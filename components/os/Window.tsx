@@ -97,8 +97,9 @@ export function Window({ windowId }: { windowId: string }) {
 
   const isMinimized = w.state === 'min'
   const isFixed = w.state === 'fullscreen' || w.state === 'max'
+  // WindowLayer already applies pt-7 to offset the menubar, so maximize uses top: 0.
   const baseStyle: React.CSSProperties = isFixed
-    ? { top: 28, left: 0, right: 0, bottom: 0, position: 'absolute', zIndex: w.z }
+    ? { top: 0, left: 0, right: 0, bottom: 0, position: 'absolute', zIndex: w.z }
     : {
         position: 'absolute',
         left: w.position.x,
