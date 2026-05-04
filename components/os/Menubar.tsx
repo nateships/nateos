@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { byId } from '@/lib/os/registry'
+import { useBattery, useNetwork } from '@/lib/os/use-system-status'
 import { useWindowStore } from '@/lib/os/window-store'
 import { AppleLogo } from './AppleLogo'
 import { AboutDialog } from './menubar/AboutDialog'
@@ -55,6 +56,23 @@ export function Menubar() {
   const focusedApp = focusedId ? byId[windows.find((w) => w.id === focusedId)?.appId ?? ''] : null
   const appTitle = focusedApp?.title ?? 'NateOS'
   const now = useClock()
+  const battery = useBattery()
+  const network = useNetwork()
+
+  const batteryPct =
+    battery.supported && battery.level !== null ? Math.round(battery.level * 100) : null
+  const batteryLabel = batteryPct !== null ? `${batteryPct}%` : '—'
+  const batteryStatusLine =
+    batteryPct !== null
+      ? `${batteryPct}% · ${battery.charging ? 'Charging' : 'On Battery'}`
+      : 'Battery status unavailable'
+
+  const networkLabel = network.online
+    ? network.type !== 'unknown'
+      ? network.type.charAt(0).toUpperCase() + network.type.slice(1)
+      : 'Connected'
+    : 'Offline'
+  const networkSpeedLabel = network.effectiveType ? network.effectiveType.toUpperCase() : null
 
   const [openMenu, setOpenMenu] = useState<MenuId>(null)
   const [spotlightOpen, setSpotlightOpen] = useState(false)
@@ -181,27 +199,36 @@ export function Menubar() {
             panelClassName="min-w-[260px]"
           >
             <div className="flex items-center justify-between px-3 py-1.5">
-              <span className="text-[12px] font-semibold">Wi-Fi</span>
+              <span className="text-[12px] font-semibold">Network</span>
               <span className="inline-flex items-center gap-2">
-                <span className="text-[11px] opacity-70">On</span>
+                <span className="text-[11px] opacity-70">{network.online ? 'On' : 'Off'}</span>
                 <span
                   aria-hidden="true"
-                  className="inline-block w-7 h-4 rounded-full bg-blue-500 relative"
+                  className={`inline-block w-7 h-4 rounded-full relative ${
+                    network.online ? 'bg-blue-500' : 'bg-zinc-600'
+                  }`}
                 >
-                  <span className="absolute top-0.5 right-0.5 w-3 h-3 rounded-full bg-white" />
+                  <span
+                    className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all ${
+                      network.online ? 'right-0.5' : 'left-0.5'
+                    }`}
+                  />
                 </span>
               </span>
             </div>
             <MenubarMenuSeparator />
-            <div className="px-3 py-1 text-[11px] uppercase opacity-60 tracking-wide">Network</div>
+            <div className="px-3 py-1 text-[11px] uppercase opacity-60 tracking-wide">Status</div>
             <MenubarMenuItem onSelect={closeMenus}>
               <span className="inline-flex items-center gap-2">
                 <WifiIcon size={12} />
-                NateOS-5G
+                {networkLabel}
+                {networkSpeedLabel ? (
+                  <span className="opacity-60">· {networkSpeedLabel}</span>
+                ) : null}
               </span>
             </MenubarMenuItem>
             <MenubarMenuSeparator />
-            <MenubarMenuItem onSelect={closeMenus}>Other Networks…</MenubarMenuItem>
+            <MenubarMenuItem onSelect={closeMenus}>Network Preferences…</MenubarMenuItem>
           </MenubarMenu>
 
           <MenubarMenu
@@ -209,8 +236,8 @@ export function Menubar() {
             align="end"
             trigger={
               <span className="flex items-center gap-1">
-                <BatteryIcon size={22} level={0.87} />
-                <span className="text-[11px] opacity-90">87%</span>
+                <BatteryIcon size={22} level={battery.level ?? 0.87} />
+                <span className="text-[11px] opacity-90">{batteryLabel}</span>
               </span>
             }
             open={openMenu === 'battery'}
@@ -219,8 +246,12 @@ export function Menubar() {
             panelClassName="min-w-[240px]"
           >
             <div className="px-3 py-1.5">
-              <div className="text-[12px] font-semibold">87% · Charging</div>
-              <div className="text-[11px] opacity-70 mt-0.5">Battery Health: Normal</div>
+              <div className="text-[12px] font-semibold">{batteryStatusLine}</div>
+              <div className="text-[11px] opacity-70 mt-0.5">
+                {battery.supported
+                  ? 'Battery Health: Normal'
+                  : 'Browser hides battery info — showing default'}
+              </div>
             </div>
             <MenubarMenuSeparator />
             <MenubarMenuItem onSelect={closeMenus}>Battery Preferences…</MenubarMenuItem>
