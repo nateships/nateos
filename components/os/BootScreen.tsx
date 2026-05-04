@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { AppleLogo } from './AppleLogo'
 
 export function BootScreen({ onDone }: { onDone: () => void }) {
   const [pct, setPct] = useState(0)
@@ -26,7 +27,7 @@ export function BootScreen({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center gap-6 text-white">
-      <span className="text-7xl">🍎</span>
+      <AppleLogo size={88} className="text-white" />
       <div className="w-48 h-1 bg-white/15 rounded-full overflow-hidden">
         <div
           className="h-full bg-white/85 transition-[width] duration-100"

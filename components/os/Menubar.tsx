@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { byId } from '@/lib/os/registry'
 import { useWindowStore } from '@/lib/os/window-store'
+import { AppleLogo } from './AppleLogo'
 
 function useClock() {
   const [now, setNow] = useState(() => new Date())
@@ -34,9 +35,7 @@ export function Menubar() {
         background: 'rgba(255,255,255,0.18)',
       }}
     >
-      <span aria-hidden className="text-base leading-none">
-        🍎
-      </span>
+      <AppleLogo size={14} className="text-white" />
       <strong className="tracking-tight">{focusedApp?.title ?? 'NateOS'}</strong>
       <span className="opacity-90">File</span>
       <span className="opacity-90">Edit</span>
