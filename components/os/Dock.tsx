@@ -4,8 +4,10 @@ import { useWindowStore } from '@/lib/os/window-store'
 
 export function Dock() {
   const windows = useWindowStore((s) => s.windows)
+  const focusedId = useWindowStore((s) => s.focusedId)
   const openApp = useWindowStore((s) => s.openApp)
   const focusWindow = useWindowStore((s) => s.focusWindow)
+  const setWindowState = useWindowStore((s) => s.setWindowState)
   const runningIds = new Set(windows.map((w) => w.appId))
 
   const dockApps = registry.filter((m) => m.surfaces.includes('dock') && !m.disabled)
@@ -30,8 +32,21 @@ export function Dock() {
             className="relative w-12 h-12 rounded-lg flex items-center justify-center transition-transform hover:scale-110 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-white/60"
             onClick={() => {
               const existing = windows.find((w) => w.appId === m.id)
-              if (existing) focusWindow(existing.id)
-              else openApp(m.id)
+              if (!existing) {
+                openApp(m.id)
+                return
+              }
+              if (existing.state === 'min') {
+                setWindowState(existing.id, 'normal')
+                focusWindow(existing.id)
+                return
+              }
+              if (focusedId === existing.id) {
+                // Already frontmost — minimize (macOS behavior).
+                setWindowState(existing.id, 'min')
+                return
+              }
+              focusWindow(existing.id)
             }}
           >
             <Icon size={44} />
