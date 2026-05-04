@@ -10,7 +10,14 @@ export function Dock() {
   const setWindowState = useWindowStore((s) => s.setWindowState)
   const runningIds = new Set(windows.map((w) => w.appId))
 
-  const dockApps = registry.filter((m) => m.surfaces.includes('dock') && !m.disabled)
+  // macOS convention: Finder pinned to the far left.
+  const dockApps = registry
+    .filter((m) => m.surfaces.includes('dock') && !m.disabled)
+    .sort((a, b) => {
+      if (a.id === 'finder') return -1
+      if (b.id === 'finder') return 1
+      return 0
+    })
 
   return (
     <div
