@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { DesktopShell } from '@/components/os/DesktopShell'
 
 export const metadata: Metadata = {
   title: "NateOS — Nate O'Farrell",
@@ -9,7 +10,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="antialiased bg-black text-white overflow-hidden">{children}</body>
+      <body className="antialiased bg-black text-white overflow-hidden">
+        <DesktopShell>{children}</DesktopShell>
+      </body>
     </html>
   )
 }
