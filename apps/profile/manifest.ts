@@ -13,4 +13,5 @@ export const manifest: AppManifest = {
   capabilities: ['resize', 'minimize'],
   surfaces: ['dock', 'launchpad', 'spotlight'],
   category: 'core',
+  description: 'Bio, role, location, and links — for visitors who want the human behind NateOS.',
 }

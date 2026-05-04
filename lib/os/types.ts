@@ -33,6 +33,8 @@ export interface AppManifest {
   badge?: () => string | number | null
   schema?: Record<string, { type: 'string' | 'number' | 'boolean'; optional?: boolean }>
   disabled?: boolean
+  /** Short copy shown in the App > About <Name> dialog. Plan 2 fills these in. */
+  description?: string
 }
 
 export interface WindowState {

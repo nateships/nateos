@@ -13,4 +13,5 @@ export const manifest: AppManifest = {
   capabilities: ['multi-instance', 'resize', 'minimize'],
   surfaces: ['dock', 'launchpad', 'spotlight'],
   category: 'core',
+  description: 'A plain markdown viewer. Open files from Finder or via deeplink.',
 }

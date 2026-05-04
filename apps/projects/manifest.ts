@@ -13,4 +13,6 @@ export const manifest: AppManifest = {
   capabilities: ['resize', 'minimize'],
   surfaces: ['dock', 'launchpad', 'spotlight'],
   category: 'core',
+  description:
+    'Selected projects: IDEA HPC platform, Sleepbar indie macOS app, AWS re:Invent 2022 talk, more.',
 }

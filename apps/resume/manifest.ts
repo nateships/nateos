@@ -13,4 +13,5 @@ export const manifest: AppManifest = {
   capabilities: ['resize', 'minimize'],
   surfaces: ['dock', 'launchpad', 'spotlight'],
   category: 'core',
+  description: 'Full work history, projects, certifications, and skills. PDF export available.',
 }

@@ -13,4 +13,5 @@ export const manifest: AppManifest = {
   capabilities: ['resize', 'minimize'],
   surfaces: ['dock', 'launchpad', 'spotlight'],
   category: 'core',
+  description: 'Send Nate a message. Delivered via email; replies come from nate@nateofarrell.com.',
 }

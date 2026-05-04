@@ -13,4 +13,5 @@ export const manifest: AppManifest = {
   capabilities: ['resize', 'minimize'],
   surfaces: ['dock', 'launchpad', 'spotlight'],
   category: 'core',
+  description: 'An interactive command-line tour of NateOS. Type help to begin.',
 }

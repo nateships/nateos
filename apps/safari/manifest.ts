@@ -13,4 +13,5 @@ export const manifest: AppManifest = {
   capabilities: ['resize', 'minimize'],
   surfaces: ['dock', 'launchpad', 'spotlight'],
   category: 'core',
+  description: 'Browse Nate links: GitHub, LinkedIn, blog, and more.',
 }

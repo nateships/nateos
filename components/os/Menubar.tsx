@@ -4,6 +4,7 @@ import { byId } from '@/lib/os/registry'
 import { useBattery, useNetwork } from '@/lib/os/use-system-status'
 import { useWindowStore } from '@/lib/os/window-store'
 import { AppleLogo } from './AppleLogo'
+import { AboutAppDialog } from './menubar/AboutAppDialog'
 import { AboutDialog } from './menubar/AboutDialog'
 import { MenubarMenu, MenubarMenuItem, MenubarMenuSeparator } from './menubar/MenubarMenu'
 import { SpotlightModal } from './menubar/SpotlightModal'
@@ -77,6 +78,32 @@ export function Menubar() {
   const [openMenu, setOpenMenu] = useState<MenuId>(null)
   const [spotlightOpen, setSpotlightOpen] = useState(false)
   const [aboutOpen, setAboutOpen] = useState(false)
+  const [aboutAppOpen, setAboutAppOpen] = useState(false)
+  const focusedWindow = focusedId ? windows.find((w) => w.id === focusedId) : null
+  const closeFocusedWindow = useWindowStore((s) => s.closeWindow)
+  const setFocusedWindowState = useWindowStore((s) => s.setWindowState)
+  function closeFocused() {
+    closeMenus()
+    if (focusedWindow) closeFocusedWindow(focusedWindow.id)
+  }
+  function quitFocused() {
+    // Quit closes all instances of the focused app (matches macOS Quit behavior).
+    closeMenus()
+    if (!focusedApp) return
+    for (const w of windows.filter((w) => w.appId === focusedApp.id)) {
+      closeFocusedWindow(w.id)
+    }
+  }
+  function minimizeFocused() {
+    closeMenus()
+    if (focusedWindow) setFocusedWindowState(focusedWindow.id, 'min')
+  }
+  function zoomFocused() {
+    closeMenus()
+    if (!focusedWindow) return
+    setFocusedWindowState(focusedWindow.id, focusedWindow.state === 'max' ? 'normal' : 'max')
+  }
+  const hasFocused = !!focusedWindow
 
   function setMenu(id: MenuId, open: boolean) {
     setOpenMenu(open ? id : null)
@@ -147,30 +174,131 @@ export function Menubar() {
           onOpenChange={(o) => setMenu('app', o)}
           onTriggerEnter={hoverSwitch('app')}
         >
-          <MenubarMenuItem onSelect={closeMenus}>About {appTitle}</MenubarMenuItem>
+          <MenubarMenuItem
+            disabled={!focusedApp}
+            onSelect={() => {
+              closeMenus()
+              if (focusedApp) setAboutAppOpen(true)
+            }}
+          >
+            About {appTitle}
+          </MenubarMenuItem>
+          <MenubarMenuSeparator />
+          <MenubarMenuItem disabled={!hasFocused} onSelect={quitFocused} shortcut="⌘Q">
+            Quit {appTitle}
+          </MenubarMenuItem>
         </MenubarMenu>
 
-        {/* Standard application menus — placeholder content for v1. */}
-        {(
-          [
-            ['file', 'File'],
-            ['edit', 'Edit'],
-            ['view', 'View'],
-            ['window', 'Window'],
-            ['help', 'Help'],
-          ] as const
-        ).map(([id, label]) => (
-          <MenubarMenu
-            key={id}
-            ariaLabel={`${label} menu`}
-            trigger={<span className="opacity-90">{label}</span>}
-            open={openMenu === id}
-            onOpenChange={(o) => setMenu(id, o)}
-            onTriggerEnter={hoverSwitch(id)}
+        {/* File */}
+        <MenubarMenu
+          ariaLabel="File menu"
+          trigger={<span className="opacity-90">File</span>}
+          open={openMenu === 'file'}
+          onOpenChange={(o) => setMenu('file', o)}
+          onTriggerEnter={hoverSwitch('file')}
+        >
+          <MenubarMenuItem disabled={!hasFocused} onSelect={closeFocused} shortcut="⌘W">
+            Close Window
+          </MenubarMenuItem>
+          <MenubarMenuItem disabled={!hasFocused} onSelect={quitFocused} shortcut="⌘Q">
+            Quit {appTitle}
+          </MenubarMenuItem>
+        </MenubarMenu>
+
+        {/* Edit — Cut/Copy/Paste delegate to browser via execCommand-like behavior; left as
+            disabled placeholders for v1 since there is no editable surface. */}
+        <MenubarMenu
+          ariaLabel="Edit menu"
+          trigger={<span className="opacity-90">Edit</span>}
+          open={openMenu === 'edit'}
+          onOpenChange={(o) => setMenu('edit', o)}
+          onTriggerEnter={hoverSwitch('edit')}
+        >
+          <MenubarMenuItem disabled shortcut="⌘Z">
+            Undo
+          </MenubarMenuItem>
+          <MenubarMenuItem disabled shortcut="⇧⌘Z">
+            Redo
+          </MenubarMenuItem>
+          <MenubarMenuSeparator />
+          <MenubarMenuItem disabled shortcut="⌘X">
+            Cut
+          </MenubarMenuItem>
+          <MenubarMenuItem disabled shortcut="⌘C">
+            Copy
+          </MenubarMenuItem>
+          <MenubarMenuItem disabled shortcut="⌘V">
+            Paste
+          </MenubarMenuItem>
+          <MenubarMenuItem disabled shortcut="⌘A">
+            Select All
+          </MenubarMenuItem>
+        </MenubarMenu>
+
+        {/* View */}
+        <MenubarMenu
+          ariaLabel="View menu"
+          trigger={<span className="opacity-90">View</span>}
+          open={openMenu === 'view'}
+          onOpenChange={(o) => setMenu('view', o)}
+          onTriggerEnter={hoverSwitch('view')}
+        >
+          <MenubarMenuItem
+            disabled={!hasFocused}
+            onSelect={zoomFocused}
+            shortcut={focusedWindow?.state === 'max' ? 'Exit Full' : '⌃⌘F'}
           >
-            <MenubarMenuItem disabled>(no items)</MenubarMenuItem>
-          </MenubarMenu>
-        ))}
+            {focusedWindow?.state === 'max' ? 'Exit Full Screen' : 'Enter Full Screen'}
+          </MenubarMenuItem>
+          <MenubarMenuItem
+            onSelect={() => {
+              closeMenus()
+              window.location.reload()
+            }}
+            shortcut="⌘R"
+          >
+            Reload
+          </MenubarMenuItem>
+        </MenubarMenu>
+
+        {/* Window */}
+        <MenubarMenu
+          ariaLabel="Window menu"
+          trigger={<span className="opacity-90">Window</span>}
+          open={openMenu === 'window'}
+          onOpenChange={(o) => setMenu('window', o)}
+          onTriggerEnter={hoverSwitch('window')}
+        >
+          <MenubarMenuItem disabled={!hasFocused} onSelect={minimizeFocused} shortcut="⌘M">
+            Minimize
+          </MenubarMenuItem>
+          <MenubarMenuItem disabled={!hasFocused} onSelect={zoomFocused}>
+            Zoom
+          </MenubarMenuItem>
+          <MenubarMenuSeparator />
+          <MenubarMenuItem disabled={!hasFocused} onSelect={closeFocused} shortcut="⌘W">
+            Close
+          </MenubarMenuItem>
+        </MenubarMenu>
+
+        {/* Help */}
+        <MenubarMenu
+          ariaLabel="Help menu"
+          trigger={<span className="opacity-90">Help</span>}
+          open={openMenu === 'help'}
+          onOpenChange={(o) => setMenu('help', o)}
+          onTriggerEnter={hoverSwitch('help')}
+        >
+          <MenubarMenuItem
+            disabled={!focusedApp}
+            onSelect={() => {
+              closeMenus()
+              if (focusedApp) setAboutAppOpen(true)
+            }}
+          >
+            {appTitle} Help
+          </MenubarMenuItem>
+        </MenubarMenu>
 
         {/* Right-side status tray. */}
         <div className="ml-auto flex items-stretch gap-0.5">
@@ -280,6 +408,10 @@ export function Menubar() {
 
       <SpotlightModal open={spotlightOpen} onClose={() => setSpotlightOpen(false)} />
       <AboutDialog open={aboutOpen} onClose={() => setAboutOpen(false)} />
+      <AboutAppDialog
+        app={aboutAppOpen ? focusedApp : null}
+        onClose={() => setAboutAppOpen(false)}
+      />
     </>
   )
 }
