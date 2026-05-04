@@ -1,4 +1,6 @@
 'use client'
+import { Suspense } from 'react'
+import { DeeplinkRouter } from '@/components/deeplink/DeeplinkRouter'
 import { Dock } from './Dock'
 import { Menubar } from './Menubar'
 import { Wallpaper } from './Wallpaper'
@@ -11,6 +13,9 @@ export function DesktopShell({ children }: { children: React.ReactNode }) {
       <Menubar />
       <WindowLayer />
       <Dock />
+      <Suspense fallback={null}>
+        <DeeplinkRouter />
+      </Suspense>
       {children}
     </div>
   )
