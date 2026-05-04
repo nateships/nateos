@@ -95,10 +95,9 @@ export function Window({ windowId }: { windowId: string }) {
     }
   }
 
-  if (w.state === 'min') return null
-
+  const isMinimized = w.state === 'min'
   const isFixed = w.state === 'fullscreen' || w.state === 'max'
-  const style: React.CSSProperties = isFixed
+  const baseStyle: React.CSSProperties = isFixed
     ? { top: 28, left: 0, right: 0, bottom: 0, position: 'absolute', zIndex: w.z }
     : {
         position: 'absolute',
@@ -108,6 +107,8 @@ export function Window({ windowId }: { windowId: string }) {
         height: w.size.h,
         zIndex: w.z,
       }
+  // Keep minimized windows mounted so app state (terminal history, scroll, etc.) is preserved.
+  const style: React.CSSProperties = isMinimized ? { ...baseStyle, display: 'none' } : baseStyle
 
   const showResize = !isFixed
 
