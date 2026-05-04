@@ -1,0 +1,54 @@
+'use client'
+import { useEffect, useState } from 'react'
+import { byId } from '@/lib/os/registry'
+import { useWindowStore } from '@/lib/os/window-store'
+
+function useClock() {
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 30_000)
+    return () => clearInterval(t)
+  }, [])
+  return now.toLocaleString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })
+}
+
+export function Menubar() {
+  const focusedId = useWindowStore((s) => s.focusedId)
+  const windows = useWindowStore((s) => s.windows)
+  const focusedApp = focusedId ? byId[windows.find((w) => w.id === focusedId)?.appId ?? ''] : null
+  const time = useClock()
+
+  return (
+    <div
+      className="fixed top-0 inset-x-0 h-7 z-50 flex items-center px-3 gap-4 text-white text-[12px] font-medium border-b border-white/10"
+      style={{
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        background: 'rgba(255,255,255,0.18)',
+      }}
+    >
+      <span aria-hidden className="text-base leading-none">
+        🍎
+      </span>
+      <strong className="tracking-tight">{focusedApp?.title ?? 'NateOS'}</strong>
+      <span className="opacity-90">File</span>
+      <span className="opacity-90">Edit</span>
+      <span className="opacity-90">View</span>
+      <span className="opacity-90">Window</span>
+      <span className="opacity-90">Help</span>
+      <span className="ml-auto flex items-center gap-3">
+        <span aria-hidden>🔍</span>
+        <span aria-hidden>📶</span>
+        <span aria-hidden>🔋 87%</span>
+        <span>{time}</span>
+      </span>
+    </div>
+  )
+}
