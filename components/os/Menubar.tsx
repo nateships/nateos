@@ -236,7 +236,11 @@ export function Menubar() {
             align="end"
             trigger={
               <span className="flex items-center gap-1">
-                <BatteryIcon size={22} level={battery.level ?? 0.87} />
+                <BatteryIcon
+                  size={22}
+                  level={battery.level ?? 0.87}
+                  charging={battery.charging ?? false}
+                />
                 <span className="text-[11px] opacity-90">{batteryLabel}</span>
               </span>
             }
