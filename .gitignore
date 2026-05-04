@@ -41,3 +41,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 nanobanana-output/
+
+# generated data (regenerated from content/*.mdx via predev/prebuild/pretypecheck)
+/app/profile/data.json
