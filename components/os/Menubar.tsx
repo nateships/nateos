@@ -68,6 +68,14 @@ export function Menubar() {
     setOpenMenu(null)
   }
 
+  // macOS-style menu-follows-mouse: once any menu is open, hovering another
+  // top-level menubar trigger switches to it without requiring a click.
+  function hoverSwitch(id: MenuId) {
+    return () => {
+      if (openMenu !== null && openMenu !== id) setOpenMenu(id)
+    }
+  }
+
   function handleRestart() {
     closeMenus()
     try {
@@ -94,6 +102,7 @@ export function Menubar() {
           trigger={<AppleLogo size={14} className="text-white" />}
           open={openMenu === 'apple'}
           onOpenChange={(o) => setMenu('apple', o)}
+          onTriggerEnter={hoverSwitch('apple')}
         >
           <MenubarMenuItem
             onSelect={() => {
@@ -118,6 +127,7 @@ export function Menubar() {
           trigger={<span>{appTitle}</span>}
           open={openMenu === 'app'}
           onOpenChange={(o) => setMenu('app', o)}
+          onTriggerEnter={hoverSwitch('app')}
         >
           <MenubarMenuItem onSelect={closeMenus}>About {appTitle}</MenubarMenuItem>
         </MenubarMenu>
@@ -138,6 +148,7 @@ export function Menubar() {
             trigger={<span className="opacity-90">{label}</span>}
             open={openMenu === id}
             onOpenChange={(o) => setMenu(id, o)}
+            onTriggerEnter={hoverSwitch(id)}
           >
             <MenubarMenuItem disabled>(no items)</MenubarMenuItem>
           </MenubarMenu>
@@ -152,6 +163,9 @@ export function Menubar() {
               closeMenus()
               setSpotlightOpen(true)
             }}
+            onMouseEnter={() => {
+              if (openMenu !== null) closeMenus()
+            }}
             className="inline-flex items-center h-7 px-2 rounded-sm hover:bg-white/10 focus:outline-none"
           >
             <SpotlightIcon size={14} />
@@ -163,6 +177,7 @@ export function Menubar() {
             trigger={<WifiIcon size={16} />}
             open={openMenu === 'wifi'}
             onOpenChange={(o) => setMenu('wifi', o)}
+            onTriggerEnter={hoverSwitch('wifi')}
             panelClassName="min-w-[260px]"
           >
             <div className="flex items-center justify-between px-3 py-1.5">
@@ -200,6 +215,7 @@ export function Menubar() {
             }
             open={openMenu === 'battery'}
             onOpenChange={(o) => setMenu('battery', o)}
+            onTriggerEnter={hoverSwitch('battery')}
             panelClassName="min-w-[240px]"
           >
             <div className="px-3 py-1.5">
@@ -216,6 +232,7 @@ export function Menubar() {
             trigger={<span>{formatClock(now)}</span>}
             open={openMenu === 'clock'}
             onOpenChange={(o) => setMenu('clock', o)}
+            onTriggerEnter={hoverSwitch('clock')}
             panelClassName="min-w-[260px]"
           >
             <div className="px-3 py-2">

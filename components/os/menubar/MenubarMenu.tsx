@@ -19,6 +19,9 @@ type Props = {
   ariaLabel?: string
   /** Extra classes for the trigger button. */
   triggerClassName?: string
+  /** Called when the trigger is hovered. Used by parent to implement
+   *  macOS-style "menu follows mouse" once any menu is already open. */
+  onTriggerEnter?: () => void
 }
 
 /**
@@ -36,6 +39,7 @@ export function MenubarMenu({
   children,
   ariaLabel,
   triggerClassName,
+  onTriggerEnter,
 }: Props) {
   const rootRef = useRef<HTMLDivElement | null>(null)
   const triggerRef = useRef<HTMLButtonElement | null>(null)
@@ -78,6 +82,7 @@ export function MenubarMenu({
         aria-controls={open ? panelId : undefined}
         aria-label={ariaLabel}
         onClick={() => onOpenChange(!open)}
+        onMouseEnter={() => onTriggerEnter?.()}
         className={[
           'inline-flex items-center h-7 px-2 rounded-sm transition-colors focus:outline-none',
           'hover:bg-white/10',
