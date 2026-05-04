@@ -137,7 +137,7 @@ export function SpotlightModal({ open, onClose }: Props) {
             aria-label="Spotlight Search"
           />
         </form>
-        <div className="max-h-[50vh] overflow-auto py-1">
+        <div className="max-h-[50vh] overflow-auto os-scroll py-1">
           {results.length === 0 ? (
             <div className="px-5 py-3 text-[13px] opacity-60">No matches</div>
           ) : (

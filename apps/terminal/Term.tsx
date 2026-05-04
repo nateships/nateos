@@ -118,7 +118,10 @@ export function Term({ ctx }: { ctx: CommandContext }) {
       style={{ background: 'rgba(20,20,24,0.92)' }}
       onClick={() => inputRef.current?.focus()}
     >
-      <div ref={scrollRef} className="h-[calc(100%-1.5rem)] overflow-auto whitespace-pre-wrap">
+      <div
+        ref={scrollRef}
+        className="h-[calc(100%-1.5rem)] overflow-auto os-scroll whitespace-pre-wrap"
+      >
         {history.map((l, i) => (
           <div
             // biome-ignore lint/suspicious/noArrayIndexKey: history is append-only
