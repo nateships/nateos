@@ -46,6 +46,7 @@ nanobanana-output/
 /app/profile/data.json
 /app/resume/data.json
 /app/projects/data.json
+/app/safari/data.json
 
 # generated resume PDF (regenerated via predev/prebuild)
 /public/resume.pdf
