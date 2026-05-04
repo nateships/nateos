@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { byId } from '@/lib/os/registry'
 import { useWindowStore } from '@/lib/os/window-store'
 import { AppleLogo } from './AppleLogo'
+import { BatteryIcon, SpotlightIcon, WifiIcon } from './SystemIcons'
 
 function useClock() {
   const [now, setNow] = useState(() => new Date())
@@ -42,10 +43,13 @@ export function Menubar() {
       <span className="opacity-90">View</span>
       <span className="opacity-90">Window</span>
       <span className="opacity-90">Help</span>
-      <span className="ml-auto flex items-center gap-3">
-        <span aria-hidden>🔍</span>
-        <span aria-hidden>📶</span>
-        <span aria-hidden>🔋 87%</span>
+      <span className="ml-auto flex items-center gap-3 text-white">
+        <SpotlightIcon size={14} />
+        <WifiIcon size={16} />
+        <span className="flex items-center gap-1">
+          <BatteryIcon size={22} level={0.87} />
+          <span className="text-[11px] opacity-90">87%</span>
+        </span>
         <span>{time}</span>
       </span>
     </div>
