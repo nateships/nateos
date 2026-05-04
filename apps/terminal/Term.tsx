@@ -115,7 +115,7 @@ export function Term({ ctx }: { ctx: CommandContext }) {
     // biome-ignore lint/a11y/useKeyWithClickEvents: input itself handles keyboard
     <div
       className="h-full w-full p-3 text-[13px] font-mono leading-relaxed text-white/90"
-      style={{ background: 'rgba(20,20,24,0.62)', backdropFilter: 'blur(20px)' }}
+      style={{ background: 'rgba(20,20,24,0.40)', backdropFilter: 'blur(24px)' }}
       onClick={() => inputRef.current?.focus()}
     >
       <div

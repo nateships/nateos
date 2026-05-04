@@ -186,10 +186,7 @@ export function Window({ windowId }: { windowId: string }) {
         </span>
         <span className="mx-auto -translate-x-4 text-xs opacity-70">{manifest.title}</span>
       </div>
-      <div
-        className="h-[calc(100%-1.75rem)] overflow-auto os-scroll"
-        style={{ background: 'rgba(40,40,46,0.78)' }}
-      >
+      <div className="h-[calc(100%-1.75rem)] overflow-auto os-scroll">
         <Comp windowId={w.id} params={w.params} />
       </div>
       {showResize && (
