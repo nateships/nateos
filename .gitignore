@@ -50,3 +50,5 @@ nanobanana-output/
 
 # generated resume PDF (regenerated via predev/prebuild)
 /public/resume.pdf
+/public/contact.vcf
+/public/qr.png
