@@ -2,12 +2,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { type CommandContext, runCommand } from './commands'
 
-const BANNER = String.raw`
-     _   __      __     ____  _____
-    / | / /___ _/ /____/ __ \/ ___/
-   /  |/ / __ \`/ __/ _ \\ / / /\__ \
-  / /|  / /_/ / /_/  __/ /_/ /___/ /
- /_/ |_/\__,_/\__/\___/\____//____/  v1.0
+const BANNER = `
+███╗   ██╗ █████╗ ████████╗███████╗ ██████╗ ███████╗
+████╗  ██║██╔══██╗╚══██╔══╝██╔════╝██╔═══██╗██╔════╝
+██╔██╗ ██║███████║   ██║   █████╗  ██║   ██║███████╗
+██║╚██╗██║██╔══██║   ██║   ██╔══╝  ██║   ██║╚════██║
+██║ ╚████║██║  ██║   ██║   ███████╗╚██████╔╝███████║
+╚═╝  ╚═══╝╚═╝  ╚═╝   ╚═╝   ╚══════╝ ╚═════╝ ╚══════╝  v1.0
 `
 
 type Line = { kind: 'in' | 'out' | 'sys'; text: string }
@@ -27,9 +28,10 @@ export function Term({ ctx }: { ctx: CommandContext }) {
   useEffect(() => {
     inputRef.current?.focus()
   }, [])
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll on every history change
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
-  }, [])
+  }, [history])
 
   async function submit() {
     const cmd = input.trim()
