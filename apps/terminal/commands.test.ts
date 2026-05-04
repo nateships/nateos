@@ -39,4 +39,20 @@ describe('terminal commands', () => {
     const out = await runCommand('whatever', ctx)
     expect(out).toMatch(/command not found/)
   })
+
+  it('cat resume.mdx fetches /api/content and returns text', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+      ok: true,
+      text: async () => '---\nsummary: hello\n---\nbody',
+    } as unknown as Response)
+    const out = await runCommand('cat resume.mdx', ctx)
+    expect(out).toMatch(/summary/)
+    expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/api/content'))
+    fetchSpy.mockRestore()
+  })
+
+  it('cat without arg returns usage', async () => {
+    const out = await runCommand('cat', ctx)
+    expect(out).toBe('usage: cat <file>')
+  })
 })

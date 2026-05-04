@@ -60,7 +60,13 @@ export async function runCommand(raw: string, ctx: CommandContext): Promise<stri
     case 'cat': {
       const file = args[0]
       if (!file) return 'usage: cat <file>'
-      return `(cat is wired in Plan 2 — content/${file} will render here)`
+      try {
+        const r = await fetch(`/api/content?file=${encodeURIComponent(file)}`)
+        if (!r.ok) return `cat: ${file}: ${r.status} ${r.statusText}`
+        return await r.text()
+      } catch (e) {
+        return `cat: ${e instanceof Error ? e.message : 'unknown error'}`
+      }
     }
     case 'cd': {
       return ''
