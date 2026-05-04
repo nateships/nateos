@@ -8,7 +8,6 @@ import { manifest as resume } from '@/apps/resume/manifest'
 import { manifest as safari } from '@/apps/safari/manifest'
 import { manifest as settings } from '@/apps/settings/manifest'
 import { manifest as terminal } from '@/apps/terminal/manifest'
-import { manifest as textedit } from '@/apps/textedit/manifest'
 import type { AppManifest } from './types'
 
 export const registry: AppManifest[] = [
@@ -21,7 +20,6 @@ export const registry: AppManifest[] = [
   finder,
   settings,
   calendar,
-  textedit,
   calculator,
 ]
 

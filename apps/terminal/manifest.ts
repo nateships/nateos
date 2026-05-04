@@ -10,7 +10,7 @@ export const manifest: AppManifest = {
   component: TerminalApp,
   defaultSize: { w: 720, h: 440 },
   minSize: { w: 420, h: 320 },
-  capabilities: ['resize', 'minimize'],
+  capabilities: ['multi-instance', 'resize', 'minimize'],
   surfaces: ['dock', 'launchpad', 'spotlight'],
   category: 'core',
   description: 'An interactive command-line tour of NateOS. Type help to begin.',

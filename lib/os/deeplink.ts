@@ -10,6 +10,5 @@ export function appIdFromPath(pathname: string): string | null {
 export function paramsFromPath(pathname: string): Record<string, string> | undefined {
   const segments = pathname.split('/').filter(Boolean)
   if (segments[0] === 'projects' && segments[1]) return { slug: segments[1] }
-  if (segments[0] === 'textedit' && segments[1]) return { file: segments[1] }
   return undefined
 }

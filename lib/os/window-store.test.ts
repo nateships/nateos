@@ -30,10 +30,10 @@ describe('window-store', () => {
     expect(useWindowStore.getState().windows).toHaveLength(0)
   })
 
-  it('multi-instance: opening textedit twice yields two windows', () => {
-    useWindowStore.getState().openApp('textedit', { file: 'a.md' })
-    useWindowStore.getState().openApp('textedit', { file: 'b.md' })
-    const wins = useWindowStore.getState().windows.filter((w) => w.appId === 'textedit')
+  it('multi-instance: opening terminal twice yields two windows', () => {
+    useWindowStore.getState().openApp('terminal', { instance: 1 })
+    useWindowStore.getState().openApp('terminal', { instance: 2 })
+    const wins = useWindowStore.getState().windows.filter((w) => w.appId === 'terminal')
     expect(wins).toHaveLength(2)
   })
 })

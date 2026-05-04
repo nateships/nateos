@@ -1,52 +1,65 @@
 'use client'
-import { useState } from 'react'
 import { bookmarks } from '@/app/safari/data'
-import { BookmarksBar } from './Bookmarks'
+import type { Bookmark } from '@/lib/content/schema'
+
+const CATEGORY_LABELS: Record<Bookmark['category'], string> = {
+  code: 'Code',
+  social: 'Social',
+  media: 'Talks & Media',
+  other: 'Elsewhere',
+}
+
+const CATEGORY_ORDER: Bookmark['category'][] = ['code', 'social', 'media', 'other']
+
+function hostOf(url: string) {
+  try {
+    return new URL(url).host.replace(/^www\./, '')
+  } catch {
+    return url
+  }
+}
 
 export function SafariApp() {
-  const [url, setUrl] = useState<string>(bookmarks[0]?.url ?? 'about:blank')
-  const [navInput, setNavInput] = useState<string>(url)
-
-  function go(target: string) {
-    setUrl(target)
-    setNavInput(target)
-  }
+  const grouped = CATEGORY_ORDER.map((cat) => ({
+    cat,
+    items: bookmarks.filter((b) => b.category === cat),
+  })).filter((g) => g.items.length > 0)
 
   return (
-    <div className="h-full w-full flex flex-col bg-zinc-900/95 text-white">
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-white/10">
-        <span className="opacity-60 text-[12px]">←</span>
-        <span className="opacity-60 text-[12px]">→</span>
-        <input
-          value={navInput}
-          onChange={(e) => setNavInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') go(navInput)
-          }}
-          className="flex-1 bg-white/5 rounded-md px-3 py-1 text-[12px] outline-none focus:ring-1 focus:ring-blue-500"
-        />
-        <a
-          href={url}
-          target="_blank"
-          rel="noreferrer"
-          className="text-[11px] opacity-70 hover:underline"
-        >
-          Open ↗
-        </a>
-      </div>
-      <BookmarksBar items={bookmarks} onPick={go} />
-      <div className="flex-1 bg-white relative">
-        <iframe
-          key={url}
-          src={url}
-          title="Safari content"
-          className="absolute inset-0 w-full h-full border-0"
-          sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-          referrerPolicy="no-referrer"
-        />
-        <div className="absolute bottom-3 right-3 text-[10px] bg-black/70 text-white/80 px-2 py-1 rounded">
-          Some sites block embedding. Click "Open ↗" if blank.
-        </div>
+    <div className="h-full w-full overflow-auto os-scroll bg-zinc-900/95 text-white">
+      <div className="max-w-2xl mx-auto px-7 py-7 flex flex-col gap-6">
+        <header>
+          <h1 className="text-xl font-semibold tracking-tight">Reading List</h1>
+          <p className="text-[12px] opacity-60 mt-1">Curated links — click to open in a new tab.</p>
+        </header>
+
+        {grouped.map(({ cat, items }) => (
+          <section key={cat}>
+            <h2 className="text-[10px] uppercase tracking-wider opacity-50 mb-2">
+              {CATEGORY_LABELS[cat]}
+            </h2>
+            <ul className="flex flex-col gap-1.5">
+              {items.map((b) => (
+                <li key={b.url}>
+                  <a
+                    href={b.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors group"
+                  >
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-[13px] font-medium truncate">{b.label}</span>
+                      <span className="block text-[11px] opacity-60 truncate">{hostOf(b.url)}</span>
+                    </span>
+                    <span className="text-[12px] opacity-40 group-hover:opacity-100 transition-opacity">
+                      ↗
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
       </div>
     </div>
   )
