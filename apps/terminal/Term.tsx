@@ -1,23 +1,42 @@
 'use client'
+import type { ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { type CommandContext, runCommand } from './commands'
 
-const BANNER = `
-███╗   ██╗ █████╗ ████████╗███████╗ ██████╗ ███████╗
-████╗  ██║██╔══██╗╚══██╔══╝██╔════╝██╔═══██╗██╔════╝
-██╔██╗ ██║███████║   ██║   █████╗  ██║   ██║███████╗
-██║╚██╗██║██╔══██║   ██║   ██╔══╝  ██║   ██║╚════██║
-██║ ╚████║██║  ██║   ██║   ███████╗╚██████╔╝███████║
-╚═╝  ╚═══╝╚═╝  ╚═╝   ╚═╝   ╚══════╝ ╚═════╝ ╚══════╝  v1.0
-`
+const NATE_ART = `███╗   ██╗ █████╗ ████████╗███████╗
+████╗  ██║██╔══██╗╚══██╔══╝██╔════╝
+██╔██╗ ██║███████║   ██║   █████╗
+██║╚██╗██║██╔══██║   ██║   ██╔══╝
+██║ ╚████║██║  ██║   ██║   ███████╗
+╚═╝  ╚═══╝╚═╝  ╚═╝   ╚═╝   ╚══════╝`
 
-type Line = { kind: 'in' | 'out' | 'sys'; text: string }
+const OS_ART = ` ██████╗ ███████╗
+██╔═══██╗██╔════╝
+██║   ██║███████╗
+██║   ██║╚════██║
+╚██████╔╝███████║
+ ╚═════╝ ╚══════╝`
+
+function Banner() {
+  return (
+    <div className="flex items-end gap-2 leading-none">
+      <pre className="text-cyan-300/90 m-0 leading-tight">{NATE_ART}</pre>
+      <pre className="text-pink-300/90 m-0 leading-tight">{OS_ART}</pre>
+      <span className="text-white/50 text-xs pb-1 ml-2">v1.0</span>
+    </div>
+  )
+}
+
+type Line = { kind: 'in' | 'out' | 'sys'; content: ReactNode }
 
 export function Term({ ctx }: { ctx: CommandContext }) {
   const [history, setHistory] = useState<Line[]>([
-    { kind: 'sys', text: BANNER },
-    { kind: 'sys', text: 'welcome · Director of Infra @ Commonwealth Fusion · Tewksbury, MA' },
-    { kind: 'sys', text: 'type `help` for commands · `apps` to list · `open <app>`' },
+    { kind: 'sys', content: <Banner /> },
+    {
+      kind: 'sys',
+      content: 'welcome · Director of Infra @ Commonwealth Fusion · Tewksbury, MA',
+    },
+    { kind: 'sys', content: 'type `help` for commands · `apps` to list · `open <app>`' },
   ])
   const [input, setInput] = useState('')
   const [stack, setStack] = useState<string[]>([])
@@ -36,7 +55,7 @@ export function Term({ ctx }: { ctx: CommandContext }) {
   async function submit() {
     const cmd = input.trim()
     if (!cmd) return
-    setHistory((h) => [...h, { kind: 'in', text: `nate@nateos ~ $ ${cmd}` }])
+    setHistory((h) => [...h, { kind: 'in', content: `nate@nateos ~ $ ${cmd}` }])
     setStack((s) => [...s, cmd])
     setStackIdx(-1)
     setInput('')
@@ -45,7 +64,7 @@ export function Term({ ctx }: { ctx: CommandContext }) {
       setHistory([])
       return
     }
-    if (out) setHistory((h) => [...h, { kind: 'out', text: out }])
+    if (out) setHistory((h) => [...h, { kind: 'out', content: out }])
   }
 
   function onKey(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -108,7 +127,7 @@ export function Term({ ctx }: { ctx: CommandContext }) {
               l.kind === 'sys' ? 'text-cyan-300/80' : l.kind === 'in' ? 'text-emerald-300' : ''
             }
           >
-            {l.text}
+            {l.content}
           </div>
         ))}
       </div>
