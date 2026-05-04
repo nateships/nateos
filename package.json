@@ -9,6 +9,8 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "check:content": "bun run scripts/check-content.ts",
     "extract:apple": "bash scripts/extract-apple-assets.sh"
   },
@@ -38,8 +40,10 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/uuid": "^11.0.0",
+    "@vitest/ui": "^4.1.5",
     "postcss": "^8.5.13",
     "tailwindcss": "^4",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5"
   }
 }
