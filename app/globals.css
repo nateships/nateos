@@ -1,1 +1,20 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "SF Pro Text", "Inter", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --color-os-bg: #000;
+  --color-os-glass: rgba(255, 255, 255, 0.18);
+  --color-os-glass-dark: rgba(20, 20, 24, 0.55);
+  --color-os-traffic-r: #ff5f57;
+  --color-os-traffic-y: #febc2e;
+  --color-os-traffic-g: #28c840;
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  font-family: var(--font-sans);
+}

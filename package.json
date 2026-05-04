@@ -6,7 +6,11 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit",
+    "check:content": "bun run scripts/check-content.ts",
+    "extract:apple": "bash scripts/extract-apple-assets.sh"
   },
   "dependencies": {
     "next": "16.2.4",
@@ -14,6 +18,7 @@
     "react-dom": "^19"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.14",
     "@tailwindcss/postcss": "^4.2.4",
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
