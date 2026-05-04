@@ -35,8 +35,8 @@ export function Dock() {
           <button
             key={m.id}
             type="button"
-            title={m.title}
-            className="relative w-12 h-12 rounded-lg flex items-center justify-center transition-transform hover:scale-110 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-white/60"
+            aria-label={m.title}
+            className="group relative w-12 h-12 rounded-lg flex items-center justify-center transition-transform hover:scale-110 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-white/60"
             onClick={() => {
               const existing = windows.find((w) => w.appId === m.id)
               if (!existing) {
@@ -60,6 +60,17 @@ export function Dock() {
             {isRunning && (
               <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white" />
             )}
+            {/* macOS-style tooltip above the icon, fades in on hover */}
+            <span
+              role="tooltip"
+              className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-2 py-1 rounded-md border border-white/10 backdrop-blur-md bg-zinc-900/85 text-white text-[11px] font-medium whitespace-nowrap shadow-lg opacity-0 translate-y-1 transition-all duration-150 group-hover:opacity-100 group-hover:translate-y-0"
+            >
+              {m.title}
+              <span
+                aria-hidden="true"
+                className="absolute top-full left-1/2 -translate-x-1/2 -mt-px w-2 h-2 rotate-45 bg-zinc-900/85 border-r border-b border-white/10"
+              />
+            </span>
           </button>
         )
       })}
