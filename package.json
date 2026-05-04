@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "gen:data": "bun run scripts/generate-data.ts",
-    "predev": "bun run scripts/generate-data.ts",
+    "build:pdf": "bun run scripts/build-pdf.ts",
+    "predev": "bun run scripts/generate-data.ts && bun run scripts/build-pdf.ts",
     "dev": "next dev --turbopack",
-    "prebuild": "bun run scripts/generate-data.ts",
+    "prebuild": "bun run scripts/generate-data.ts && bun run scripts/build-pdf.ts",
     "build": "next build",
     "pretypecheck": "bun run scripts/generate-data.ts",
     "start": "next start",
