@@ -1,12 +1,18 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
-import { loadProfile, loadResume } from '../lib/content/load'
+import { loadProfile, loadProjectBody, loadProjects, loadResume } from '../lib/content/load'
 
 const ROOT = process.cwd()
+
+const projects = loadProjects().map((p) => ({
+  ...p,
+  body: loadProjectBody(p.slug),
+}))
 
 const targets: Array<{ path: string; data: unknown }> = [
   { path: join(ROOT, 'app/profile/data.json'), data: loadProfile() },
   { path: join(ROOT, 'app/resume/data.json'), data: loadResume() },
+  { path: join(ROOT, 'app/projects/data.json'), data: projects },
 ]
 
 for (const { path, data } of targets) {

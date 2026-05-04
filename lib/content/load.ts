@@ -29,3 +29,8 @@ export function loadLinks(): Links['bookmarks'] {
   const raw = readFront('links.mdx') as { bookmarks?: Links['bookmarks'] }
   return raw.bookmarks ?? []
 }
+
+export function loadProjectBody(slug: string): string {
+  const raw = readFileSync(join(ROOT, 'projects', `${slug}.mdx`), 'utf8')
+  return matter(raw).content.trim()
+}
