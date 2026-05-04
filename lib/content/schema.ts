@@ -5,7 +5,9 @@ export const Profile = z.object({
   tagline: z.string(),
   location: z.string(),
   email: z.email(),
+  phone: z.string().optional(),
   links: z.array(z.object({ label: z.string(), url: z.url() })),
+  bio: z.string(),
 })
 export type Profile = z.infer<typeof Profile>
 
@@ -17,6 +19,7 @@ export const ResumeRole = z.object({
   location: z.string(),
   bullets: z.array(z.string()),
 })
+export type ResumeRole = z.infer<typeof ResumeRole>
 
 export const Resume = z.object({
   summary: z.string(),
@@ -38,3 +41,15 @@ export const Project = z.object({
   order: z.number().default(0),
 })
 export type Project = z.infer<typeof Project>
+
+export const Bookmark = z.object({
+  label: z.string(),
+  url: z.url(),
+  category: z.enum(['social', 'code', 'media', 'other']).default('other'),
+})
+export type Bookmark = z.infer<typeof Bookmark>
+
+export const Links = z.object({
+  bookmarks: z.array(Bookmark),
+})
+export type Links = z.infer<typeof Links>
