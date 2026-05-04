@@ -126,34 +126,61 @@ export function Window({ windowId }: { windowId: string }) {
         onPointerCancel={onPointerUp}
         onDoubleClick={() => setState(w.id, w.state === 'max' ? 'normal' : 'max')}
       >
-        <span className="flex gap-1.5">
+        <span className="group flex gap-2 items-center px-1 py-1">
           <button
             type="button"
             aria-label="Close"
-            className="w-3 h-3 rounded-full bg-[#ff5f57]"
+            className="w-3 h-3 rounded-full bg-zinc-600 group-hover:bg-[#ff5f57] cursor-pointer flex items-center justify-center leading-none font-bold transition-colors"
+            onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation()
               closeWindow(w.id)
             }}
-          />
+          >
+            <span
+              aria-hidden="true"
+              className="opacity-0 hover:opacity-100 text-[10px] text-[#4d0000]"
+              style={{ lineHeight: 0 }}
+            >
+              ×
+            </span>
+          </button>
           <button
             type="button"
             aria-label="Minimize"
-            className="w-3 h-3 rounded-full bg-[#febc2e]"
+            className="w-3 h-3 rounded-full bg-zinc-600 group-hover:bg-[#febc2e] cursor-pointer flex items-center justify-center leading-none font-bold transition-colors"
+            onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation()
               setState(w.id, 'min')
             }}
-          />
+          >
+            <span
+              aria-hidden="true"
+              className="opacity-0 hover:opacity-100 text-[12px] text-[#5a3a00]"
+              style={{ lineHeight: 0, marginTop: -1 }}
+            >
+              −
+            </span>
+          </button>
           <button
             type="button"
             aria-label="Maximize"
-            className="w-3 h-3 rounded-full bg-[#28c840]"
+            className="w-3 h-3 rounded-full bg-zinc-600 group-hover:bg-[#28c840] cursor-pointer flex items-center justify-center leading-none font-bold transition-colors"
+            onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation()
               setState(w.id, w.state === 'max' ? 'normal' : 'max')
             }}
-          />
+          >
+            <span
+              aria-hidden="true"
+              className="opacity-0 hover:opacity-100 text-[10px] text-[#003300]"
+              style={{ lineHeight: 0 }}
+            >
+              +
+            </span>
+          </button>
         </span>
         <span className="mx-auto -translate-x-4 text-xs opacity-70">{manifest.title}</span>
       </div>
