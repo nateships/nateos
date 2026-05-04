@@ -77,11 +77,14 @@ for f in FinderIcon.icns GenericFolderIcon.icns GenericDocumentIcon.icns AlertCa
 done
 
 echo "Extracting wallpapers..."
+# Note: real high-res wallpapers may live in hidden .wallpapers/ subdirs and
+# get streamed on demand. Force overwrite so stale stubs get replaced after
+# macOS downloads the full versions.
 WPS=("/System/Library/Desktop Pictures" "/Library/Desktop Pictures")
 for d in "${WPS[@]}"; do
   if [[ -d "$d" ]]; then
-    find "$d" -maxdepth 2 -type f \( -name "*.heic" -o -name "*.jpg" -o -name "*.png" \) -print0 \
-      | xargs -0 -I {} cp -n {} "$OUT/wallpapers/" 2>/dev/null || true
+    find "$d" -type f \( -name "*.heic" -o -name "*.jpg" -o -name "*.png" \) -print0 \
+      | xargs -0 -I {} cp -f {} "$OUT/wallpapers/" 2>/dev/null || true
   fi
 done
 
