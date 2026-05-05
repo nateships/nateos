@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image'
 import { useState } from 'react'
-import { projectsData, type ProjectWithBody } from '@/app/projects/data'
+import { type ProjectWithBody, projectsData } from '@/app/projects/data'
 import type { AppContext } from '@/lib/os/types'
 import { renderBody } from './markdown'
 
@@ -40,9 +40,7 @@ const SHORT_LABELS: Record<string, string> = {
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
   return (
-    <h3 className="text-[10px] font-semibold tracking-[0.08em] uppercase opacity-50">
-      {children}
-    </h3>
+    <h3 className="text-[10px] font-semibold tracking-[0.08em] uppercase opacity-50">{children}</h3>
   )
 }
 
@@ -107,9 +105,7 @@ export function ProjectsApp(ctx: AppContext) {
                 type="button"
                 onClick={() => setActiveSlug(p.slug)}
                 className={`flex-1 min-w-0 px-1 py-1 rounded-md text-[12px] font-medium truncate transition-colors ${
-                  isActive
-                    ? 'bg-blue-500 text-white'
-                    : 'text-white/75 hover:bg-white/10'
+                  isActive ? 'bg-blue-500 text-white' : 'text-white/75 hover:bg-white/10'
                 }`}
               >
                 {label}

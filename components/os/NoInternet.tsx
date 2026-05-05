@@ -228,7 +228,6 @@ export function NoInternet({ onClose }: { onClose: () => void }) {
         // Collision: trex bounding box ≈ x [TREX_X+8, TREX_X+38], top [feetY-44, feetY-2]
         const tx1 = TREX_X + 8
         const tx2 = TREX_X + 38
-        const ty1 = feetY.current - 44
         const ty2 = feetY.current - 2
         for (const c of cacti.current) {
           const cTop =
@@ -276,7 +275,7 @@ export function NoInternet({ onClose }: { onClose: () => void }) {
       >
         <div className="flex items-start gap-4 mb-5">
           <div className="text-zinc-700">
-            <svg width="36" height="40" viewBox="0 0 22 24">
+            <svg width="36" height="40" viewBox="0 0 22 24" aria-hidden="true">
               <Trex feetY={24} frame={0} dead={false} idle />
             </svg>
           </div>
@@ -383,9 +382,7 @@ export function NoInternet({ onClose }: { onClose: () => void }) {
           </svg>
         </div>
         <div className="flex items-center justify-between mt-4">
-          <div className="text-[11px] opacity-50 font-mono">
-            ERR_INTERNET_DISCONNECTED · NateOS
-          </div>
+          <div className="text-[11px] opacity-50 font-mono">ERR_INTERNET_DISCONNECTED · NateOS</div>
           <button
             type="button"
             onClick={onClose}
