@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { renderBody } from '@/apps/projects/markdown'
 import { projectsData } from '../data'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -54,7 +55,11 @@ export default async function ProjectRoute({ params }: Props) {
       ) : null}
       <section>
         <h2>Overview</h2>
-        <p>{p.body}</p>
+        {/* Render the markdown body through the same parser used by the
+            visible Projects app so crawlers + screen readers receive proper
+            <ul>/<li>/<code> elements rather than literal `- ` characters and
+            backticks. */}
+        {renderBody(p.body)}
       </section>
     </article>
   )
