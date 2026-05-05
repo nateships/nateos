@@ -16,10 +16,12 @@ type OgInfo = {
 }
 
 function metaContent(html: string, prop: string): string | null {
-  const re1 = new RegExp(`<meta[^>]+property=["']${prop}["'][^>]+content=["']([^"']+)["']`, 'i')
-  const re2 = new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+property=["']${prop}["']`, 'i')
-  const re3 = new RegExp(`<meta[^>]+name=["']${prop}["'][^>]+content=["']([^"']+)["']`, 'i')
-  return html.match(re1)?.[1] ?? html.match(re2)?.[1] ?? html.match(re3)?.[1] ?? null
+  // Use a backreference to the opening quote so values containing the
+  // opposite quote (e.g. `content="Nate's site"`) aren't truncated.
+  const re1 = new RegExp(`<meta[^>]+property=(["'])${prop}\\1[^>]+content=(["'])(.*?)\\2`, 'i')
+  const re2 = new RegExp(`<meta[^>]+content=(["'])(.*?)\\1[^>]+property=(["'])${prop}\\3`, 'i')
+  const re3 = new RegExp(`<meta[^>]+name=(["'])${prop}\\1[^>]+content=(["'])(.*?)\\2`, 'i')
+  return html.match(re1)?.[3] ?? html.match(re2)?.[2] ?? html.match(re3)?.[3] ?? null
 }
 
 function decodeEntities(s: string | null): string | null {
