@@ -25,7 +25,6 @@ function Banner() {
     { label: 'Role', value: 'Director · Infra & Platform Eng' },
     { label: 'Location', value: 'Tewksbury, MA' },
     { label: 'Email', value: 'nate@nateofarrell.com', valueClass: 'text-blue-300' },
-    { label: 'Shell', value: '/bin/nate' },
     { label: 'Theme', value: 'Tahoe (dark)' },
   ]
   return (
