@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "SF Pro Text", "Inter", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --color-os-bg: #000;
+  --color-os-glass: rgba(255, 255, 255, 0.18);
+  --color-os-glass-dark: rgba(20, 20, 24, 0.55);
+  --color-os-traffic-r: #ff5f57;
+  --color-os-traffic-y: #febc2e;
+  --color-os-traffic-g: #28c840;
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  font-family: var(--font-sans);
+}
+
+/* macOS-style overlay scrollbars used inside the OS shell. Apply via class. */
+.os-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+.os-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.os-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.os-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+.os-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.32);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+.os-scroll::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Light variant for use on near-white backgrounds (rare in NateOS, but available). */
+.os-scroll-dark {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.28) transparent;
+}
+.os-scroll-dark::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.os-scroll-dark::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.22);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+.os-scroll-dark::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+/*
+ * Glass surface classes used by Menubar / Dock / Window chrome / Terminal.
+ * The `--os-glass-*` vars are driven by the transparency slider in Settings:
+ *   t=0   → light=95% / dark=95% / blur=0   (solid)
+ *   t=100 → light=25% / dark=55% / blur=30  (full glass)
+ * Sensible fallbacks kept inline so SSR pre-hydration paints look reasonable.
+ */
+.os-glass-menubar {
+  backdrop-filter: blur(var(--os-glass-blur, 30px));
+  -webkit-backdrop-filter: blur(var(--os-glass-blur, 30px));
+  background: color-mix(in srgb, rgb(245, 245, 250) var(--os-glass-light, 25%), transparent);
+}
+.os-glass-dock {
+  backdrop-filter: blur(var(--os-glass-blur, 30px));
+  -webkit-backdrop-filter: blur(var(--os-glass-blur, 30px));
+  background: color-mix(in srgb, rgb(245, 245, 250) var(--os-glass-light, 25%), transparent);
+}
+.os-glass-window {
+  backdrop-filter: blur(var(--os-glass-blur-dark, 5.4px));
+  -webkit-backdrop-filter: blur(var(--os-glass-blur-dark, 5.4px));
+  background: color-mix(in srgb, rgb(40, 40, 46) var(--os-glass-dark, 90.2%), transparent);
+}
+.os-glass-term {
+  backdrop-filter: blur(var(--os-glass-blur-dark, 5.4px));
+  -webkit-backdrop-filter: blur(var(--os-glass-blur-dark, 5.4px));
+  background: color-mix(in srgb, rgb(20, 20, 24) var(--os-glass-dark, 90.2%), transparent);
+}
+/*
+ * App body surface: lives behind every app's content area inside Window. Uses
+ * a zinc-900 base to match the prior `bg-zinc-900/95` pattern apps relied on.
+ */
+.os-glass-app {
+  backdrop-filter: blur(var(--os-glass-blur-dark, 5.4px));
+  -webkit-backdrop-filter: blur(var(--os-glass-blur-dark, 5.4px));
+  background: color-mix(in srgb, rgb(24, 24, 27) var(--os-glass-dark, 90.2%), transparent);
+}
+
+/* Subtle fade for the Projects app on detail switch — single ramp, no stagger. */
+@keyframes proj-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.proj-fade {
+  animation: proj-fade 200ms ease-out both;
+}

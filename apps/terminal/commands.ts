@@ -1,0 +1,148 @@
+import { triggerKernelPanic } from '@/components/os/KernelPanic'
+import { registry } from '@/lib/os/registry'
+
+export type CommandContext = {
+  openApp(appId: string, params?: Record<string, unknown>): string
+  closeWindow(windowId: string): void
+}
+
+const WHOAMI =
+  "Nate O'Farrell — Director of Infrastructure & Platform Engineering at\n" +
+  'Commonwealth Fusion Systems. 15+ years building distributed systems.\n' +
+  'Hands-on builder. Tewksbury, MA. nate@nateofarrell.com\n' +
+  '\n' +
+  "Type 'open resume' for the long version."
+
+const HELP_LINES = [
+  'help                       show this message',
+  'apps                       list available apps',
+  'open <app>                 open an app',
+  'whoami                     bio + contact',
+  'ls [path]                  list /content',
+  'cat <file>                 print a content file',
+  'cd <path>                  (cosmetic) change pwd display',
+  'clear                      clear screen',
+  'contact                    open Messages app',
+  'resume                     open Resume app',
+]
+
+// Hidden commands. Not advertised in help. Found by curiosity.
+function cowsay(msg: string): string {
+  const padded = ` ${msg.slice(0, 64)} `
+  const top = '_'.repeat(padded.length)
+  const bottom = '-'.repeat(padded.length)
+  return [
+    ` ${top}`,
+    `<${padded}>`,
+    ` ${bottom}`,
+    '        \\   ^__^',
+    '         \\  (oo)\\_______',
+    '            (__)\\       )\\/\\',
+    '                ||----w |',
+    '                ||     ||',
+  ].join('\n')
+}
+
+function pick<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)] as T
+}
+
+const VIBES = [
+  'fr fr no cap',
+  'sigma grindset detected',
+  'ohio energy ☄',
+  'let him cook 🍳',
+  'rizz level: critical',
+  "you're chopped 💀",
+  'mewing detected',
+  'aura: +9999',
+  'gyatt indeed',
+]
+
+const HIDDEN: Record<string, (args: string[]) => string> = {
+  rizz: () => `rizz score: ${Math.floor(Math.random() * 100)}/100. ${pick(VIBES)}`,
+  skibidi: () => 'skibidi.exe is not a recognized command. ohio detected. systems chopped.',
+  cowsay: (a) => cowsay(a.join(' ') || 'moo'),
+  coffee: () => "brewing… ☕ done.\n(RFC 2324: HTCPCP/1.0 — 418 I'm a teapot. you tried.)",
+  aura: (a) => {
+    const sign = Math.random() > 0.4 ? '+' : '-'
+    const n = Math.floor(Math.random() * 9999)
+    return `${sign}${n} aura — ${a.join(' ') || 'just vibes'}`
+  },
+  vibe: () => pick(VIBES),
+  vibes: () => pick(VIBES),
+  cook: () => 'let him cook 🍳',
+  sigma: () => 'sigma grindset activated. proceed to cook 4hr deep work block.',
+  gyatt: () => '💀💀💀',
+  ohio: () => 'only in ohio',
+  mew: () => 'mewing detected. jawline +12. continue.',
+}
+
+const VFS: Record<string, string[] | string> = {
+  '/': ['resume.mdx', 'projects/', 'links.mdx'],
+  '/projects/': ['idea.mdx', 'sleepbar.mdx', 'reinvent-2022.mdx', '_index.mdx'],
+}
+
+export async function runCommand(raw: string, ctx: CommandContext): Promise<string> {
+  const parts = raw.trim().split(/\s+/)
+  const cmd = parts[0]
+  const args = parts.slice(1)
+
+  // Hidden brainrot/meme commands resolve before the main switch.
+  if (cmd && HIDDEN[cmd]) {
+    return HIDDEN[cmd](args)
+  }
+
+  switch (cmd) {
+    case 'help':
+      return HELP_LINES.join('\n')
+    case 'apps':
+      return registry.map((m) => `  ${m.id.padEnd(12)} ${m.title}`).join('\n')
+    case 'open': {
+      const id = args[0]
+      if (!id) return 'usage: open <app>'
+      const exists = registry.find((m) => m.id === id)
+      if (!exists) return `nateos: unknown app: ${id}`
+      ctx.openApp(id, undefined)
+      return ''
+    }
+    case 'whoami':
+      return WHOAMI
+    case 'ls': {
+      const path = args[0] ?? '/'
+      const norm = path.endsWith('/') || path === '/' ? path : `${path}/`
+      const entry = VFS[norm]
+      if (!entry) return `ls: ${path}: no such directory`
+      return Array.isArray(entry) ? entry.join('  ') : entry
+    }
+    case 'cat': {
+      const file = args[0]
+      if (!file) return 'usage: cat <file>'
+      try {
+        const r = await fetch(`/api/content?file=${encodeURIComponent(file)}`)
+        if (!r.ok) return `cat: ${file}: ${r.status} ${r.statusText}`
+        return await r.text()
+      } catch (e) {
+        return `cat: ${e instanceof Error ? e.message : 'unknown error'}`
+      }
+    }
+    case 'cd': {
+      return ''
+    }
+    case 'clear':
+      return '__CLEAR__'
+    case 'contact':
+      ctx.openApp('messages')
+      return ''
+    case 'resume':
+      ctx.openApp('resume')
+      return ''
+    case 'sudo':
+      triggerKernelPanic()
+      return "nice try. you don't have sudo here. try 'contact' instead."
+    case '':
+      return ''
+    default:
+      return `nateos: command not found: ${cmd}. Type 'help' for available commands.`
+  }
+}

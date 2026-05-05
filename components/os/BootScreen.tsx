@@ -1,0 +1,50 @@
+'use client'
+import { useEffect, useState } from 'react'
+import { useSettings } from '@/lib/settings/store'
+import { AppleLogo } from './AppleLogo'
+
+export function BootScreen({ onDone }: { onDone: () => void }) {
+  const reduceMotion = useSettings((s) => s.reduceMotion)
+  const [pct, setPct] = useState(0)
+  const total = reduceMotion ? 200 : 1200
+
+  useEffect(() => {
+    // Guard so onDone fires at most once even if the interval and the click
+    // race each other in the same tick.
+    let fired = false
+    const finish = () => {
+      if (fired) return
+      fired = true
+      onDone()
+    }
+    const start = Date.now()
+    const t = setInterval(() => {
+      const elapsed = Date.now() - start
+      const p = Math.min(100, (elapsed / total) * 100)
+      setPct(p)
+      if (p >= 100) {
+        clearInterval(t)
+        finish()
+      }
+    }, 30)
+    const onClick = () => finish()
+    window.addEventListener('click', onClick, { once: true })
+    return () => {
+      clearInterval(t)
+      window.removeEventListener('click', onClick)
+    }
+  }, [onDone, total])
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center gap-6 text-white">
+      <AppleLogo size={88} className="text-white" />
+      <div className="w-48 h-1 bg-white/15 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-white/85 transition-[width] duration-100"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <p className="text-[11px] opacity-50">click to skip</p>
+    </div>
+  )
+}

@@ -1,0 +1,179 @@
+'use client'
+import type { ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { type CommandContext, runCommand } from './commands'
+
+const NATE_ART = `███╗   ██╗ █████╗ ████████╗███████╗
+████╗  ██║██╔══██╗╚══██╔══╝██╔════╝
+██╔██╗ ██║███████║   ██║   █████╗
+██║╚██╗██║██╔══██║   ██║   ██╔══╝
+██║ ╚████║██║  ██║   ██║   ███████╗
+╚═╝  ╚═══╝╚═╝  ╚═╝   ╚═╝   ╚══════╝`
+
+const OS_ART = ` ██████╗ ███████╗
+██╔═══██╗██╔════╝
+██║   ██║███████╗
+██║   ██║╚════██║
+╚██████╔╝███████║
+ ╚═════╝ ╚══════╝`
+
+function Banner() {
+  const facts: { label: string; value: string; valueClass?: string }[] = [
+    { label: 'User', value: 'nate', valueClass: 'text-emerald-300' },
+    { label: 'Host', value: 'nate.cx', valueClass: 'text-sky-300' },
+    { label: 'OS', value: 'NateOS v1.0' },
+    { label: 'Role', value: 'Director · Infra & Platform Eng' },
+    { label: 'Location', value: 'Tewksbury, MA' },
+    { label: 'Email', value: 'nate@nateofarrell.com', valueClass: 'text-blue-300' },
+    { label: 'Theme', value: 'Tahoe (dark)' },
+  ]
+  return (
+    <div className="flex flex-col gap-2 leading-none">
+      <div className="flex items-end gap-1 leading-none">
+        <pre className="text-cyan-300/90 m-0 leading-tight">{NATE_ART}</pre>
+        <pre className="text-pink-300/90 m-0 leading-tight">{OS_ART}</pre>
+      </div>
+      <div className="flex flex-col gap-0.5">
+        <div className="flex gap-2 items-baseline">
+          <span className="text-emerald-300 font-bold">nate</span>
+          <span className="text-white/40">@</span>
+          <span className="text-sky-300 font-bold">nate.cx</span>
+        </div>
+        <div className="text-white/30 tracking-tight">────────────────────────────</div>
+        {facts.slice(2).map((f) => (
+          <div key={f.label} className="flex gap-2">
+            <span className="text-pink-300 font-semibold w-[72px]">{f.label}:</span>
+            <span className={f.valueClass ?? 'text-white/85'}>{f.value}</span>
+          </div>
+        ))}
+        <div className="text-white/30 tracking-tight mt-1">────────────────────────────</div>
+        <div className="flex gap-2 mt-0.5 text-white/70">
+          <span>tip:</span>
+          <span>
+            type <span className="text-emerald-300">help</span> ·{' '}
+            <span className="text-emerald-300">apps</span> ·{' '}
+            <span className="text-emerald-300">open &lt;app&gt;</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+type Line = { kind: 'in' | 'out' | 'sys'; content: ReactNode }
+
+export function Term({ ctx }: { ctx: CommandContext }) {
+  const [history, setHistory] = useState<Line[]>([{ kind: 'sys', content: <Banner /> }])
+  const [input, setInput] = useState('')
+  const [stack, setStack] = useState<string[]>([])
+  const [stackIdx, setStackIdx] = useState<number>(-1)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    inputRef.current?.focus()
+  }, [])
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll on every history change
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
+  }, [history])
+
+  async function submit() {
+    const cmd = input.trim()
+    if (!cmd) return
+    setHistory((h) => [...h, { kind: 'in', content: `nate@nateos ~ $ ${cmd}` }])
+    setStack((s) => [...s, cmd])
+    setStackIdx(-1)
+    setInput('')
+    const out = await runCommand(cmd, ctx)
+    if (out === '__CLEAR__') {
+      setHistory([])
+      return
+    }
+    if (out) setHistory((h) => [...h, { kind: 'out', content: out }])
+  }
+
+  function onKey(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      submit()
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      // Compute next index outside the updater so we keep both setters pure.
+      const cur = stackIdx
+      const n = cur < 0 ? stack.length - 1 : Math.max(0, cur - 1)
+      setStackIdx(n)
+      setInput(stack[n] ?? '')
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      const cur = stackIdx
+      if (cur < 0) {
+        setStackIdx(-1)
+        return
+      }
+      const n = cur + 1
+      if (n >= stack.length) {
+        setStackIdx(-1)
+        setInput('')
+        return
+      }
+      setStackIdx(n)
+      setInput(stack[n] ?? '')
+    } else if (e.key === 'Tab') {
+      e.preventDefault()
+      const candidates = [
+        'help',
+        'apps',
+        'open',
+        'whoami',
+        'ls',
+        'cat',
+        'cd',
+        'clear',
+        'contact',
+        'resume',
+      ]
+      const m = candidates.filter((c) => c.startsWith(input))
+      if (m.length === 1) setInput(m[0])
+    }
+  }
+
+  return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: terminal pane focuses input on background click
+    // biome-ignore lint/a11y/useKeyWithClickEvents: input itself handles keyboard
+    <div
+      className="os-glass-term h-full w-full p-3 text-[13px] font-mono leading-relaxed text-white/90"
+      onClick={() => inputRef.current?.focus()}
+    >
+      <div
+        ref={scrollRef}
+        className="h-[calc(100%-1.5rem)] overflow-auto os-scroll whitespace-pre-wrap"
+      >
+        {history.map((l, i) => (
+          <div
+            // biome-ignore lint/suspicious/noArrayIndexKey: history is append-only
+            key={i}
+            className={
+              l.kind === 'sys' ? 'text-cyan-300/80' : l.kind === 'in' ? 'text-emerald-300' : ''
+            }
+          >
+            {l.content}
+          </div>
+        ))}
+      </div>
+      <div className="flex gap-1.5">
+        <span className="text-emerald-300">nate@nateos</span>
+        <span className="text-sky-300">~</span>
+        <span>$</span>
+        <input
+          ref={inputRef}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={onKey}
+          className="flex-1 bg-transparent outline-none caret-emerald-300"
+          spellCheck={false}
+          autoComplete="off"
+        />
+      </div>
+    </div>
+  )
+}
