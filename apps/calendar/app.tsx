@@ -4,7 +4,7 @@ const CAL_LINK = 'https://cal.com/nateofarrell/intro'
 
 export function CalendarApp() {
   return (
-    <div className="h-full w-full flex flex-col bg-zinc-900/95 text-white">
+    <div className="os-glass-app h-full w-full flex flex-col text-white">
       <div className="px-5 py-3 border-b border-white/10 flex items-center justify-between">
         <div>
           <h1 className="text-[14px] font-semibold">Book an intro chat</h1>

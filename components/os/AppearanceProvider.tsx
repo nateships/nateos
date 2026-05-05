@@ -1,0 +1,51 @@
+'use client'
+import { useEffect } from 'react'
+import { ACCENT_RAMP, useSettings } from '@/lib/settings/store'
+
+/**
+ * Mounts no DOM but applies persisted appearance settings to <html>:
+ *  - Overrides --color-blue-500/--color-blue-400 so every `bg-blue-500` etc.
+ *    retints to the chosen accent (Tailwind v4 emits these as CSS vars).
+ *  - Sets --os-glass-* CSS vars from the transparency slider so .os-glass-*
+ *    surfaces interpolate between solid (t=0) and full glass (t=100).
+ *  - Sets data-dock-size for Dock.tsx to size icons off of.
+ */
+export function AppearanceProvider() {
+  const accent = useSettings((s) => s.accentColor)
+  const transparency = useSettings((s) => s.transparency)
+  const dockSize = useSettings((s) => s.dockSize)
+
+  useEffect(() => {
+    const root = document.documentElement
+    const ramp = ACCENT_RAMP[accent]
+    root.style.setProperty('--color-blue-500', ramp.c500)
+    root.style.setProperty('--color-blue-400', ramp.c400)
+    root.dataset.accent = accent
+  }, [accent])
+
+  useEffect(() => {
+    const root = document.documentElement
+    const t = Math.max(0, Math.min(100, transparency)) / 100
+    // Light surfaces (menubar, dock): 95% solid → 25% at full glass.
+    const lightPct = 95 - 70 * t
+    // Dark surfaces (window chrome, terminal, app bodies): the dark slope is
+    // 30% of the light slope, so slider=100 gives dock full-glass AND windows
+    // the legibility level that previously required slider≈30. Means one
+    // slider position looks "right" across every surface at once.
+    const darkPct = 98 - 7.8 * t
+    // Blur is scaled the same 30% factor for dark surfaces so the visual
+    // weight of the blur tracks the alpha compression.
+    const blurPx = 30 * t
+    const darkBlurPx = 5.4 * t
+    root.style.setProperty('--os-glass-light', `${lightPct}%`)
+    root.style.setProperty('--os-glass-dark', `${darkPct}%`)
+    root.style.setProperty('--os-glass-blur', `${blurPx}px`)
+    root.style.setProperty('--os-glass-blur-dark', `${darkBlurPx}px`)
+  }, [transparency])
+
+  useEffect(() => {
+    document.documentElement.dataset.dockSize = dockSize
+  }, [dockSize])
+
+  return null
+}

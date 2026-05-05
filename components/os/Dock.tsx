@@ -1,6 +1,13 @@
 'use client'
 import { registry } from '@/lib/os/registry'
 import { useWindowStore } from '@/lib/os/window-store'
+import { useSettings } from '@/lib/settings/store'
+
+const SIZES = {
+  small: { btn: 'w-10 h-10', icon: 36, gap: 'gap-1' },
+  medium: { btn: 'w-12 h-12', icon: 44, gap: 'gap-1.5' },
+  large: { btn: 'w-14 h-14', icon: 52, gap: 'gap-2' },
+} as const
 
 export function Dock() {
   const windows = useWindowStore((s) => s.windows)
@@ -8,7 +15,9 @@ export function Dock() {
   const openApp = useWindowStore((s) => s.openApp)
   const focusWindow = useWindowStore((s) => s.focusWindow)
   const setWindowState = useWindowStore((s) => s.setWindowState)
+  const dockSize = useSettings((s) => s.dockSize)
   const runningIds = new Set(windows.map((w) => w.appId))
+  const sz = SIZES[dockSize]
 
   // macOS convention: Finder pinned to the far left.
   const dockApps = registry
@@ -21,12 +30,7 @@ export function Dock() {
 
   return (
     <div
-      className="fixed bottom-2 left-1/2 -translate-x-1/2 z-50 flex gap-1.5 px-2 py-1.5 rounded-2xl border border-white/20"
-      style={{
-        backdropFilter: 'blur(30px)',
-        WebkitBackdropFilter: 'blur(30px)',
-        background: 'rgba(255,255,255,0.18)',
-      }}
+      className={`os-glass-dock fixed bottom-2 left-1/2 -translate-x-1/2 z-50 flex ${sz.gap} px-2 py-1.5 rounded-2xl border border-white/20`}
     >
       {dockApps.map((m) => {
         const Icon = m.icon
@@ -36,7 +40,7 @@ export function Dock() {
             key={m.id}
             type="button"
             aria-label={m.title}
-            className="group relative w-12 h-12 rounded-lg flex items-center justify-center transition-transform hover:scale-110 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+            className={`group relative ${sz.btn} rounded-lg flex items-center justify-center transition-transform hover:scale-110 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60`}
             onClick={() => {
               const existing = windows.find((w) => w.appId === m.id)
               if (!existing) {
@@ -56,7 +60,7 @@ export function Dock() {
               focusWindow(existing.id)
             }}
           >
-            <Icon size={44} />
+            <Icon size={sz.icon} />
             {isRunning && (
               <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white" />
             )}

@@ -73,7 +73,7 @@ export function MessagesApp() {
   }
 
   return (
-    <div className="h-full w-full flex flex-col bg-zinc-900/95 text-white">
+    <div className="os-glass-app h-full w-full flex flex-col text-white">
       <header className="px-5 py-3 border-b border-white/10">
         <h1 className="text-[14px] font-semibold">Nate O'Farrell</h1>
         <p className="text-[11px] opacity-60">iMessage · delivered to nate@nateofarrell.com</p>
@@ -100,7 +100,7 @@ export function MessagesApp() {
         )}
       </div>
 
-      <div className="px-4 py-3 border-t border-white/10 flex flex-col gap-2 bg-zinc-900/95">
+      <div className="px-4 py-3 border-t border-white/10 flex flex-col gap-2">
         <div className="grid grid-cols-2 gap-2">
           <input
             value={name}

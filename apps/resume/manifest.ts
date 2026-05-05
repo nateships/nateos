@@ -8,7 +8,7 @@ export const manifest: AppManifest = {
   icon: ResumeIcon,
   route: '/resume',
   component: ResumeApp,
-  defaultSize: { w: 900, h: 640 },
+  defaultSize: { w: 900, h: 820 },
   minSize: { w: 420, h: 320 },
   capabilities: ['resize', 'minimize'],
   surfaces: ['dock', 'launchpad', 'spotlight'],

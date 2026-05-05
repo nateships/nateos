@@ -120,8 +120,7 @@ export function Window({ windowId }: { windowId: string }) {
     >
       <div
         role="toolbar"
-        className="h-7 px-3 flex items-center gap-2 border-b border-white/10 select-none cursor-default"
-        style={{ backdropFilter: 'blur(40px)', background: 'rgba(40,40,46,0.78)' }}
+        className="os-glass-window h-7 px-3 flex items-center gap-2 border-b border-white/10 select-none cursor-default"
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}

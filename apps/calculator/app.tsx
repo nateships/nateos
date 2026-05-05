@@ -48,7 +48,7 @@ export function CalculatorApp() {
   }
 
   return (
-    <div className="h-full w-full flex flex-col bg-zinc-900 text-white">
+    <div className="os-glass-app h-full w-full flex flex-col text-white">
       <div className="flex-1 flex items-end justify-end px-5 py-4 text-[44px] font-light tracking-tight">
         {state.display}
       </div>

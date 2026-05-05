@@ -8,7 +8,7 @@ export const manifest: AppManifest = {
   icon: ProjectsIcon,
   route: '/projects',
   component: ProjectsApp,
-  defaultSize: { w: 960, h: 620 },
+  defaultSize: { w: 960, h: 780 },
   minSize: { w: 420, h: 320 },
   capabilities: ['resize', 'minimize'],
   surfaces: ['dock', 'launchpad', 'spotlight'],

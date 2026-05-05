@@ -13,7 +13,7 @@ const ITEMS: { id: Pane; label: string }[] = [
 export function SettingsApp() {
   const [pane, setPane] = useState<Pane>('appearance')
   return (
-    <div className="h-full w-full flex bg-zinc-900/95 text-white">
+    <div className="os-glass-app h-full w-full flex text-white">
       <aside className="w-44 border-r border-white/10 p-2">
         {ITEMS.map((i) => (
           <button

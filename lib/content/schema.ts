@@ -38,6 +38,8 @@ export const Project = z.object({
   repo: z.url().optional(),
   url: z.url().optional(),
   hero: z.string().optional(),
+  /** YouTube video ID — when present the projects app renders an embed at the top of the section. */
+  youtube: z.string().optional(),
   order: z.number().default(0),
 })
 export type Project = z.infer<typeof Project>

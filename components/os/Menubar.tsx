@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { byId } from '@/lib/os/registry'
+import { useScreenStore } from '@/lib/os/screen-store'
 import { useBattery, useNetwork } from '@/lib/os/use-system-status'
 import { useWindowStore } from '@/lib/os/window-store'
 import { AppleLogo } from './AppleLogo'
@@ -8,6 +9,7 @@ import { AboutAppDialog } from './menubar/AboutAppDialog'
 import { AboutDialog } from './menubar/AboutDialog'
 import { MenubarMenu, MenubarMenuItem, MenubarMenuSeparator } from './menubar/MenubarMenu'
 import { SpotlightModal } from './menubar/SpotlightModal'
+import { NoInternet } from './NoInternet'
 import { BatteryIcon, SpotlightIcon, WifiIcon } from './SystemIcons'
 
 function useClock() {
@@ -54,6 +56,7 @@ type MenuId =
 export function Menubar() {
   const focusedId = useWindowStore((s) => s.focusedId)
   const windows = useWindowStore((s) => s.windows)
+  const setScreen = useScreenStore((s) => s.setScreen)
   const focusedApp = focusedId ? byId[windows.find((w) => w.id === focusedId)?.appId ?? ''] : null
   const appTitle = focusedApp?.title ?? 'NateOS'
   const now = useClock()
@@ -73,12 +76,15 @@ export function Menubar() {
       ? network.type.charAt(0).toUpperCase() + network.type.slice(1)
       : 'Connected'
     : 'Offline'
-  const networkSpeedLabel = network.effectiveType ? network.effectiveType.toUpperCase() : null
 
   const [openMenu, setOpenMenu] = useState<MenuId>(null)
   const [spotlightOpen, setSpotlightOpen] = useState(false)
   const [aboutOpen, setAboutOpen] = useState(false)
   const [aboutAppOpen, setAboutAppOpen] = useState(false)
+  // Wi-Fi toggle is a gag — flipping it Off opens the Chrome dino easter egg
+  // and the toggle visually flips back when the modal is dismissed.
+  const [noInternetOpen, setNoInternetOpen] = useState(false)
+  const wifiOn = !noInternetOpen
   const focusedWindow = focusedId ? windows.find((w) => w.id === focusedId) : null
   const closeFocusedWindow = useWindowStore((s) => s.closeWindow)
   const setFocusedWindowState = useWindowStore((s) => s.setWindowState)
@@ -133,14 +139,7 @@ export function Menubar() {
 
   return (
     <>
-      <div
-        className="fixed top-0 inset-x-0 h-7 z-50 flex items-stretch px-2 gap-0.5 text-white text-[12px] font-medium border-b border-white/10"
-        style={{
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          background: 'rgba(255,255,255,0.18)',
-        }}
-      >
+      <div className="os-glass-menubar fixed top-0 inset-x-0 h-7 z-50 flex items-stretch px-2 gap-0.5 text-white text-[12px] font-medium border-b border-white/10">
         {/* Apple menu */}
         <MenubarMenu
           ariaLabel="Apple menu"
@@ -159,10 +158,23 @@ export function Menubar() {
           </MenubarMenuItem>
           <MenubarMenuSeparator />
           <MenubarMenuItem onSelect={handleRestart}>Restart…</MenubarMenuItem>
-          <MenubarMenuItem onSelect={closeMenus}>Sleep</MenubarMenuItem>
+          <MenubarMenuItem
+            onSelect={() => {
+              closeMenus()
+              setScreen('sleeping')
+            }}
+          >
+            Sleep
+          </MenubarMenuItem>
           <MenubarMenuSeparator />
-          <MenubarMenuItem onSelect={closeMenus}>Lock Screen</MenubarMenuItem>
-          <MenubarMenuItem onSelect={closeMenus}>Log Out…</MenubarMenuItem>
+          <MenubarMenuItem
+            onSelect={() => {
+              closeMenus()
+              setScreen('locked')
+            }}
+          >
+            Lock Screen
+          </MenubarMenuItem>
         </MenubarMenu>
 
         {/* Focused app title menu */}
@@ -327,22 +339,34 @@ export function Menubar() {
             panelClassName="min-w-[260px]"
           >
             <div className="flex items-center justify-between px-3 py-1.5">
-              <span className="text-[12px] font-semibold">Network</span>
-              <span className="inline-flex items-center gap-2">
-                <span className="text-[11px] opacity-70">{network.online ? 'On' : 'Off'}</span>
+              <span className="text-[12px] font-semibold">Wi-Fi</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={wifiOn}
+                aria-label="Wi-Fi"
+                onClick={() => {
+                  if (wifiOn) {
+                    closeMenus()
+                    setNoInternetOpen(true)
+                  }
+                }}
+                className="inline-flex items-center gap-2 focus:outline-none"
+              >
+                <span className="text-[11px] opacity-70">{wifiOn ? 'On' : 'Off'}</span>
                 <span
                   aria-hidden="true"
-                  className={`inline-block w-7 h-4 rounded-full relative ${
-                    network.online ? 'bg-blue-500' : 'bg-zinc-600'
+                  className={`inline-block w-7 h-4 rounded-full relative transition-colors ${
+                    wifiOn ? 'bg-blue-500' : 'bg-zinc-600'
                   }`}
                 >
                   <span
                     className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all ${
-                      network.online ? 'right-0.5' : 'left-0.5'
+                      wifiOn ? 'right-0.5' : 'left-0.5'
                     }`}
                   />
                 </span>
-              </span>
+              </button>
             </div>
             <MenubarMenuSeparator />
             <div className="px-3 py-1 text-[11px] uppercase opacity-60 tracking-wide">Status</div>
@@ -350,13 +374,8 @@ export function Menubar() {
               <span className="inline-flex items-center gap-2">
                 <WifiIcon size={12} />
                 {networkLabel}
-                {networkSpeedLabel ? (
-                  <span className="opacity-60">· {networkSpeedLabel}</span>
-                ) : null}
               </span>
             </MenubarMenuItem>
-            <MenubarMenuSeparator />
-            <MenubarMenuItem onSelect={closeMenus}>Network Preferences…</MenubarMenuItem>
           </MenubarMenu>
 
           <MenubarMenu
@@ -385,8 +404,6 @@ export function Menubar() {
                   : 'Browser hides battery info — showing default'}
               </div>
             </div>
-            <MenubarMenuSeparator />
-            <MenubarMenuItem onSelect={closeMenus}>Battery Preferences…</MenubarMenuItem>
           </MenubarMenu>
 
           <MenubarMenu
@@ -412,6 +429,7 @@ export function Menubar() {
         app={aboutAppOpen ? focusedApp : null}
         onClose={() => setAboutAppOpen(false)}
       />
+      {noInternetOpen ? <NoInternet onClose={() => setNoInternetOpen(false)} /> : null}
     </>
   )
 }

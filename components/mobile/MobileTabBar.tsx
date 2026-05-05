@@ -1,7 +1,7 @@
 'use client'
 import type { ComponentType } from 'react'
 
-export type TabId = 'resume' | 'projects' | 'messages' | 'safari' | 'terminal'
+export type TabId = 'resume' | 'projects' | 'calendar' | 'messages' | 'safari' | 'terminal'
 
 export type Tab = {
   id: TabId

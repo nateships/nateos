@@ -81,7 +81,7 @@ export function Snake({ onExit }: { onExit: () => void }) {
   const food = foodRef.current
 
   return (
-    <div className="h-full w-full flex flex-col items-center justify-center gap-2 bg-zinc-900 text-white">
+    <div className="os-glass-app h-full w-full flex flex-col items-center justify-center gap-2 text-white">
       <div className="text-[10px] opacity-60">
         ↑↓←→ to move · Esc to exit{dead ? ' · DEAD — refresh' : ''}
       </div>
