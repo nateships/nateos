@@ -27,8 +27,7 @@ export function FinderApp() {
       openApp('projects', { slug })
       return
     }
-    if (entry.open === '/profile') openApp('profile')
-    else if (entry.open === '/resume') openApp('resume')
+    if (entry.open === '/resume') openApp('resume')
     else if (entry.open === '/safari') openApp('safari')
     else if (entry.open === '/calendar') openApp('calendar')
     else if (entry.open.endsWith('.pdf')) window.open(entry.open, '_blank')

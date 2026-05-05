@@ -6,17 +6,24 @@ export function ResumeApp() {
   return (
     <div className="h-full w-full overflow-auto os-scroll bg-zinc-900/90 text-white">
       <div className="max-w-3xl mx-auto px-8 py-7 flex flex-col gap-7">
-        <header className="flex items-center justify-between gap-4">
+        <header className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">Nate O'Farrell</h1>
             <p className="text-sm opacity-80 mt-1">
               Director of Infrastructure & Platform Engineering
             </p>
+            <p className="text-[12px] opacity-60 mt-1">Tewksbury, MA</p>
+            <div className="flex flex-wrap gap-3 mt-2 text-[12px]">
+              <a className="text-blue-400 hover:underline" href="mailto:nate@nateofarrell.com">
+                nate@nateofarrell.com
+              </a>
+              <span className="opacity-70">+1 (781) 888 2277</span>
+            </div>
           </div>
           <a
             href="/resume.pdf"
             download="Nate_OFarrell_Resume.pdf"
-            className="px-3 py-1.5 rounded-md bg-blue-500 hover:bg-blue-400 text-white text-[12px] font-medium"
+            className="px-3 py-1.5 rounded-md bg-blue-500 hover:bg-blue-400 text-white text-[12px] font-medium whitespace-nowrap"
           >
             Download PDF
           </a>

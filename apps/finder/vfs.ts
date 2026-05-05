@@ -15,7 +15,6 @@ export const VFS_ROOT: VfsEntry = {
 
 export const VFS: Record<string, VfsEntry[]> = {
   '/': [
-    { name: 'Profile.app', kind: 'file', path: '/Profile.app', open: '/profile' },
     { name: 'Resume.pdf', kind: 'file', path: '/Resume.pdf', open: '/resume.pdf' },
     { name: 'Projects', kind: 'folder', path: '/Projects' },
     { name: 'Documents', kind: 'folder', path: '/Documents' },
@@ -38,7 +37,6 @@ export const VFS: Record<string, VfsEntry[]> = {
     },
   ],
   '/Documents': [
-    { name: 'About.md', kind: 'file', path: '/Documents/About.md', open: '/profile' },
     { name: 'Resume.md', kind: 'file', path: '/Documents/Resume.md', open: '/resume' },
   ],
   '/Calendar': [

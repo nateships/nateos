@@ -26,7 +26,7 @@ const HELP_LINES = [
 ]
 
 const VFS: Record<string, string[] | string> = {
-  '/': ['profile.mdx', 'resume.mdx', 'projects/', 'links.mdx'],
+  '/': ['resume.mdx', 'projects/', 'links.mdx'],
   '/projects/': ['idea.mdx', 'sleepbar.mdx', 'reinvent-2022.mdx', '_index.mdx'],
 }
 
