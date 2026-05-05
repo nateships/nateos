@@ -8,7 +8,7 @@ export const manifest: AppManifest = {
   icon: CalendarIcon,
   route: '/calendar',
   component: CalendarApp,
-  defaultSize: { w: 880, h: 600 },
+  defaultSize: { w: 880, h: 780 },
   minSize: { w: 420, h: 320 },
   capabilities: ['resize', 'minimize'],
   surfaces: ['dock', 'launchpad', 'spotlight'],
