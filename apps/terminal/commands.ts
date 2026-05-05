@@ -23,8 +23,59 @@ const HELP_LINES = [
   'about                      one-paragraph bio',
   'contact                    open Messages app',
   'resume                     open Resume app',
-  'sudo hire-me               (try it)',
 ]
+
+// Hidden commands. Not advertised in help. Found by curiosity.
+function cowsay(msg: string): string {
+  const padded = ` ${msg.slice(0, 64)} `
+  const top = '_'.repeat(padded.length)
+  const bottom = '-'.repeat(padded.length)
+  return [
+    ` ${top}`,
+    `<${padded}>`,
+    ` ${bottom}`,
+    '        \\   ^__^',
+    '         \\  (oo)\\_______',
+    '            (__)\\       )\\/\\',
+    '                ||----w |',
+    '                ||     ||',
+  ].join('\n')
+}
+
+function pick<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)] as T
+}
+
+const VIBES = [
+  'fr fr no cap',
+  'sigma grindset detected',
+  'ohio energy ☄',
+  'let him cook 🍳',
+  'rizz level: critical',
+  "you're chopped 💀",
+  'mewing detected',
+  'aura: +9999',
+  'gyatt indeed',
+]
+
+const HIDDEN: Record<string, (args: string[]) => string> = {
+  rizz: () => `rizz score: ${Math.floor(Math.random() * 100)}/100. ${pick(VIBES)}`,
+  skibidi: () => 'skibidi.exe is not a recognized command. ohio detected. systems chopped.',
+  cowsay: (a) => cowsay(a.join(' ') || 'moo'),
+  coffee: () => "brewing… ☕ done.\n(RFC 2324: HTCPCP/1.0 — 418 I'm a teapot. you tried.)",
+  aura: (a) => {
+    const sign = Math.random() > 0.4 ? '+' : '-'
+    const n = Math.floor(Math.random() * 9999)
+    return `${sign}${n} aura — ${a.join(' ') || 'just vibes'}`
+  },
+  vibe: () => pick(VIBES),
+  vibes: () => pick(VIBES),
+  cook: () => 'let him cook 🍳',
+  sigma: () => 'sigma grindset activated. proceed to cook 4hr deep work block.',
+  gyatt: () => '💀💀💀',
+  ohio: () => 'only in ohio',
+  mew: () => 'mewing detected. jawline +12. continue.',
+}
 
 const VFS: Record<string, string[] | string> = {
   '/': ['resume.mdx', 'projects/', 'links.mdx'],
@@ -35,6 +86,11 @@ export async function runCommand(raw: string, ctx: CommandContext): Promise<stri
   const parts = raw.trim().split(/\s+/)
   const cmd = parts[0]
   const args = parts.slice(1)
+
+  // Hidden brainrot/meme commands resolve before the main switch.
+  if (cmd && HIDDEN[cmd]) {
+    return HIDDEN[cmd](args)
+  }
 
   switch (cmd) {
     case 'help':
