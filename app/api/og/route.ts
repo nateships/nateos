@@ -1,6 +1,8 @@
+import { type LookupAddress, type LookupOptions, lookup as lookupCb } from 'node:dns'
 import { lookup } from 'node:dns/promises'
 import { isIP } from 'node:net'
 import { NextResponse } from 'next/server'
+import { Agent, fetch as undiciFetch } from 'undici'
 
 export const revalidate = 21600
 // SSRF protection requires DNS lookup, which is a Node-only API. Force the
@@ -77,6 +79,52 @@ function isPrivateIP(ip: string): boolean {
   return true // not an IP we recognize → reject
 }
 
+// undici Agent that runs every TCP connect's DNS lookup through our private-IP
+// guard. Closes the DNS-rebinding TOCTOU where ssrfSafe sees a public IP
+// but fetch's own DNS resolution lands on a private one.
+const safeAgent = new Agent({
+  connect: {
+    lookup: (
+      hostname: string,
+      opts: LookupOptions,
+      cb: (
+        err: NodeJS.ErrnoException | null,
+        address: string | LookupAddress[],
+        family?: number,
+      ) => void,
+    ) => {
+      // Re-run the bare-hostname guard (BLOCKED_HOSTS, IP literal in private ranges).
+      const host = hostname.toLowerCase()
+      if (BLOCKED_HOSTS.has(host)) {
+        cb(new Error(`SSRF blocked: hostname ${host}`), '', 0)
+        return
+      }
+      if (isIP(host) !== 0 && isPrivateIP(host)) {
+        cb(new Error(`SSRF blocked: private ip literal ${host}`), '', 0)
+        return
+      }
+      lookupCb(hostname, opts, (err, address, family) => {
+        if (err) return cb(err, '', 0)
+        const list: LookupAddress[] = Array.isArray(address)
+          ? address
+          : [{ address: address as string, family: family as number }]
+        for (const r of list) {
+          if (isPrivateIP(r.address)) {
+            cb(new Error(`SSRF blocked: ${hostname} → ${r.address}`), '', 0)
+            return
+          }
+        }
+        if (opts?.all) {
+          cb(null, list)
+        } else {
+          const first = list[0]
+          cb(null, first.address, first.family)
+        }
+      })
+    },
+  },
+})
+
 async function ssrfSafe(parsed: URL): Promise<{ ok: true } | { ok: false; reason: string }> {
   const host = parsed.hostname.toLowerCase()
   if (!host) return { ok: false, reason: 'empty host' }
@@ -121,15 +169,15 @@ export async function GET(req: Request) {
     // to e.g. http://169.254.169.254/...
     const MAX_REDIRECTS = 5
     let current = parsed
-    let r: Response | null = null
+    let r: Awaited<ReturnType<typeof undiciFetch>> | null = null
     for (let i = 0; i <= MAX_REDIRECTS; i++) {
-      r = await fetch(current.toString(), {
+      r = await undiciFetch(current.toString(), {
         headers: {
           'user-agent': 'Mozilla/5.0 (compatible; NateOS-Portfolio/1.0; +https://nate.cx)',
           accept: 'text/html,*/*;q=0.5',
         },
         redirect: 'manual',
-        next: { revalidate: 21600 },
+        dispatcher: safeAgent,
       })
       if (r.status >= 300 && r.status < 400) {
         const loc = r.headers.get('location')
