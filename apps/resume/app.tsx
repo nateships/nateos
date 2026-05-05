@@ -22,15 +22,15 @@ export function ResumeApp() {
           </div>
           <div className="flex flex-col gap-1.5 items-end">
             <a
-              href="/resume.pdf"
-              download="Nate_OFarrell_Resume.pdf"
+              href="/Nate_OFarrell_Resume_2026.pdf"
+              download="Nate_OFarrell_Resume_2026.pdf"
               className="px-3 py-1.5 rounded-md bg-blue-500 hover:bg-blue-400 text-white text-[12px] font-medium whitespace-nowrap"
             >
               Download PDF
             </a>
             <a
-              href="/resume.docx"
-              download="Nate_OFarrell_Resume.docx"
+              href="/Nate_OFarrell_Resume_2026.docx"
+              download="Nate_OFarrell_Resume_2026.docx"
               className="px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white text-[12px] font-medium whitespace-nowrap"
             >
               Download DOCX
