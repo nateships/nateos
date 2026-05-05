@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { renderBody } from '@/apps/projects/markdown'
+import { BASE_OG, BASE_TWITTER } from '@/lib/seo'
 import { projectsData } from '../data'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -13,22 +14,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const p = projectsData.find((x) => x.slug === slug)
   if (!p) return { title: 'Project not found' }
-  const url = `https://nate.cx/projects/${p.slug}`
+  const ogTitle = `${p.title} · NateOS`
   return {
     title: p.title,
     description: p.summary,
     alternates: { canonical: `/projects/${p.slug}` },
     openGraph: {
-      title: `${p.title} · NateOS`,
-      description: p.summary,
-      url,
+      ...BASE_OG,
       type: 'article',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${p.title} · NateOS`,
+      url: `/projects/${p.slug}`,
+      title: ogTitle,
       description: p.summary,
     },
+    twitter: { ...BASE_TWITTER, title: ogTitle, description: p.summary },
   }
 }
 

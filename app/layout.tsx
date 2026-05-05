@@ -2,9 +2,8 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { DesktopShell } from '@/components/os/DesktopShell'
+import { BASE_OG, BASE_TWITTER, SITE_NAME, SITE_URL } from '@/lib/seo'
 
-const SITE_URL = 'https://nate.cx'
-const SITE_NAME = 'NateOS'
 const TITLE = "NateOS — Nate O'Farrell"
 const DESCRIPTION =
   "Nate O'Farrell — Director of Infrastructure & Platform Engineering. Hands-on builder behind IDEA HPC, Sleepbar, AWS re:Invent talks, and this macOS-style portfolio."
@@ -37,19 +36,8 @@ export const metadata: Metadata = {
     'Next.js',
   ],
   alternates: { canonical: '/' },
-  openGraph: {
-    type: 'website',
-    url: SITE_URL,
-    siteName: SITE_NAME,
-    title: TITLE,
-    description: DESCRIPTION,
-    locale: 'en_US',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: TITLE,
-    description: DESCRIPTION,
-  },
+  openGraph: { ...BASE_OG, title: TITLE, description: DESCRIPTION },
+  twitter: { ...BASE_TWITTER, title: TITLE, description: DESCRIPTION },
   robots: {
     index: true,
     follow: true,

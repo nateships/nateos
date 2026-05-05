@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
+import { BASE_OG, BASE_TWITTER } from '@/lib/seo'
+
+const TITLE = "Book a chat — Nate O'Farrell"
+const DESCRIPTION = 'Schedule a 15-minute intro via Cal.com.'
 
 export const metadata: Metadata = {
   title: 'Book a chat',
   description: 'Public availability via Cal.com — schedule a 15-minute intro chat with Nate.',
   alternates: { canonical: '/calendar' },
-  openGraph: {
-    title: "Book a chat — Nate O'Farrell",
-    description: 'Schedule a 15-minute intro via Cal.com.',
-    url: 'https://nate.cx/calendar',
-  },
+  openGraph: { ...BASE_OG, title: TITLE, description: DESCRIPTION, url: '/calendar' },
+  twitter: { ...BASE_TWITTER, title: TITLE, description: DESCRIPTION },
 }
 
 export default function CalendarRoute() {

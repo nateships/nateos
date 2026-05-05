@@ -1,5 +1,10 @@
 import type { Metadata } from 'next'
+import { BASE_OG, BASE_TWITTER } from '@/lib/seo'
 import { resumeData } from './data'
+
+const TITLE = "Resume — Nate O'Farrell"
+const DESCRIPTION =
+  'Director of Infrastructure & Platform Engineering. 15+ years across cloud, on-prem, and HPC.'
 
 export const metadata: Metadata = {
   // Page title goes through the layout template ("%s · NateOS"). Keep it
@@ -9,19 +14,17 @@ export const metadata: Metadata = {
   description:
     "Nate O'Farrell — Director of Infrastructure & Platform Engineering. Full work history, skills, certifications, and education. PDF + DOCX downloads available.",
   alternates: { canonical: '/resume' },
+  // Spread BASE_OG so siteName/locale stay set; override type to 'profile'
+  // and url to the resume canonical. Without spread, parent's defaults are
+  // wholesale-replaced when this child openGraph is defined.
   openGraph: {
-    title: "Resume — Nate O'Farrell",
-    description:
-      'Director of Infrastructure & Platform Engineering. 15+ years across cloud, on-prem, and HPC.',
+    ...BASE_OG,
     type: 'profile',
-    url: 'https://nate.cx/resume',
+    url: '/resume',
+    title: TITLE,
+    description: DESCRIPTION,
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: "Resume — Nate O'Farrell",
-    description:
-      'Director of Infrastructure & Platform Engineering. 15+ years across cloud, on-prem, and HPC.',
-  },
+  twitter: { ...BASE_TWITTER, title: TITLE, description: DESCRIPTION },
 }
 
 /**

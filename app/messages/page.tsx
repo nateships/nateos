@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
+import { BASE_OG, BASE_TWITTER } from '@/lib/seo'
+
+const TITLE = "Contact — Nate O'Farrell"
+const DESCRIPTION = 'Send Nate a message — delivered straight to inbox.'
 
 export const metadata: Metadata = {
   title: 'Contact',
   description:
     'Send Nate a message. iMessage-style contact form delivered straight to nate@nateofarrell.com via Resend. Recruiter, engineer, or other — whichever fits.',
   alternates: { canonical: '/messages' },
-  openGraph: {
-    title: "Contact — Nate O'Farrell",
-    description: 'Send Nate a message — delivered straight to inbox.',
-    url: 'https://nate.cx/messages',
-  },
+  openGraph: { ...BASE_OG, title: TITLE, description: DESCRIPTION, url: '/messages' },
+  twitter: { ...BASE_TWITTER, title: TITLE, description: DESCRIPTION },
 }
 
 export default function MessagesRoute() {

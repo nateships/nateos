@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
+import { BASE_OG, BASE_TWITTER } from '@/lib/seo'
+
+const TITLE = 'Terminal — NateOS'
+const DESCRIPTION = 'Interactive command-line tour of NateOS.'
 
 export const metadata: Metadata = {
   title: 'Terminal',
   description:
     'Interactive command-line tour of NateOS. Type help to begin — open apps, read project content, follow links, all without leaving the keyboard.',
   alternates: { canonical: '/terminal' },
-  openGraph: {
-    title: 'Terminal — NateOS',
-    description: 'Interactive command-line tour of NateOS.',
-    url: 'https://nate.cx/terminal',
-  },
+  openGraph: { ...BASE_OG, title: TITLE, description: DESCRIPTION, url: '/terminal' },
+  twitter: { ...BASE_TWITTER, title: TITLE, description: DESCRIPTION },
 }
 
 export default function TerminalRoute() {

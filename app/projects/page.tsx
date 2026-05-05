@@ -1,17 +1,18 @@
 import type { Metadata } from 'next'
+import { BASE_OG, BASE_TWITTER } from '@/lib/seo'
 import { projectsData } from './data'
+
+const TITLE = "Projects — Nate O'Farrell"
+const DESCRIPTION =
+  'Selected projects spanning open-source HPC platforms, indie macOS apps, and AWS re:Invent talks.'
 
 export const metadata: Metadata = {
   title: 'Projects',
   description:
     'Selected projects: NateOS portfolio, IDEA HPC platform powering Commonwealth Fusion Systems, Sleepbar indie macOS app, AWS re:Invent 2022 talk on cloud HPC for fusion.',
   alternates: { canonical: '/projects' },
-  openGraph: {
-    title: "Projects — Nate O'Farrell",
-    description:
-      'Selected projects spanning open-source HPC platforms, indie macOS apps, and AWS re:Invent talks.',
-    url: 'https://nate.cx/projects',
-  },
+  openGraph: { ...BASE_OG, title: TITLE, description: DESCRIPTION, url: '/projects' },
+  twitter: { ...BASE_TWITTER, title: TITLE, description: DESCRIPTION },
 }
 
 export default function ProjectsRoute() {
