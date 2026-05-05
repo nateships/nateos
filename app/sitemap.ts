@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next'
+import { SITE_URL } from '@/lib/seo'
 import { projectsData } from './projects/data'
-
-const SITE_URL = 'https://nate.cx'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date()

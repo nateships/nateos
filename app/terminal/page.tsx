@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { BASE_OG, BASE_TWITTER } from '@/lib/seo'
 
-const TITLE = 'Terminal — NateOS'
+const TITLE = "Terminal — Nate O'Farrell"
 const DESCRIPTION = 'Interactive command-line tour of NateOS.'
 
 export const metadata: Metadata = {
