@@ -1,6 +1,6 @@
 'use client'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { BootScreen } from '@/components/os/BootScreen'
 import { KernelPanic } from '@/components/os/KernelPanic'
 import { useWindowStore } from '@/lib/os/window-store'
@@ -26,6 +26,11 @@ export function HomeClient() {
   // already booted this session.
   const [booting, setBooting] = useState<boolean>(true)
   const pathname = usePathname()
+  // Mirror pathname into a ref so onBootDone can be a stable callback —
+  // BootScreen depends on it via useEffect deps and recreating it would
+  // restart the progress animation.
+  const pathRef = useRef(pathname)
+  pathRef.current = pathname
 
   useEffect(() => {
     if (sessionStorage.getItem(KEY) === '1') {
@@ -37,11 +42,12 @@ export function HomeClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  function onBootDone() {
+  const onBootDone = useCallback(() => {
     sessionStorage.setItem(KEY, '1')
     setBooting(false)
-    if (pathname === '/' || pathname === '') ensureTerminal()
-  }
+    const p = pathRef.current
+    if (p === '/' || p === '') ensureTerminal()
+  }, [])
 
   return (
     <>

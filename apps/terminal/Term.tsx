@@ -66,7 +66,7 @@ export function Term({ ctx }: { ctx: CommandContext }) {
   const [history, setHistory] = useState<Line[]>([{ kind: 'sys', content: <Banner /> }])
   const [input, setInput] = useState('')
   const [stack, setStack] = useState<string[]>([])
-  const [_stackIdx, setStackIdx] = useState<number>(-1)
+  const [stackIdx, setStackIdx] = useState<number>(-1)
   const inputRef = useRef<HTMLInputElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -98,23 +98,26 @@ export function Term({ ctx }: { ctx: CommandContext }) {
       submit()
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
-      setStackIdx((i) => {
-        const n = i < 0 ? stack.length - 1 : Math.max(0, i - 1)
-        setInput(stack[n] ?? '')
-        return n
-      })
+      // Compute next index outside the updater so we keep both setters pure.
+      const cur = stackIdx
+      const n = cur < 0 ? stack.length - 1 : Math.max(0, cur - 1)
+      setStackIdx(n)
+      setInput(stack[n] ?? '')
     } else if (e.key === 'ArrowDown') {
       e.preventDefault()
-      setStackIdx((i) => {
-        if (i < 0) return -1
-        const n = i + 1
-        if (n >= stack.length) {
-          setInput('')
-          return -1
-        }
-        setInput(stack[n] ?? '')
-        return n
-      })
+      const cur = stackIdx
+      if (cur < 0) {
+        setStackIdx(-1)
+        return
+      }
+      const n = cur + 1
+      if (n >= stack.length) {
+        setStackIdx(-1)
+        setInput('')
+        return
+      }
+      setStackIdx(n)
+      setInput(stack[n] ?? '')
     } else if (e.key === 'Tab') {
       e.preventDefault()
       const candidates = [

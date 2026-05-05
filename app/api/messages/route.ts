@@ -30,9 +30,6 @@ function rateLimit(ip: string): boolean {
 
 export async function POST(req: Request) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
-  if (!rateLimit(ip)) {
-    return NextResponse.json({ error: 'Rate limited' }, { status: 429 })
-  }
 
   let payload: unknown
   try {
@@ -45,8 +42,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
   }
   if (parsed.data._gotcha) {
-    // Honeypot tripped — pretend success
+    // Honeypot tripped — pretend success without consuming the rate-limit
+    // quota for this IP, so a bot scanner can't burn legit users' allowance.
     return NextResponse.json({ ok: true })
+  }
+  // Apply rate-limit only to legitimate-looking submissions.
+  if (!rateLimit(ip)) {
+    return NextResponse.json({ error: 'Rate limited' }, { status: 429 })
   }
 
   const apiKey = process.env.RESEND_API_KEY
