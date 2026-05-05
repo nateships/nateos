@@ -1,11 +1,13 @@
 import { v4 as uuid } from 'uuid'
 import { create } from 'zustand'
+import { MENUBAR_H } from './layout'
 import { byId } from './registry'
 import type { AppParams, WindowState } from './types'
 
 type Rect = { x: number; y: number; w: number; h: number }
 
-const MENUBAR_H = 32
+// Min Y for tiled windows: just below the menubar with a small clearance gap.
+const TILE_TOP = MENUBAR_H + 4
 const DOCK_RESERVE = 80
 const TILE_STEP = 24
 const MARGIN = 8
@@ -41,7 +43,7 @@ function findTilePosition(
   const obstacles: Rect[] = [...desktopReservedRects(viewW), ...existing]
 
   function scan(bottom: number): { x: number; y: number } | null {
-    for (let y = MENUBAR_H; y + size.h <= bottom; y += TILE_STEP) {
+    for (let y = TILE_TOP; y + size.h <= bottom; y += TILE_STEP) {
       for (let x = MARGIN; x + size.w <= viewW - MARGIN; x += TILE_STEP) {
         const overlaps = obstacles.some(
           (e) => x < e.x + e.w && x + size.w > e.x && y < e.y + e.h && y + size.h > e.y,

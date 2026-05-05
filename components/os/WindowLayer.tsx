@@ -1,5 +1,5 @@
 'use client'
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 import { useWindowStore } from '@/lib/os/window-store'
 import { Window } from './Window'
 
@@ -8,18 +8,23 @@ export function WindowLayer() {
   const sorted = [...windows].sort((a, b) => a.z - b.z)
   // Mark <html> when any window is in fullscreen so globals.css can hide the
   // menubar + dock, matching real macOS fullscreen (which moves the window
-  // into its own Space and hides the bars).
+  // into its own Space and hides the bars). useLayoutEffect runs before the
+  // browser paints so the bars vanish in the same frame the window expands —
+  // a plain useEffect leaves a one-frame flash of overlapping chrome.
   const anyFullscreen = windows.some((w) => w.state === 'fullscreen')
-  useEffect(() => {
+  useLayoutEffect(() => {
     const root = document.documentElement
     if (anyFullscreen) root.dataset.fullscreen = 'true'
     else delete root.dataset.fullscreen
   }, [anyFullscreen])
-  // ESC exits fullscreen — restores the focused fullscreen window to normal.
+  // ESC exits fullscreen — but only if no inner component (Snake game,
+  // dialogs, inputs) has already claimed the keypress via preventDefault.
+  // Without this, an in-flight ESC could exit Snake AND fullscreen on the
+  // same press.
   useEffect(() => {
     if (!anyFullscreen) return
     function onKey(e: KeyboardEvent) {
-      if (e.key !== 'Escape') return
+      if (e.key !== 'Escape' || e.defaultPrevented) return
       const { windows: ws, setWindowState } = useWindowStore.getState()
       const fs = ws.find((w) => w.state === 'fullscreen')
       if (fs) setWindowState(fs.id, 'normal')
