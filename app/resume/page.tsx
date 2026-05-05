@@ -2,7 +2,10 @@ import type { Metadata } from 'next'
 import { resumeData } from './data'
 
 export const metadata: Metadata = {
-  title: "Resume — Nate O'Farrell",
+  // Page title goes through the layout template ("%s · NateOS"). Keep it
+  // short here so the rendered title is "Resume · NateOS" rather than
+  // double-branded ("Resume — Nate O'Farrell · NateOS").
+  title: 'Resume',
   description:
     "Nate O'Farrell — Director of Infrastructure & Platform Engineering. Full work history, skills, certifications, and education. PDF + DOCX downloads available.",
   alternates: { canonical: '/resume' },
