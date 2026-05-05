@@ -1,0 +1,30 @@
+---
+title: NateOS
+slug: nateos
+summary: The site you're using right now. A macOS-style portfolio at nate.cx with a plugin-style App Registry, deeplinked apps, real Apple chrome, working Terminal, and live battery/network state.
+tech:
+  - Next.js 16
+  - React 19
+  - TypeScript
+  - Tailwind v4
+  - Bun
+  - Zustand
+  - MDX
+repo: https://github.com/cfsnate/nateos
+url: https://nate.cx
+order: 4
+---
+
+The site you're using right now. Built as a credible "this is how I architect" signal as much as
+a resume site.
+
+- App Registry pattern: shell never imports app code; each app under `apps/<id>/` declares a
+  manifest. Drop a folder = new app in dock + Spotlight + deeplinks.
+- Window manager with drag, 3-edge resize, traffic lights, focus/z-index, multi-instance,
+  minimize-preserves-state, URL-driven open state.
+- Real Apple icons + wallpapers + SF fonts extracted from the local macOS install. File-type
+  icons rendered via `NSWorkspace.icon(forFileType:)`.
+- Working Terminal with command parser + tab-complete + history. `cat` reads real content via
+  `/api/content`. `sudo hire-me` opens Messages.
+- Konami code → About This Mac. Cmd+Opt+Esc → Force Quit dialog.
+- Mobile (<768px): same registry, switches to bottom-tab single-window mode.
