@@ -7,16 +7,17 @@ import { useWindowStore } from '@/lib/os/window-store'
 const KEY = 'nateos_booted'
 
 export function HomeClient() {
-  const [booting, setBooting] = useState<boolean>(false)
+  // Always start booting=true so the boot screen overlays the wallpaper on
+  // cold paint (no flash). A useEffect short-circuits past it if we've
+  // already booted this session.
+  const [booting, setBooting] = useState<boolean>(true)
   const openApp = useWindowStore((s) => s.openApp)
   const windows = useWindowStore((s) => s.windows)
 
   useEffect(() => {
-    const already = sessionStorage.getItem(KEY) === '1'
-    if (already) {
+    if (sessionStorage.getItem(KEY) === '1') {
+      setBooting(false)
       ensureTerminal()
-    } else {
-      setBooting(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
