@@ -1,3 +1,4 @@
+import { triggerKernelPanic } from '@/components/os/KernelPanic'
 import { registry } from '@/lib/os/registry'
 
 export type CommandContext = {
@@ -81,13 +82,9 @@ export async function runCommand(raw: string, ctx: CommandContext): Promise<stri
     case 'resume':
       ctx.openApp('resume')
       return ''
-    case 'sudo': {
-      if (args[0] === 'hire-me') {
-        ctx.openApp('messages')
-        return 'Permission granted. Opening Messages…'
-      }
-      return `nateos: ${args.join(' ')}: sudo not supported. Try 'sudo hire-me'.`
-    }
+    case 'sudo':
+      triggerKernelPanic()
+      return ''
     case '':
       return ''
     default:

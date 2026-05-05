@@ -55,15 +55,4 @@ describe('terminal commands', () => {
     const out = await runCommand('cat', ctx)
     expect(out).toBe('usage: cat <file>')
   })
-
-  it('sudo hire-me opens Messages and confirms permission granted', async () => {
-    const out = await runCommand('sudo hire-me', ctx)
-    expect(ctx.openApp).toHaveBeenCalledWith('messages')
-    expect(out).toMatch(/permission granted/i)
-  })
-
-  it('sudo without hire-me returns helpful error', async () => {
-    const out = await runCommand('sudo rm -rf', ctx)
-    expect(out).toMatch(/sudo not supported/)
-  })
 })

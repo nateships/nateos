@@ -103,7 +103,6 @@ export function Term({ ctx }: { ctx: CommandContext }) {
         'about',
         'contact',
         'resume',
-        'sudo',
       ]
       const m = candidates.filter((c) => c.startsWith(input))
       if (m.length === 1) setInput(m[0])

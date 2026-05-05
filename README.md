@@ -20,8 +20,6 @@ apps. Built as a credible "this is how I architect" signal as much as a resume s
   Snake easter egg).
 - **Mobile.** At <768px switches to a single-window bottom-tab UI; same registry, different
   chrome.
-- **Easter eggs.** Konami code → About This Mac. Cmd+Opt+Esc → Force Quit dialog. `sudo hire-me`
-  in Terminal opens Messages.
 
 ## Stack
 

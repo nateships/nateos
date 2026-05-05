@@ -1,8 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { BootScreen } from '@/components/os/BootScreen'
-import { ForceQuit } from '@/components/os/ForceQuit'
-import { KonamiTrigger } from '@/components/os/KonamiTrigger'
+import { KernelPanic } from '@/components/os/KernelPanic'
 import { useWindowStore } from '@/lib/os/window-store'
 
 const KEY = 'nateos_booted'
@@ -36,8 +35,7 @@ export function HomeClient() {
 
   return (
     <>
-      <KonamiTrigger />
-      <ForceQuit />
+      <KernelPanic />
       {booting ? <BootScreen onDone={onBootDone} /> : null}
     </>
   )
