@@ -20,13 +20,22 @@ export function ResumeApp() {
               <span className="opacity-70">+1 (781) 888 2277</span>
             </div>
           </div>
-          <a
-            href="/resume.pdf"
-            download="Nate_OFarrell_Resume.pdf"
-            className="px-3 py-1.5 rounded-md bg-blue-500 hover:bg-blue-400 text-white text-[12px] font-medium whitespace-nowrap"
-          >
-            Download PDF
-          </a>
+          <div className="flex flex-col gap-1.5 items-end">
+            <a
+              href="/resume.pdf"
+              download="Nate_OFarrell_Resume.pdf"
+              className="px-3 py-1.5 rounded-md bg-blue-500 hover:bg-blue-400 text-white text-[12px] font-medium whitespace-nowrap"
+            >
+              Download PDF
+            </a>
+            <a
+              href="/resume.docx"
+              download="Nate_OFarrell_Resume.docx"
+              className="px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white text-[12px] font-medium whitespace-nowrap"
+            >
+              Download DOCX
+            </a>
+          </div>
         </header>
 
         <section>

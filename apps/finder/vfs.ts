@@ -16,6 +16,7 @@ export const VFS_ROOT: VfsEntry = {
 export const VFS: Record<string, VfsEntry[]> = {
   '/': [
     { name: 'Resume.pdf', kind: 'file', path: '/Resume.pdf', open: '/resume.pdf' },
+    { name: 'Resume.docx', kind: 'file', path: '/Resume.docx', open: '/resume.docx' },
     { name: 'Projects', kind: 'folder', path: '/Projects' },
     { name: 'Documents', kind: 'folder', path: '/Documents' },
     { name: 'Links.txt', kind: 'file', path: '/Links.txt', open: '/safari' },

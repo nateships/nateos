@@ -103,7 +103,7 @@ guard let tiff = icon.tiffRepresentation,
       let png = rep.representation(using: .png, properties: [:]) else { exit(2) }
 try png.write(to: URL(fileURLWithPath: outPath))
 SWIFT
-for ext in pdf txt md; do
+for ext in pdf txt md docx; do
   swift "$SWIFT_SRC" "$ext" "$OUT/icons/file-$ext.png" >/dev/null 2>&1 \
     && echo "  + file-$ext" \
     || echo "  ! file-$ext (swift render failed)" >&2

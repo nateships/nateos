@@ -15,6 +15,7 @@ function iconFor(entry: VfsEntry): string {
   if (entry.kind === 'folder') return '/apple/icons/GenericFolderIcon.png'
   const name = entry.name.toLowerCase()
   if (name.endsWith('.pdf')) return '/apple/icons/file-pdf.png'
+  if (name.endsWith('.docx')) return '/apple/icons/file-docx.png'
   if (name.endsWith('.md')) return '/apple/icons/file-md.png'
   if (name.endsWith('.txt')) return '/apple/icons/file-txt.png'
   if (name.endsWith('.url') || name.endsWith('.app')) return '/apple/icons/safari.png'
@@ -40,7 +41,8 @@ export function FinderApp() {
     if (entry.open === '/resume') openApp('resume')
     else if (entry.open === '/safari') openApp('safari')
     else if (entry.open === '/calendar') openApp('calendar')
-    else if (entry.open.endsWith('.pdf')) window.open(entry.open, '_blank')
+    else if (entry.open.endsWith('.pdf') || entry.open.endsWith('.docx'))
+      window.open(entry.open, '_blank')
   }
 
   return (

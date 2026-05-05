@@ -48,7 +48,6 @@ nanobanana-output/
 /app/projects/data.json
 /app/safari/data.json
 
-# generated resume PDF (regenerated via predev/prebuild)
-/public/resume.pdf
+# generated at build (vCard + QR from content/profile.mdx)
 /public/contact.vcf
 /public/qr.png
