@@ -9,6 +9,14 @@ export function BootScreen({ onDone }: { onDone: () => void }) {
   const total = reduceMotion ? 200 : 1200
 
   useEffect(() => {
+    // Guard so onDone fires at most once even if the interval and the click
+    // race each other in the same tick.
+    let fired = false
+    const finish = () => {
+      if (fired) return
+      fired = true
+      onDone()
+    }
     const start = Date.now()
     const t = setInterval(() => {
       const elapsed = Date.now() - start
@@ -16,10 +24,10 @@ export function BootScreen({ onDone }: { onDone: () => void }) {
       setPct(p)
       if (p >= 100) {
         clearInterval(t)
-        onDone()
+        finish()
       }
     }, 30)
-    const onClick = () => onDone()
+    const onClick = () => finish()
     window.addEventListener('click', onClick, { once: true })
     return () => {
       clearInterval(t)

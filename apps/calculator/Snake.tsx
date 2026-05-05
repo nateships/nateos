@@ -42,22 +42,27 @@ export function Snake({ onExit }: { onExit: () => void }) {
   useEffect(() => {
     if (dead) return
     const t = setInterval(() => {
+      // Compute the next state outside of any setState updater so we don't
+      // perform side-effects inside a (potentially re-invoked) updater.
+      let nextDead = false
+      let ate = false
       setSnake((s) => {
         const head = { x: s[0].x + dirRef.current.x, y: s[0].y + dirRef.current.y }
         if (head.x < 0 || head.y < 0 || head.x >= COLS || head.y >= ROWS) {
-          setDead(true)
+          nextDead = true
           return s
         }
         if (s.some((p) => p.x === head.x && p.y === head.y)) {
-          setDead(true)
+          nextDead = true
           return s
         }
-        const ate = head.x === food.x && head.y === food.y
+        ate = head.x === food.x && head.y === food.y
         const next = [head, ...s]
         if (!ate) next.pop()
-        if (ate) setFood(rand())
         return next
       })
+      if (nextDead) setDead(true)
+      if (ate) setFood(rand())
     }, TICK)
     return () => clearInterval(t)
   }, [dead, food])
