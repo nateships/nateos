@@ -12,7 +12,7 @@ export function DesktopIcons() {
         className="flex flex-col items-center gap-1 w-16 hover:bg-white/10 rounded-md p-1.5 transition-colors"
       >
         <Image
-          src="/apple/icons/GenericDocumentIcon.png"
+          src="/apple/icons/file-pdf.png"
           alt="Resume.pdf"
           width={48}
           height={48}
