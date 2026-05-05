@@ -11,11 +11,22 @@ function rand(): Point {
   return { x: Math.floor(Math.random() * COLS), y: Math.floor(Math.random() * ROWS) }
 }
 
+function spawnFood(snake: Point[]): Point {
+  // Pick a cell that isn't currently occupied by the snake.
+  // Bounded retries since the board is small; falls through to whatever
+  // rand() returned last if the snake somehow fills the grid.
+  for (let i = 0; i < 200; i++) {
+    const p = rand()
+    if (!snake.some((s) => s.x === p.x && s.y === p.y)) return p
+  }
+  return rand()
+}
+
 export function Snake({ onExit }: { onExit: () => void }) {
   // Game state lives in refs so the tick loop is free of setState-updater
   // side-effects (which would be invoked twice in StrictMode/concurrent).
   const snakeRef = useRef<Point[]>([{ x: 8, y: 10 }])
-  const foodRef = useRef<Point>(rand())
+  const foodRef = useRef<Point>(spawnFood([{ x: 8, y: 10 }]))
   const dirRef = useRef<Point>({ x: 1, y: 0 })
   const [dead, setDead] = useState(false)
   // Bumped every tick to trigger a re-render; the actual game state lives
@@ -60,7 +71,7 @@ export function Snake({ onExit }: { onExit: () => void }) {
       const next = [head, ...s]
       if (!ate) next.pop()
       snakeRef.current = next
-      if (ate) foodRef.current = rand()
+      if (ate) foodRef.current = spawnFood(next)
       force((n) => (n + 1) % 1_000_000)
     }, TICK)
     return () => clearInterval(t)
