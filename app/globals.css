@@ -104,6 +104,16 @@ body {
   background: color-mix(in srgb, rgb(24, 24, 27) var(--os-glass-dark, 90.2%), transparent);
 }
 
+/*
+ * Real fullscreen mode hides the menubar and dock, matching macOS where a
+ * fullscreen window moves into its own Space. WindowLayer toggles the data
+ * attribute when any window has state === 'fullscreen'.
+ */
+html[data-fullscreen] .os-glass-menubar,
+html[data-fullscreen] .os-glass-dock {
+  display: none;
+}
+
 /* Subtle fade for the Projects app on detail switch — single ramp, no stagger. */
 @keyframes proj-fade {
   from {

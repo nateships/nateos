@@ -35,7 +35,13 @@ export function Snake({ onExit }: { onExit: () => void }) {
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') return onExit()
+      if (e.key === 'Escape') {
+        // Mark the event handled so a global ESC listener (e.g. exit-
+        // fullscreen on WindowLayer) doesn't also fire on the same press.
+        e.preventDefault()
+        onExit()
+        return
+      }
       const map: Record<string, Point> = {
         ArrowUp: { x: 0, y: -1 },
         ArrowDown: { x: 0, y: 1 },
