@@ -51,3 +51,6 @@ nanobanana-output/
 # generated at build (vCard + QR from content/profile.mdx)
 /public/contact.vcf
 /public/qr.png
+
+# superpowers planning artifacts (keep local, not part of public repo)
+/docs/superpowers/

@@ -54,13 +54,14 @@ If you fork this for your own portfolio, replace `public/apple/` with your own.
 
 ## Architecture
 
-Full design + implementation plans in [`docs/superpowers/`](./docs/superpowers/):
-
-- `specs/2026-05-03-nateos-portfolio-design.md` — design spec
-- `plans/2026-05-03-nateos-foundation.md` — Plan 1: foundation (OS shell, registry, Terminal)
-- `plans/2026-05-04-nateos-app-content.md` — Plan 2: real app content
-- `plans/2026-05-04-nateos-mobile-retro-eggs.md` — Plan 3: mobile + easter eggs
-- `DEPLOY.md` — Vercel + Resend + DNS cutover
+- App registry: `apps/<id>/manifest.ts` declares each app; `lib/os/registry.ts` is the barrel.
+- Window state: Zustand store at `lib/os/window-store.ts` (open/close/focus/move/resize +
+  multi-instance + persisted-on-minimize).
+- Routing: each app has a route under `app/<id>/`; deeplinks open the matching window via
+  `components/deeplink/DeeplinkRouter.tsx`.
+- Content: MDX in `content/`, validated by Zod schemas at build, surfaced as JSON via
+  `scripts/generate-data.ts` (Turbopack rejects `node:fs` in client component import chains).
+- Deploy: see [`docs/DEPLOY.md`](./docs/DEPLOY.md).
 
 ## Status
 
