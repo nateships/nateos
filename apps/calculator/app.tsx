@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { type CalcState, calc, initialState, type Op } from './engine'
 import { Snake } from './Snake'
 
@@ -24,17 +24,19 @@ const OP_BTN = `${BTN} bg-orange-500 text-white hover:bg-orange-400`
 export function CalculatorApp() {
   const [state, setState] = useState<CalcState>(initialState)
   const [snake, setSnake] = useState(false)
-  const [seq, setSeq] = useState<string[]>([])
+  // Track Konami sequence in a ref so the keydown listener can be subscribed
+  // once and never need re-subscription on every keystroke.
+  const seqRef = useRef<string[]>([])
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      const next = [...seq, e.key].slice(-KONAMI.length)
-      setSeq(next)
+      const next = [...seqRef.current, e.key].slice(-KONAMI.length)
+      seqRef.current = next
       if (next.join(',') === KONAMI.join(',')) setSnake(true)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [seq])
+  }, [])
 
   if (snake) return <Snake onExit={() => setSnake(false)} />
 

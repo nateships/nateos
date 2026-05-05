@@ -10,8 +10,9 @@ export function classify(url: string): PreviewType {
   } catch {
     return { kind: 'og', url }
   }
-  // YouTube — watch?v= or youtu.be/<id>
-  if (u.host.endsWith('youtube.com')) {
+  // YouTube — watch?v= or youtu.be/<id>. Match exact youtube.com or any
+  // dotted subdomain (m./www./music.) but NOT lookalikes like notyoutube.com.
+  if (u.host === 'youtube.com' || u.host.endsWith('.youtube.com')) {
     const id = u.searchParams.get('v')
     if (id) return { kind: 'youtube', videoId: id }
   }
