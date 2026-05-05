@@ -116,7 +116,7 @@ export function Window({ windowId }: { windowId: string }) {
   return (
     <div
       style={style}
-      className="rounded-xl overflow-hidden border border-white/10 shadow-2xl text-white/90"
+      className="pointer-events-auto rounded-xl overflow-hidden border border-white/10 shadow-2xl text-white/90"
     >
       <div
         role="toolbar"
