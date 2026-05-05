@@ -96,20 +96,26 @@ export function Window({ windowId }: { windowId: string }) {
   }
 
   const isMinimized = w.state === 'min'
-  const isFixed = w.state === 'fullscreen' || w.state === 'max'
-  // WindowLayer is `absolute inset-0` so its children's `top: 0` would land
-  // behind the fixed menubar. Offset by the menubar height (h-7 = 28px) so a
-  // maximized window's title bar sits directly below the menubar.
-  const baseStyle: React.CSSProperties = isFixed
+  const isMax = w.state === 'max'
+  const isFullscreen = w.state === 'fullscreen'
+  const isFixed = isMax || isFullscreen
+  // WindowLayer is `absolute inset-0` so its children's `top: 0` lands behind
+  // the fixed menubar. Maximize ("zoom") fills below the menubar with the dock
+  // still showing — title bar sits at top: 28 (h-7). Fullscreen covers the
+  // entire viewport (menubar + dock hide via html[data-fullscreen]) so its top
+  // is 0, matching real macOS fullscreen.
+  const baseStyle: React.CSSProperties = isMax
     ? { top: 28, left: 0, right: 0, bottom: 0, position: 'absolute', zIndex: w.z }
-    : {
-        position: 'absolute',
-        left: w.position.x,
-        top: w.position.y,
-        width: w.size.w,
-        height: w.size.h,
-        zIndex: w.z,
-      }
+    : isFullscreen
+      ? { top: 0, left: 0, right: 0, bottom: 0, position: 'absolute', zIndex: w.z }
+      : {
+          position: 'absolute',
+          left: w.position.x,
+          top: w.position.y,
+          width: w.size.w,
+          height: w.size.h,
+          zIndex: w.z,
+        }
   // Keep minimized windows mounted so app state (terminal history, scroll, etc.) is preserved.
   const style: React.CSSProperties = isMinimized ? { ...baseStyle, display: 'none' } : baseStyle
 

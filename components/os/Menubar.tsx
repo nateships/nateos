@@ -109,6 +109,14 @@ export function Menubar() {
     if (!focusedWindow) return
     setFocusedWindowState(focusedWindow.id, focusedWindow.state === 'max' ? 'normal' : 'max')
   }
+  function fullscreenFocused() {
+    closeMenus()
+    if (!focusedWindow) return
+    setFocusedWindowState(
+      focusedWindow.id,
+      focusedWindow.state === 'fullscreen' ? 'normal' : 'fullscreen',
+    )
+  }
   const hasFocused = !!focusedWindow
 
   function setMenu(id: MenuId, open: boolean) {
@@ -257,10 +265,10 @@ export function Menubar() {
         >
           <MenubarMenuItem
             disabled={!hasFocused}
-            onSelect={zoomFocused}
-            shortcut={focusedWindow?.state === 'max' ? 'Exit Full' : '⌃⌘F'}
+            onSelect={fullscreenFocused}
+            shortcut={focusedWindow?.state === 'fullscreen' ? 'Esc' : '⌃⌘F'}
           >
-            {focusedWindow?.state === 'max' ? 'Exit Full Screen' : 'Enter Full Screen'}
+            {focusedWindow?.state === 'fullscreen' ? 'Exit Full Screen' : 'Enter Full Screen'}
           </MenubarMenuItem>
           <MenubarMenuItem
             onSelect={() => {
