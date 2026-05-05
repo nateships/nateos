@@ -7,12 +7,6 @@ export type VfsEntry = {
   size?: number
 }
 
-export const VFS_ROOT: VfsEntry = {
-  name: 'Nate',
-  kind: 'folder',
-  path: '/',
-}
-
 export const VFS: Record<string, VfsEntry[]> = {
   '/': [
     {

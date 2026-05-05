@@ -1,6 +1,11 @@
+import { lookup } from 'node:dns/promises'
+import { isIP } from 'node:net'
 import { NextResponse } from 'next/server'
 
 export const revalidate = 21600
+// SSRF protection requires DNS lookup, which is a Node-only API. Force the
+// Node runtime so we don't run on the Edge.
+export const runtime = 'nodejs'
 
 type OgInfo = {
   url: string
@@ -28,6 +33,69 @@ function decodeEntities(s: string | null): string | null {
     .replace(/&#x2F;/g, '/')
 }
 
+// Hostnames we never proxy, even before DNS resolution.
+const BLOCKED_HOSTS = new Set([
+  'localhost',
+  'metadata.google.internal',
+  'metadata.azure.com',
+  'instance-data',
+])
+
+function isPrivateIPv4(ip: string): boolean {
+  const parts = ip.split('.').map(Number)
+  if (parts.length !== 4 || parts.some((n) => Number.isNaN(n) || n < 0 || n > 255)) return true
+  const [a, b] = parts as [number, number]
+  if (a === 10) return true
+  if (a === 127) return true // loopback
+  if (a === 0) return true // current network / wildcard
+  if (a === 169 && b === 254) return true // link-local + AWS/GCP/Azure metadata
+  if (a === 172 && b >= 16 && b <= 31) return true
+  if (a === 192 && b === 168) return true
+  if (a === 100 && b >= 64 && b <= 127) return true // CGNAT
+  if (a >= 224) return true // multicast / reserved
+  return false
+}
+
+function isPrivateIPv6(ip: string): boolean {
+  const lower = ip.toLowerCase()
+  if (lower === '::1' || lower === '::') return true
+  if (lower.startsWith('fc') || lower.startsWith('fd')) return true // unique local
+  if (lower.startsWith('fe80')) return true // link-local
+  if (lower.startsWith('::ffff:')) {
+    const v4 = lower.slice('::ffff:'.length)
+    return isPrivateIPv4(v4)
+  }
+  return false
+}
+
+function isPrivateIP(ip: string): boolean {
+  const v = isIP(ip)
+  if (v === 4) return isPrivateIPv4(ip)
+  if (v === 6) return isPrivateIPv6(ip)
+  return true // not an IP we recognize → reject
+}
+
+async function ssrfSafe(parsed: URL): Promise<{ ok: true } | { ok: false; reason: string }> {
+  const host = parsed.hostname.toLowerCase()
+  if (!host) return { ok: false, reason: 'empty host' }
+  if (BLOCKED_HOSTS.has(host)) return { ok: false, reason: 'blocked host' }
+  // If the host is already an IP literal, validate directly.
+  if (isIP(host) !== 0) {
+    return isPrivateIP(host) ? { ok: false, reason: 'private ip literal' } : { ok: true }
+  }
+  // Otherwise resolve and validate every result.
+  try {
+    const results = await lookup(host, { all: true })
+    if (results.length === 0) return { ok: false, reason: 'no DNS result' }
+    for (const r of results) {
+      if (isPrivateIP(r.address)) return { ok: false, reason: 'resolves to private ip' }
+    }
+    return { ok: true }
+  } catch {
+    return { ok: false, reason: 'dns lookup failed' }
+  }
+}
+
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const target = url.searchParams.get('url')
@@ -40,6 +108,10 @@ export async function GET(req: Request) {
   }
   if (!['http:', 'https:'].includes(parsed.protocol)) {
     return NextResponse.json({ error: 'bad protocol' }, { status: 400 })
+  }
+  const guard = await ssrfSafe(parsed)
+  if (!guard.ok) {
+    return NextResponse.json({ error: `blocked: ${guard.reason}` }, { status: 400 })
   }
   try {
     const r = await fetch(parsed.toString(), {
