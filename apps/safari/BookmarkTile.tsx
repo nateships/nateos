@@ -30,17 +30,23 @@ export function BookmarkTile({ bookmark }: { bookmark: Bookmark }) {
   const [og, setOg] = useState<Og | null>(null)
   const [gh, setGh] = useState<GhRepo | null>(null)
 
+  // Depend on the stable URL string, not the freshly-classified object.
+  // Otherwise the new object reference on each render re-fires the effect,
+  // re-fetches, re-renders, and loops forever.
   useEffect(() => {
     let cancelled = false
-    if (t.kind === 'github') {
-      fetch(`/api/github?owner=${encodeURIComponent(t.owner)}&repo=${encodeURIComponent(t.repo)}`)
+    const next = classify(bookmark.url)
+    if (next.kind === 'github') {
+      fetch(
+        `/api/github?owner=${encodeURIComponent(next.owner)}&repo=${encodeURIComponent(next.repo)}`,
+      )
         .then(async (r) => (r.ok ? ((await r.json()) as GhRepo) : null))
         .then((d) => {
           if (!cancelled && d) setGh(d)
         })
         .catch(() => undefined)
-    } else if (t.kind === 'og') {
-      fetch(`/api/og?url=${encodeURIComponent(t.url)}`)
+    } else if (next.kind === 'og') {
+      fetch(`/api/og?url=${encodeURIComponent(next.url)}`)
         .then(async (r) => (r.ok ? ((await r.json()) as Og) : null))
         .then((d) => {
           if (!cancelled && d) setOg(d)
@@ -50,7 +56,7 @@ export function BookmarkTile({ bookmark }: { bookmark: Bookmark }) {
     return () => {
       cancelled = true
     }
-  }, [t])
+  }, [bookmark.url])
 
   const host = hostOf(bookmark.url)
 
