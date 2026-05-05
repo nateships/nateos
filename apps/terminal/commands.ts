@@ -84,7 +84,7 @@ export async function runCommand(raw: string, ctx: CommandContext): Promise<stri
       return ''
     case 'sudo':
       triggerKernelPanic()
-      return ''
+      return "nice try. you don't have sudo here. try 'contact' instead."
     case '':
       return ''
     default:
