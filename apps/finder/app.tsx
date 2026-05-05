@@ -14,8 +14,9 @@ const SIDEBAR: { label: string; path: string }[] = [
 function iconFor(entry: VfsEntry): string {
   if (entry.kind === 'folder') return '/apple/icons/GenericFolderIcon.png'
   const name = entry.name.toLowerCase()
-  if (name.endsWith('.pdf')) return '/apple/icons/preview.png'
-  if (name.endsWith('.md') || name.endsWith('.txt')) return '/apple/icons/textedit.png'
+  if (name.endsWith('.pdf')) return '/apple/icons/file-pdf.png'
+  if (name.endsWith('.md')) return '/apple/icons/file-md.png'
+  if (name.endsWith('.txt')) return '/apple/icons/file-txt.png'
   if (name.endsWith('.url') || name.endsWith('.app')) return '/apple/icons/safari.png'
   return '/apple/icons/GenericDocumentIcon.png'
 }

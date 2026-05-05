@@ -88,6 +88,28 @@ for d in "${WPS[@]}"; do
   fi
 done
 
+echo "Rendering file-type icons via NSWorkspace..."
+SWIFT_SRC="$(mktemp -t icon_for_type.XXXXXX.swift)"
+cat > "$SWIFT_SRC" <<'SWIFT'
+import AppKit
+let args = CommandLine.arguments
+guard args.count >= 3 else { exit(1) }
+let type = args[1]
+let outPath = args[2]
+let icon = NSWorkspace.shared.icon(forFileType: type)
+icon.size = NSSize(width: 256, height: 256)
+guard let tiff = icon.tiffRepresentation,
+      let rep = NSBitmapImageRep(data: tiff),
+      let png = rep.representation(using: .png, properties: [:]) else { exit(2) }
+try png.write(to: URL(fileURLWithPath: outPath))
+SWIFT
+for ext in pdf txt md; do
+  swift "$SWIFT_SRC" "$ext" "$OUT/icons/file-$ext.png" >/dev/null 2>&1 \
+    && echo "  + file-$ext" \
+    || echo "  ! file-$ext (swift render failed)" >&2
+done
+rm -f "$SWIFT_SRC"
+
 echo "Extracting SF fonts..."
 for f in "SF-Pro.ttf" "SF-Pro-Text-Regular.otf" "SFNS.ttf" "SFNSMono.ttf"; do
   src="/System/Library/Fonts/$f"
