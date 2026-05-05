@@ -73,7 +73,7 @@ export function MessagesApp() {
   }
 
   return (
-    <div className="h-full w-full flex flex-col bg-zinc-900/90 text-white">
+    <div className="h-full w-full flex flex-col bg-zinc-900/95 text-white">
       <header className="px-5 py-3 border-b border-white/10">
         <h1 className="text-[14px] font-semibold">Nate O'Farrell</h1>
         <p className="text-[11px] opacity-60">iMessage · delivered to nate@nateofarrell.com</p>

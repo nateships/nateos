@@ -11,13 +11,13 @@ export function ProjectsApp(ctx: AppContext) {
   const active = projectsData.find((p) => p.slug === activeSlug) ?? projectsData[0]
   if (!active) {
     return (
-      <div className="h-full w-full flex items-center justify-center bg-zinc-900/85 text-white">
+      <div className="h-full w-full flex items-center justify-center bg-zinc-900/95 text-white">
         No projects yet.
       </div>
     )
   }
   return (
-    <div className="h-full w-full flex bg-zinc-900/90 text-white">
+    <div className="h-full w-full flex bg-zinc-900/95 text-white">
       <aside className="w-60 border-r border-white/10 p-2 overflow-auto os-scroll">
         <div className="px-2 py-1.5 text-[10px] uppercase tracking-wider opacity-50">Projects</div>
         <div className="flex flex-col gap-0.5">

@@ -4,7 +4,7 @@ import { resumeData } from '@/app/resume/data'
 export function ResumeApp() {
   const r = resumeData
   return (
-    <div className="h-full w-full overflow-auto os-scroll bg-zinc-900/90 text-white">
+    <div className="h-full w-full overflow-auto os-scroll bg-zinc-900/95 text-white">
       <div className="max-w-3xl mx-auto px-8 py-7 flex flex-col gap-7">
         <header className="flex items-start justify-between gap-4">
           <div>

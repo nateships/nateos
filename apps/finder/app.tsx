@@ -34,7 +34,7 @@ export function FinderApp() {
   }
 
   return (
-    <div className="h-full w-full flex bg-zinc-900/90 text-white">
+    <div className="h-full w-full flex bg-zinc-900/95 text-white">
       <aside className="w-44 border-r border-white/10 p-2 text-[12px]">
         <div className="px-2 py-1.5 text-[10px] uppercase tracking-wider opacity-50">Locations</div>
         <ul className="flex flex-col gap-0.5">
