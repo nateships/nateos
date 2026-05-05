@@ -14,10 +14,12 @@ apps. Built as a credible "this is how I architect" signal as much as a resume s
 - **Window manager.** Drag, resize (3 edges), traffic-light close/minimize/maximize, focus +
   z-index, multi-instance, deeplink-driven open state, minimize-preserves-state.
 - **Apps:** Resume (+ PDF + DOCX download), Projects (case studies w/ MDX bodies), Terminal
-  (custom shell w/ tab-complete + history), Messages (iMessage UI → Resend backend), Safari
-  (favorites tile grid w/ YouTube embeds + GitHub API + OG previews), Finder (virtual filesystem),
-  Settings (appearance + wallpaper picker), Calendar (Cal.com embed), Calculator (Konami →
-  Snake easter egg).
+  (custom shell w/ tab-complete + history + neofetch MOTD), Messages (iMessage UI → Resend
+  backend), Safari (favorites tile grid w/ YouTube embeds + GitHub API + OG previews), Finder
+  (virtual filesystem w/ real macOS file-type icons), Settings (appearance + wallpaper picker),
+  Calendar (Cal.com embed), Calculator.
+- **Live system status.** Menubar reads `navigator.getBattery()` and `navigator.connection`
+  for real battery + network indicators (where the browser supports them).
 - **Mobile.** At <768px switches to a single-window bottom-tab UI; same registry, different
   chrome.
 
