@@ -1,4 +1,5 @@
 import { registry } from '@/lib/os/registry'
+import { useSettings } from '@/lib/settings/store'
 
 export type CommandContext = {
   openApp(appId: string, params?: Record<string, unknown>): string
@@ -75,8 +76,11 @@ export async function runCommand(raw: string, ctx: CommandContext): Promise<stri
       return '__CLEAR__'
     case 'theme': {
       const arg = args[0]
-      if (!arg || !['classic', 'tahoe'].includes(arg)) return 'usage: theme <classic|tahoe>'
-      return `theme set to ${arg} (full retro skin lands in Plan 3)`
+      if (!arg || !['classic', 'tahoe'].includes(arg)) {
+        return 'usage: theme <classic|tahoe>'
+      }
+      useSettings.getState().setEra(arg as 'classic' | 'tahoe')
+      return `theme set to ${arg}.`
     }
     case 'about':
       return ABOUT

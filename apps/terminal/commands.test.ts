@@ -55,4 +55,17 @@ describe('terminal commands', () => {
     const out = await runCommand('cat', ctx)
     expect(out).toBe('usage: cat <file>')
   })
+
+  it('theme classic sets era to classic in settings store', async () => {
+    const { useSettings } = await import('@/lib/settings/store')
+    await runCommand('theme classic', ctx)
+    expect(useSettings.getState().era).toBe('classic')
+    await runCommand('theme tahoe', ctx)
+    expect(useSettings.getState().era).toBe('tahoe')
+  })
+
+  it('theme without valid arg returns usage', async () => {
+    const out = await runCommand('theme', ctx)
+    expect(out).toMatch(/usage/)
+  })
 })
