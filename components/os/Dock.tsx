@@ -36,7 +36,7 @@ export function Dock() {
             key={m.id}
             type="button"
             aria-label={m.title}
-            className="group relative w-12 h-12 rounded-lg flex items-center justify-center transition-transform hover:scale-110 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-white/60"
+            className="group relative w-12 h-12 rounded-lg flex items-center justify-center transition-transform hover:scale-110 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
             onClick={() => {
               const existing = windows.find((w) => w.appId === m.id)
               if (!existing) {
