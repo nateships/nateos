@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { BootScreen } from '@/components/os/BootScreen'
+import { EraClass } from '@/components/os/EraClass'
 import { useWindowStore } from '@/lib/os/window-store'
 
 const KEY = 'nateos_booted'
@@ -32,6 +33,10 @@ export function HomeClient() {
     ensureTerminal()
   }
 
-  if (booting) return <BootScreen onDone={onBootDone} />
-  return null
+  return (
+    <>
+      <EraClass />
+      {booting ? <BootScreen onDone={onBootDone} /> : null}
+    </>
+  )
 }

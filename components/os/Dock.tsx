@@ -21,7 +21,7 @@ export function Dock() {
 
   return (
     <div
-      className="fixed bottom-2 left-1/2 -translate-x-1/2 z-50 flex gap-1.5 px-2 py-1.5 rounded-2xl border border-white/20"
+      className="nateos-dock fixed bottom-2 left-1/2 -translate-x-1/2 z-50 flex gap-1.5 px-2 py-1.5 rounded-2xl border border-white/20"
       style={{
         backdropFilter: 'blur(30px)',
         WebkitBackdropFilter: 'blur(30px)',

@@ -116,11 +116,11 @@ export function Window({ windowId }: { windowId: string }) {
   return (
     <div
       style={style}
-      className="rounded-xl overflow-hidden border border-white/10 shadow-2xl text-white/90"
+      className="nateos-window rounded-xl overflow-hidden border border-white/10 shadow-2xl text-white/90"
     >
       <div
         role="toolbar"
-        className="h-7 px-3 flex items-center gap-2 border-b border-white/10 select-none cursor-default"
+        className="nateos-window-titlebar h-7 px-3 flex items-center gap-2 border-b border-white/10 select-none cursor-default"
         style={{ backdropFilter: 'blur(40px)', background: 'rgba(40,40,46,0.78)' }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -132,7 +132,7 @@ export function Window({ windowId }: { windowId: string }) {
           <button
             type="button"
             aria-label="Close"
-            className="w-3 h-3 rounded-full bg-zinc-600 group-hover:bg-[#ff5f57] cursor-pointer flex items-center justify-center leading-none font-bold transition-colors"
+            className="nateos-traffic-light w-3 h-3 rounded-full bg-zinc-600 group-hover:bg-[#ff5f57] cursor-pointer flex items-center justify-center leading-none font-bold transition-colors"
             onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation()
@@ -150,7 +150,7 @@ export function Window({ windowId }: { windowId: string }) {
           <button
             type="button"
             aria-label="Minimize"
-            className="w-3 h-3 rounded-full bg-zinc-600 group-hover:bg-[#febc2e] cursor-pointer flex items-center justify-center leading-none font-bold transition-colors"
+            className="nateos-traffic-light w-3 h-3 rounded-full bg-zinc-600 group-hover:bg-[#febc2e] cursor-pointer flex items-center justify-center leading-none font-bold transition-colors"
             onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation()
@@ -168,7 +168,7 @@ export function Window({ windowId }: { windowId: string }) {
           <button
             type="button"
             aria-label="Maximize"
-            className="w-3 h-3 rounded-full bg-zinc-600 group-hover:bg-[#28c840] cursor-pointer flex items-center justify-center leading-none font-bold transition-colors"
+            className="nateos-traffic-light w-3 h-3 rounded-full bg-zinc-600 group-hover:bg-[#28c840] cursor-pointer flex items-center justify-center leading-none font-bold transition-colors"
             onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation()
@@ -184,7 +184,9 @@ export function Window({ windowId }: { windowId: string }) {
             </span>
           </button>
         </span>
-        <span className="mx-auto -translate-x-4 text-xs opacity-70">{manifest.title}</span>
+        <span className="nateos-window-title mx-auto -translate-x-4 text-xs opacity-70">
+          {manifest.title}
+        </span>
       </div>
       <div className="h-[calc(100%-1.75rem)] overflow-auto os-scroll">
         <Comp windowId={w.id} params={w.params} />
