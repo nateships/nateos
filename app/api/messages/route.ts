@@ -37,8 +37,9 @@ function rateLimit(ip: string): boolean {
   sweep(now)
   const arr = (buckets.get(ip) ?? []).filter((t) => now - t < WINDOW_MS)
   if (arr.length >= LIMIT) {
-    if (arr.length === 0) buckets.delete(ip)
-    else buckets.set(ip, arr)
+    // Persist the freshly-filtered window so expired entries don't pile up
+    // on a quota-exceeded IP.
+    buckets.set(ip, arr)
     return false
   }
   arr.push(now)
