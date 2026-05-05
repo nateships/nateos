@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { BootScreen } from '@/components/os/BootScreen'
-import { EraClass } from '@/components/os/EraClass'
 import { ForceQuit } from '@/components/os/ForceQuit'
 import { KonamiTrigger } from '@/components/os/KonamiTrigger'
 import { useWindowStore } from '@/lib/os/window-store'
@@ -37,7 +36,6 @@ export function HomeClient() {
 
   return (
     <>
-      <EraClass />
       <KonamiTrigger />
       <ForceQuit />
       {booting ? <BootScreen onDone={onBootDone} /> : null}

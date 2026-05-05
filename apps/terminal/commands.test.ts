@@ -56,19 +56,6 @@ describe('terminal commands', () => {
     expect(out).toBe('usage: cat <file>')
   })
 
-  it('theme classic sets era to classic in settings store', async () => {
-    const { useSettings } = await import('@/lib/settings/store')
-    await runCommand('theme classic', ctx)
-    expect(useSettings.getState().era).toBe('classic')
-    await runCommand('theme tahoe', ctx)
-    expect(useSettings.getState().era).toBe('tahoe')
-  })
-
-  it('theme without valid arg returns usage', async () => {
-    const out = await runCommand('theme', ctx)
-    expect(out).toMatch(/usage/)
-  })
-
   it('sudo hire-me opens Messages and confirms permission granted', async () => {
     const out = await runCommand('sudo hire-me', ctx)
     expect(ctx.openApp).toHaveBeenCalledWith('messages')

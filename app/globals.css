@@ -1,4 +1,3 @@
-/* biome-ignore-all lint/complexity/noImportantStyles: era theming must override Tailwind utilities applied directly on elements */
 @import "tailwindcss";
 
 @theme {
@@ -66,70 +65,4 @@ body {
   background-color: rgba(0, 0, 0, 0.4);
   border: 3px solid transparent;
   background-clip: content-box;
-}
-
-/* Era theming. .era-classic body class triggers retro chrome. */
-.era-classic {
-  --color-classic-bg: #c0c0c0;
-  --color-classic-fg: #000000;
-  --color-classic-titlebar: #ffffff;
-  --color-classic-stripe: #000000;
-  --classic-radius: 0px;
-  --classic-font-ui: "Chicago", "ChicagoFLF", "Charcoal", system-ui, sans-serif;
-}
-
-.era-classic .nateos-window {
-  border-radius: var(--classic-radius) !important;
-  border: 1px solid #000 !important;
-  background: var(--color-classic-bg) !important;
-  color: var(--color-classic-fg) !important;
-  box-shadow: 2px 2px 0 0 #000 !important;
-  font-family: var(--classic-font-ui);
-}
-
-.era-classic .nateos-window-titlebar {
-  background: repeating-linear-gradient(
-    to bottom,
-    var(--color-classic-stripe) 0,
-    var(--color-classic-stripe) 1px,
-    var(--color-classic-titlebar) 1px,
-    var(--color-classic-titlebar) 3px
-  ) !important;
-  color: var(--color-classic-fg) !important;
-  border-bottom: 1px solid #000 !important;
-}
-
-.era-classic .nateos-window-title {
-  background: var(--color-classic-titlebar);
-  padding: 0 8px;
-  border: 1px solid #000;
-  border-top: none;
-  border-bottom: none;
-  font-family: var(--classic-font-ui);
-  font-weight: 700;
-}
-
-.era-classic .nateos-menubar {
-  background: #ffffff !important;
-  color: #000 !important;
-  border-bottom: 1px solid #000 !important;
-  font-family: var(--classic-font-ui);
-}
-
-.era-classic .nateos-dock {
-  background: #ffffff !important;
-  border: 1px solid #000 !important;
-  border-radius: 0 !important;
-}
-
-.era-classic .nateos-wallpaper {
-  background: repeating-conic-gradient(#5a5a5a 0% 25%, #6a6a6a 25% 50%) 0 0 / 6px 6px !important;
-}
-
-.era-classic .nateos-traffic-light {
-  border-radius: 0 !important;
-  width: 14px !important;
-  height: 14px !important;
-  background: #fff !important;
-  border: 1px solid #000 !important;
 }

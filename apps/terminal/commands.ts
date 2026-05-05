@@ -1,5 +1,4 @@
 import { registry } from '@/lib/os/registry'
-import { useSettings } from '@/lib/settings/store'
 
 export type CommandContext = {
   openApp(appId: string, params?: Record<string, unknown>): string
@@ -20,7 +19,6 @@ const HELP_LINES = [
   'cat <file>                 print a content file',
   'cd <path>                  (cosmetic) change pwd display',
   'clear                      clear screen',
-  'theme <classic|tahoe>      toggle era',
   'about                      one-paragraph bio',
   'contact                    open Messages app',
   'resume                     open Resume app',
@@ -75,14 +73,6 @@ export async function runCommand(raw: string, ctx: CommandContext): Promise<stri
     }
     case 'clear':
       return '__CLEAR__'
-    case 'theme': {
-      const arg = args[0]
-      if (!arg || !['classic', 'tahoe'].includes(arg)) {
-        return 'usage: theme <classic|tahoe>'
-      }
-      useSettings.getState().setEra(arg as 'classic' | 'tahoe')
-      return `theme set to ${arg}.`
-    }
     case 'about':
       return ABOUT
     case 'contact':

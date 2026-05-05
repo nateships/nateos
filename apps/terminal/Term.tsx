@@ -100,7 +100,6 @@ export function Term({ ctx }: { ctx: CommandContext }) {
         'cat',
         'cd',
         'clear',
-        'theme',
         'about',
         'contact',
         'resume',
