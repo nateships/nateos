@@ -18,11 +18,45 @@ const OS_ART = ` ██████╗ ███████╗
  ╚═════╝ ╚══════╝`
 
 function Banner() {
+  const facts: { label: string; value: string; valueClass?: string }[] = [
+    { label: 'User', value: 'nate', valueClass: 'text-emerald-300' },
+    { label: 'Host', value: 'nate.cx', valueClass: 'text-sky-300' },
+    { label: 'OS', value: 'NateOS v1.0' },
+    { label: 'Role', value: 'Director · Infra & Platform Eng' },
+    { label: 'Location', value: 'Tewksbury, MA' },
+    { label: 'Email', value: 'nate@nateofarrell.com', valueClass: 'text-blue-300' },
+    { label: 'Shell', value: '/bin/nate' },
+    { label: 'Theme', value: 'Tahoe (dark)' },
+  ]
   return (
-    <div className="flex items-end gap-2 leading-none">
-      <pre className="text-cyan-300/90 m-0 leading-tight">{NATE_ART}</pre>
-      <pre className="text-pink-300/90 m-0 leading-tight">{OS_ART}</pre>
-      <span className="text-white/50 text-xs pb-1 ml-2">v1.0</span>
+    <div className="flex items-start gap-4 leading-none">
+      <div className="flex items-end gap-1 leading-none">
+        <pre className="text-cyan-300/90 m-0 leading-tight">{NATE_ART}</pre>
+        <pre className="text-pink-300/90 m-0 leading-tight">{OS_ART}</pre>
+      </div>
+      <div className="flex flex-col gap-0.5 pt-1">
+        <div className="flex gap-2 items-baseline">
+          <span className="text-emerald-300 font-bold">nate</span>
+          <span className="text-white/40">@</span>
+          <span className="text-sky-300 font-bold">nate.cx</span>
+        </div>
+        <div className="text-white/30 tracking-tight">────────────────────</div>
+        {facts.slice(2).map((f) => (
+          <div key={f.label} className="flex gap-2">
+            <span className="text-pink-300 font-semibold w-[72px]">{f.label}:</span>
+            <span className={f.valueClass ?? 'text-white/85'}>{f.value}</span>
+          </div>
+        ))}
+        <div className="text-white/30 tracking-tight mt-1">────────────────────</div>
+        <div className="flex gap-2 mt-0.5 text-white/70">
+          <span>tip:</span>
+          <span>
+            type <span className="text-emerald-300">help</span> ·{' '}
+            <span className="text-emerald-300">apps</span> ·{' '}
+            <span className="text-emerald-300">open &lt;app&gt;</span>
+          </span>
+        </div>
+      </div>
     </div>
   )
 }
@@ -30,14 +64,7 @@ function Banner() {
 type Line = { kind: 'in' | 'out' | 'sys'; content: ReactNode }
 
 export function Term({ ctx }: { ctx: CommandContext }) {
-  const [history, setHistory] = useState<Line[]>([
-    { kind: 'sys', content: <Banner /> },
-    {
-      kind: 'sys',
-      content: 'welcome · Director of Infra @ Commonwealth Fusion · Tewksbury, MA',
-    },
-    { kind: 'sys', content: 'type `help` for commands · `apps` to list · `open <app>`' },
-  ])
+  const [history, setHistory] = useState<Line[]>([{ kind: 'sys', content: <Banner /> }])
   const [input, setInput] = useState('')
   const [stack, setStack] = useState<string[]>([])
   const [_stackIdx, setStackIdx] = useState<number>(-1)
