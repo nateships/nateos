@@ -20,10 +20,11 @@ const HELP_LINES = [
   'cat <file>                 print a content file',
   'cd <path>                  (cosmetic) change pwd display',
   'clear                      clear screen',
-  'theme <classic|tahoe>      toggle era (Plan 3 wires retro skin)',
+  'theme <classic|tahoe>      toggle era',
   'about                      one-paragraph bio',
   'contact                    open Messages app',
   'resume                     open Resume app',
+  'sudo hire-me               (try it)',
 ]
 
 const VFS: Record<string, string[] | string> = {
@@ -90,6 +91,13 @@ export async function runCommand(raw: string, ctx: CommandContext): Promise<stri
     case 'resume':
       ctx.openApp('resume')
       return ''
+    case 'sudo': {
+      if (args[0] === 'hire-me') {
+        ctx.openApp('messages')
+        return 'Permission granted. Opening Messages…'
+      }
+      return `nateos: ${args.join(' ')}: sudo not supported. Try 'sudo hire-me'.`
+    }
     case '':
       return ''
     default:
