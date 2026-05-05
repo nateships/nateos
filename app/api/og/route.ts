@@ -26,6 +26,46 @@ function metaContent(html: string, prop: string): string | null {
   return html.match(re1)?.[3] ?? html.match(re2)?.[2] ?? html.match(re3)?.[3] ?? null
 }
 
+type ByteStream = {
+  getReader(): {
+    read(): Promise<{ done: boolean; value?: Uint8Array }>
+    cancel(): Promise<unknown>
+  }
+}
+
+/** Read up to `cap` bytes from a ReadableStream, then cancel. Returns UTF-8. */
+async function readCapped(body: unknown, cap: number): Promise<string> {
+  if (!body) return ''
+  const stream = body as ByteStream
+  const reader = stream.getReader()
+  const chunks: Uint8Array[] = []
+  let total = 0
+  try {
+    while (total < cap) {
+      const { done, value } = await reader.read()
+      if (done) break
+      if (!value) continue
+      const remaining = cap - total
+      if (value.byteLength > remaining) {
+        chunks.push(value.subarray(0, remaining))
+        total = cap
+        break
+      }
+      chunks.push(value)
+      total += value.byteLength
+    }
+  } finally {
+    await reader.cancel().catch(() => undefined)
+  }
+  const buf = new Uint8Array(total)
+  let offset = 0
+  for (const c of chunks) {
+    buf.set(c, offset)
+    offset += c.byteLength
+  }
+  return new TextDecoder('utf-8', { fatal: false }).decode(buf)
+}
+
 function decodeEntities(s: string | null): string | null {
   if (!s) return s
   return s
@@ -181,6 +221,8 @@ export async function GET(req: Request) {
       })
       if (r.status >= 300 && r.status < 400) {
         const loc = r.headers.get('location')
+        // Drain redirect body so the connection can return to the pool.
+        await r.body?.cancel().catch(() => undefined)
         if (!loc) break
         const next = new URL(loc, current)
         if (!['http:', 'https:'].includes(next.protocol)) {
@@ -202,15 +244,29 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'no response' }, { status: 502 })
     }
     if (r.status >= 300 && r.status < 400) {
+      await r.body?.cancel().catch(() => undefined)
       return NextResponse.json({ error: 'too many redirects' }, { status: 502 })
     }
     if (!r.ok) {
+      await r.body?.cancel().catch(() => undefined)
       return NextResponse.json(
         { url: target, title: null, description: null, image: null, siteName: null },
         { status: 200 },
       )
     }
-    const html = (await r.text()).slice(0, 200_000) // cap to avoid huge pages
+    // Reject obviously non-HTML payloads early (e.g. PDFs, videos).
+    const contentType = (r.headers.get('content-type') ?? '').toLowerCase()
+    if (contentType && !/\b(text\/html|application\/xhtml\+xml|text\/plain)\b/.test(contentType)) {
+      await r.body?.cancel().catch(() => undefined)
+      return NextResponse.json(
+        { url: target, title: null, description: null, image: null, siteName: null },
+        { status: 200 },
+      )
+    }
+    // Stream-read with a hard cap so a multi-GB response can't OOM the
+    // server. Stops as soon as we have enough bytes.
+    const CAP = 200_000
+    const html = await readCapped(r.body, CAP)
     const info: OgInfo = {
       url: target,
       title: decodeEntities(

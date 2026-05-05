@@ -12,12 +12,15 @@ function rand(): Point {
 }
 
 export function Snake({ onExit }: { onExit: () => void }) {
-  const [snake, setSnake] = useState<Point[]>([{ x: 8, y: 10 }])
-  const [food, setFood] = useState<Point>(rand)
-  const [dir, setDir] = useState<Point>({ x: 1, y: 0 })
+  // Game state lives in refs so the tick loop is free of setState-updater
+  // side-effects (which would be invoked twice in StrictMode/concurrent).
+  const snakeRef = useRef<Point[]>([{ x: 8, y: 10 }])
+  const foodRef = useRef<Point>(rand())
+  const dirRef = useRef<Point>({ x: 1, y: 0 })
   const [dead, setDead] = useState(false)
-  const dirRef = useRef(dir)
-  dirRef.current = dir
+  // Bumped every tick to trigger a re-render; the actual game state lives
+  // in the refs above.
+  const [, force] = useState(0)
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -33,7 +36,7 @@ export function Snake({ onExit }: { onExit: () => void }) {
       const cur = dirRef.current
       // Block reversal
       if (next.x + cur.x === 0 && next.y + cur.y === 0) return
-      setDir(next)
+      dirRef.current = next
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -42,30 +45,29 @@ export function Snake({ onExit }: { onExit: () => void }) {
   useEffect(() => {
     if (dead) return
     const t = setInterval(() => {
-      // Compute the next state outside of any setState updater so we don't
-      // perform side-effects inside a (potentially re-invoked) updater.
-      let nextDead = false
-      let ate = false
-      setSnake((s) => {
-        const head = { x: s[0].x + dirRef.current.x, y: s[0].y + dirRef.current.y }
-        if (head.x < 0 || head.y < 0 || head.x >= COLS || head.y >= ROWS) {
-          nextDead = true
-          return s
-        }
-        if (s.some((p) => p.x === head.x && p.y === head.y)) {
-          nextDead = true
-          return s
-        }
-        ate = head.x === food.x && head.y === food.y
-        const next = [head, ...s]
-        if (!ate) next.pop()
-        return next
-      })
-      if (nextDead) setDead(true)
-      if (ate) setFood(rand())
+      const s = snakeRef.current
+      const head = { x: s[0].x + dirRef.current.x, y: s[0].y + dirRef.current.y }
+      if (head.x < 0 || head.y < 0 || head.x >= COLS || head.y >= ROWS) {
+        setDead(true)
+        return
+      }
+      if (s.some((p) => p.x === head.x && p.y === head.y)) {
+        setDead(true)
+        return
+      }
+      const food = foodRef.current
+      const ate = head.x === food.x && head.y === food.y
+      const next = [head, ...s]
+      if (!ate) next.pop()
+      snakeRef.current = next
+      if (ate) foodRef.current = rand()
+      force((n) => (n + 1) % 1_000_000)
     }, TICK)
     return () => clearInterval(t)
-  }, [dead, food])
+  }, [dead])
+
+  const snake = snakeRef.current
+  const food = foodRef.current
 
   return (
     <div className="h-full w-full flex flex-col items-center justify-center gap-2 bg-zinc-900 text-white">
