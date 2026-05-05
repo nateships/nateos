@@ -114,14 +114,46 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: `blocked: ${guard.reason}` }, { status: 400 })
   }
   try {
-    const r = await fetch(parsed.toString(), {
-      headers: {
-        'user-agent': 'Mozilla/5.0 (compatible; NateOS-Portfolio/1.0; +https://nate.cx)',
-        accept: 'text/html,*/*;q=0.5',
-      },
-      redirect: 'follow',
-      next: { revalidate: 21600 },
-    })
+    // Follow redirects manually so we can re-run the SSRF guard on each hop.
+    // `redirect: 'follow'` would let an attacker host a public URL that 302s
+    // to e.g. http://169.254.169.254/...
+    const MAX_REDIRECTS = 5
+    let current = parsed
+    let r: Response | null = null
+    for (let i = 0; i <= MAX_REDIRECTS; i++) {
+      r = await fetch(current.toString(), {
+        headers: {
+          'user-agent': 'Mozilla/5.0 (compatible; NateOS-Portfolio/1.0; +https://nate.cx)',
+          accept: 'text/html,*/*;q=0.5',
+        },
+        redirect: 'manual',
+        next: { revalidate: 21600 },
+      })
+      if (r.status >= 300 && r.status < 400) {
+        const loc = r.headers.get('location')
+        if (!loc) break
+        const next = new URL(loc, current)
+        if (!['http:', 'https:'].includes(next.protocol)) {
+          return NextResponse.json({ error: 'bad redirect protocol' }, { status: 400 })
+        }
+        const hopGuard = await ssrfSafe(next)
+        if (!hopGuard.ok) {
+          return NextResponse.json(
+            { error: `blocked redirect: ${hopGuard.reason}` },
+            { status: 400 },
+          )
+        }
+        current = next
+        continue
+      }
+      break
+    }
+    if (!r) {
+      return NextResponse.json({ error: 'no response' }, { status: 502 })
+    }
+    if (r.status >= 300 && r.status < 400) {
+      return NextResponse.json({ error: 'too many redirects' }, { status: 502 })
+    }
     if (!r.ok) {
       return NextResponse.json(
         { url: target, title: null, description: null, image: null, siteName: null },
