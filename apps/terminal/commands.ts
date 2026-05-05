@@ -6,21 +6,22 @@ export type CommandContext = {
   closeWindow(windowId: string): void
 }
 
-const ABOUT =
+const WHOAMI =
   "Nate O'Farrell — Director of Infrastructure & Platform Engineering at\n" +
   'Commonwealth Fusion Systems. 15+ years building distributed systems.\n' +
-  'Hands-on builder. Tewksbury, MA. nate@nateofarrell.com'
+  'Hands-on builder. Tewksbury, MA. nate@nateofarrell.com\n' +
+  '\n' +
+  "Type 'open resume' for the long version."
 
 const HELP_LINES = [
   'help                       show this message',
   'apps                       list available apps',
   'open <app>                 open an app',
-  'whoami                     who is running NateOS',
+  'whoami                     bio + contact',
   'ls [path]                  list /content',
   'cat <file>                 print a content file',
   'cd <path>                  (cosmetic) change pwd display',
   'clear                      clear screen',
-  'about                      one-paragraph bio',
   'contact                    open Messages app',
   'resume                     open Resume app',
 ]
@@ -106,7 +107,7 @@ export async function runCommand(raw: string, ctx: CommandContext): Promise<stri
       return ''
     }
     case 'whoami':
-      return 'nate (Director of Infra @ CFS — hands-on builder)'
+      return WHOAMI
     case 'ls': {
       const path = args[0] ?? '/'
       const norm = path.endsWith('/') || path === '/' ? path : `${path}/`
@@ -130,8 +131,6 @@ export async function runCommand(raw: string, ctx: CommandContext): Promise<stri
     }
     case 'clear':
       return '__CLEAR__'
-    case 'about':
-      return ABOUT
     case 'contact':
       ctx.openApp('messages')
       return ''

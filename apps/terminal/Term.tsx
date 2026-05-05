@@ -126,7 +126,6 @@ export function Term({ ctx }: { ctx: CommandContext }) {
         'cat',
         'cd',
         'clear',
-        'about',
         'contact',
         'resume',
       ]
