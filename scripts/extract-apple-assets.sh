@@ -15,7 +15,7 @@ if [[ "$(uname)" != "Darwin" ]]; then
 fi
 
 echo "Extracting app icons from /System/Applications/..."
-APPS=(Finder Safari Calendar Calculator Messages TextEdit Terminal Contacts "System Preferences" "System Settings")
+APPS=(Finder Safari Calendar Calculator Messages TextEdit Terminal Contacts Preview "System Preferences" "System Settings")
 # Locate an .icns for an app by checking common locations + falling back to first .icns
 # in the app's Resources dir.
 locate_app_icns() {

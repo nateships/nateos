@@ -11,6 +11,15 @@ const SIDEBAR: { label: string; path: string }[] = [
   { label: 'Calendar', path: '/Calendar' },
 ]
 
+function iconFor(entry: VfsEntry): string {
+  if (entry.kind === 'folder') return '/apple/icons/GenericFolderIcon.png'
+  const name = entry.name.toLowerCase()
+  if (name.endsWith('.pdf')) return '/apple/icons/preview.png'
+  if (name.endsWith('.md') || name.endsWith('.txt')) return '/apple/icons/textedit.png'
+  if (name.endsWith('.url') || name.endsWith('.app')) return '/apple/icons/safari.png'
+  return '/apple/icons/GenericDocumentIcon.png'
+}
+
 export function FinderApp() {
   const [cwd, setCwd] = useState('/')
   const openApp = useWindowStore((s) => s.openApp)
@@ -67,17 +76,7 @@ export function FinderApp() {
               className="flex flex-col items-center gap-1 p-2 rounded-md hover:bg-white/5 focus:bg-white/10 outline-none"
               title={e.name}
             >
-              <Image
-                src={
-                  e.kind === 'folder'
-                    ? '/apple/icons/GenericFolderIcon.png'
-                    : '/apple/icons/GenericDocumentIcon.png'
-                }
-                alt=""
-                width={48}
-                height={48}
-                unoptimized
-              />
+              <Image src={iconFor(e)} alt="" width={48} height={48} unoptimized />
               <div className="text-[11px] text-center break-words leading-tight max-w-full">
                 {e.name}
               </div>
