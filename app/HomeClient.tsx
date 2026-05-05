@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { BootScreen } from '@/components/os/BootScreen'
 import { EraClass } from '@/components/os/EraClass'
+import { KonamiTrigger } from '@/components/os/KonamiTrigger'
 import { useWindowStore } from '@/lib/os/window-store'
 
 const KEY = 'nateos_booted'
@@ -36,6 +37,7 @@ export function HomeClient() {
   return (
     <>
       <EraClass />
+      <KonamiTrigger />
       {booting ? <BootScreen onDone={onBootDone} /> : null}
     </>
   )
