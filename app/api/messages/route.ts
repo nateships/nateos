@@ -18,11 +18,29 @@ const FROM = 'NateOS <onboarding@resend.dev>'
 const buckets = new Map<string, number[]>()
 const LIMIT = 3
 const WINDOW_MS = 60 * 60 * 1000
+let lastSweep = 0
+
+// Drop expired entries so a long-running warm function doesn't accumulate
+// orphaned IP keys forever. Sweeps at most once per WINDOW_MS.
+function sweep(now: number) {
+  if (now - lastSweep < WINDOW_MS) return
+  lastSweep = now
+  for (const [ip, arr] of buckets) {
+    const fresh = arr.filter((t) => now - t < WINDOW_MS)
+    if (fresh.length === 0) buckets.delete(ip)
+    else if (fresh.length !== arr.length) buckets.set(ip, fresh)
+  }
+}
 
 function rateLimit(ip: string): boolean {
   const now = Date.now()
+  sweep(now)
   const arr = (buckets.get(ip) ?? []).filter((t) => now - t < WINDOW_MS)
-  if (arr.length >= LIMIT) return false
+  if (arr.length >= LIMIT) {
+    if (arr.length === 0) buckets.delete(ip)
+    else buckets.set(ip, arr)
+    return false
+  }
   arr.push(now)
   buckets.set(ip, arr)
   return true

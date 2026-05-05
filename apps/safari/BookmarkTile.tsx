@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { Bookmark } from '@/lib/content/schema'
 import { classify } from './preview-type'
 
@@ -26,27 +26,24 @@ function hostOf(url: string) {
 }
 
 export function BookmarkTile({ bookmark }: { bookmark: Bookmark }) {
-  const t = classify(bookmark.url)
+  // useMemo gives a stable reference keyed on bookmark.url so the effect
+  // can depend on `t` itself without re-firing every render (the bug we
+  // hit before when classify was called twice).
+  const t = useMemo(() => classify(bookmark.url), [bookmark.url])
   const [og, setOg] = useState<Og | null>(null)
   const [gh, setGh] = useState<GhRepo | null>(null)
 
-  // Depend on the stable URL string, not the freshly-classified object.
-  // Otherwise the new object reference on each render re-fires the effect,
-  // re-fetches, re-renders, and loops forever.
   useEffect(() => {
     let cancelled = false
-    const next = classify(bookmark.url)
-    if (next.kind === 'github') {
-      fetch(
-        `/api/github?owner=${encodeURIComponent(next.owner)}&repo=${encodeURIComponent(next.repo)}`,
-      )
+    if (t.kind === 'github') {
+      fetch(`/api/github?owner=${encodeURIComponent(t.owner)}&repo=${encodeURIComponent(t.repo)}`)
         .then(async (r) => (r.ok ? ((await r.json()) as GhRepo) : null))
         .then((d) => {
           if (!cancelled && d) setGh(d)
         })
         .catch(() => undefined)
-    } else if (next.kind === 'og') {
-      fetch(`/api/og?url=${encodeURIComponent(next.url)}`)
+    } else if (t.kind === 'og') {
+      fetch(`/api/og?url=${encodeURIComponent(t.url)}`)
         .then(async (r) => (r.ok ? ((await r.json()) as Og) : null))
         .then((d) => {
           if (!cancelled && d) setOg(d)
@@ -56,7 +53,7 @@ export function BookmarkTile({ bookmark }: { bookmark: Bookmark }) {
     return () => {
       cancelled = true
     }
-  }, [bookmark.url])
+  }, [t])
 
   const host = hostOf(bookmark.url)
 
