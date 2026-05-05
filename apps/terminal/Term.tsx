@@ -29,25 +29,25 @@ function Banner() {
     { label: 'Theme', value: 'Tahoe (dark)' },
   ]
   return (
-    <div className="flex items-start gap-4 leading-none">
+    <div className="flex flex-col gap-2 leading-none">
       <div className="flex items-end gap-1 leading-none">
         <pre className="text-cyan-300/90 m-0 leading-tight">{NATE_ART}</pre>
         <pre className="text-pink-300/90 m-0 leading-tight">{OS_ART}</pre>
       </div>
-      <div className="flex flex-col gap-0.5 pt-1">
+      <div className="flex flex-col gap-0.5">
         <div className="flex gap-2 items-baseline">
           <span className="text-emerald-300 font-bold">nate</span>
           <span className="text-white/40">@</span>
           <span className="text-sky-300 font-bold">nate.cx</span>
         </div>
-        <div className="text-white/30 tracking-tight">────────────────────</div>
+        <div className="text-white/30 tracking-tight">────────────────────────────</div>
         {facts.slice(2).map((f) => (
           <div key={f.label} className="flex gap-2">
             <span className="text-pink-300 font-semibold w-[72px]">{f.label}:</span>
             <span className={f.valueClass ?? 'text-white/85'}>{f.value}</span>
           </div>
         ))}
-        <div className="text-white/30 tracking-tight mt-1">────────────────────</div>
+        <div className="text-white/30 tracking-tight mt-1">────────────────────────────</div>
         <div className="flex gap-2 mt-0.5 text-white/70">
           <span>tip:</span>
           <span>
