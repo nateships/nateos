@@ -2,7 +2,7 @@ import { type LookupAddress, type LookupOptions, lookup as lookupCb } from 'node
 import { lookup } from 'node:dns/promises'
 import { isIP } from 'node:net'
 import { NextResponse } from 'next/server'
-import { Agent, fetch as undiciFetch } from 'undici'
+import type { Agent as UndiciAgent, fetch as UndiciFetch } from 'undici'
 
 export const revalidate = 21600
 // SSRF protection requires DNS lookup, which is a Node-only API. Force the
@@ -126,51 +126,59 @@ function isPrivateIP(ip: string): boolean {
   return true // not an IP we recognize → reject
 }
 
-// undici Agent that runs every TCP connect's DNS lookup through our private-IP
-// guard. Closes the DNS-rebinding TOCTOU where ssrfSafe sees a public IP
-// but fetch's own DNS resolution lands on a private one.
-const safeAgent = new Agent({
-  connect: {
-    lookup: (
-      hostname: string,
-      opts: LookupOptions,
-      cb: (
-        err: NodeJS.ErrnoException | null,
-        address: string | LookupAddress[],
-        family?: number,
-      ) => void,
-    ) => {
-      // Re-run the bare-hostname guard (BLOCKED_HOSTS, IP literal in private ranges).
-      const host = hostname.toLowerCase()
-      if (BLOCKED_HOSTS.has(host)) {
-        cb(new Error(`SSRF blocked: hostname ${host}`), '', 0)
-        return
-      }
-      if (isIP(host) !== 0 && isPrivateIP(host)) {
-        cb(new Error(`SSRF blocked: private ip literal ${host}`), '', 0)
-        return
-      }
-      lookupCb(hostname, opts, (err, address, family) => {
-        if (err) return cb(err, '', 0)
-        const list: LookupAddress[] = Array.isArray(address)
-          ? address
-          : [{ address: address as string, family: family as number }]
-        for (const r of list) {
-          if (isPrivateIP(r.address)) {
-            cb(new Error(`SSRF blocked: ${hostname} → ${r.address}`), '', 0)
-            return
+// Lazy-loaded singleton — undici is only imported when a real request arrives.
+// Importing it at module scope evaluates its init code during Next's build-
+// time page-data collection, which fails on runtimes that don't yet implement
+// `node:util#markAsUncloneable` (e.g. Bun 1.x, Node < 22.5). The Vercel
+// runtime is Node 22+, so the runtime path is unaffected.
+let cachedAgent: UndiciAgent | null = null
+async function getSafeAgent(): Promise<UndiciAgent> {
+  if (cachedAgent) return cachedAgent
+  const { Agent } = await import('undici')
+  cachedAgent = new Agent({
+    connect: {
+      lookup: (
+        hostname: string,
+        opts: LookupOptions,
+        cb: (
+          err: NodeJS.ErrnoException | null,
+          address: string | LookupAddress[],
+          family?: number,
+        ) => void,
+      ) => {
+        // Re-run the bare-hostname guard (BLOCKED_HOSTS, IP literal in private ranges).
+        const host = hostname.toLowerCase()
+        if (BLOCKED_HOSTS.has(host)) {
+          cb(new Error(`SSRF blocked: hostname ${host}`), '', 0)
+          return
+        }
+        if (isIP(host) !== 0 && isPrivateIP(host)) {
+          cb(new Error(`SSRF blocked: private ip literal ${host}`), '', 0)
+          return
+        }
+        lookupCb(hostname, opts, (err, address, family) => {
+          if (err) return cb(err, '', 0)
+          const list: LookupAddress[] = Array.isArray(address)
+            ? address
+            : [{ address: address as string, family: family as number }]
+          for (const r of list) {
+            if (isPrivateIP(r.address)) {
+              cb(new Error(`SSRF blocked: ${hostname} → ${r.address}`), '', 0)
+              return
+            }
           }
-        }
-        if (opts?.all) {
-          cb(null, list)
-        } else {
-          const first = list[0]
-          cb(null, first.address, first.family)
-        }
-      })
+          if (opts?.all) {
+            cb(null, list)
+          } else {
+            const first = list[0]
+            cb(null, first.address, first.family)
+          }
+        })
+      },
     },
-  },
-})
+  })
+  return cachedAgent
+}
 
 async function ssrfSafe(parsed: URL): Promise<{ ok: true } | { ok: false; reason: string }> {
   const host = parsed.hostname.toLowerCase()
@@ -210,13 +218,16 @@ export async function GET(req: Request) {
   if (!guard.ok) {
     return NextResponse.json({ error: `blocked: ${guard.reason}` }, { status: 400 })
   }
+  // Lazy-import undici only when a request actually arrives.
+  const { fetch: undiciFetch } = await import('undici')
+  const safeAgent = await getSafeAgent()
   try {
     // Follow redirects manually so we can re-run the SSRF guard on each hop.
     // `redirect: 'follow'` would let an attacker host a public URL that 302s
     // to e.g. http://169.254.169.254/...
     const MAX_REDIRECTS = 5
     let current = parsed
-    let r: Awaited<ReturnType<typeof undiciFetch>> | null = null
+    let r: Awaited<ReturnType<typeof UndiciFetch>> | null = null
     for (let i = 0; i <= MAX_REDIRECTS; i++) {
       r = await undiciFetch(current.toString(), {
         headers: {
