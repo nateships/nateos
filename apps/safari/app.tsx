@@ -1,6 +1,8 @@
 'use client'
+import { useState } from 'react'
 import { bookmarks } from '@/app/safari/data'
 import type { Bookmark } from '@/lib/content/schema'
+import { PreviewPane } from './PreviewPane'
 
 const CATEGORY_LABELS: Record<Bookmark['category'], string> = {
   code: 'Code',
@@ -20,47 +22,48 @@ function hostOf(url: string) {
 }
 
 export function SafariApp() {
+  const [activeUrl, setActiveUrl] = useState<string>(bookmarks[0]?.url ?? '')
+  const active = bookmarks.find((b) => b.url === activeUrl) ?? bookmarks[0]
   const grouped = CATEGORY_ORDER.map((cat) => ({
     cat,
     items: bookmarks.filter((b) => b.category === cat),
   })).filter((g) => g.items.length > 0)
 
   return (
-    <div className="h-full w-full overflow-auto os-scroll bg-zinc-900/95 text-white">
-      <div className="max-w-2xl mx-auto px-7 py-7 flex flex-col gap-6">
+    <div className="h-full w-full flex bg-zinc-900/95 text-white">
+      <aside className="w-64 border-r border-white/10 overflow-auto os-scroll p-3 flex flex-col gap-4">
         <header>
-          <h1 className="text-xl font-semibold tracking-tight">Reading List</h1>
-          <p className="text-[12px] opacity-60 mt-1">Curated links — click to open in a new tab.</p>
+          <h1 className="text-[14px] font-semibold">Reading List</h1>
+          <p className="text-[10px] opacity-60 mt-0.5">Click to preview</p>
         </header>
-
         {grouped.map(({ cat, items }) => (
           <section key={cat}>
-            <h2 className="text-[10px] uppercase tracking-wider opacity-50 mb-2">
+            <h2 className="text-[10px] uppercase tracking-wider opacity-50 mb-1.5 px-1">
               {CATEGORY_LABELS[cat]}
             </h2>
-            <ul className="flex flex-col gap-1.5">
-              {items.map((b) => (
-                <li key={b.url}>
-                  <a
-                    href={b.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors group"
-                  >
-                    <span className="flex-1 min-w-0">
-                      <span className="block text-[13px] font-medium truncate">{b.label}</span>
-                      <span className="block text-[11px] opacity-60 truncate">{hostOf(b.url)}</span>
-                    </span>
-                    <span className="text-[12px] opacity-40 group-hover:opacity-100 transition-opacity">
-                      ↗
-                    </span>
-                  </a>
-                </li>
-              ))}
+            <ul className="flex flex-col gap-0.5">
+              {items.map((b) => {
+                const isActive = b.url === active?.url
+                return (
+                  <li key={b.url}>
+                    <button
+                      type="button"
+                      onClick={() => setActiveUrl(b.url)}
+                      className={`w-full text-left px-2 py-1.5 rounded-md transition-colors ${
+                        isActive ? 'bg-blue-500/80 text-white' : 'hover:bg-white/5'
+                      }`}
+                    >
+                      <div className="text-[12px] font-medium truncate">{b.label}</div>
+                      <div className="text-[10px] opacity-60 truncate">{hostOf(b.url)}</div>
+                    </button>
+                  </li>
+                )
+              })}
             </ul>
           </section>
         ))}
-      </div>
+      </aside>
+      <div className="flex-1 min-w-0">{active ? <PreviewPane bookmark={active} /> : null}</div>
     </div>
   )
 }
