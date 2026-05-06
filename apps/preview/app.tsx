@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { AppContext } from '@/lib/os/types'
 
 function Fallback({ src, msg }: { src: string; msg: string }) {
@@ -18,25 +18,35 @@ function Fallback({ src, msg }: { src: string; msg: string }) {
 }
 
 /**
- * DOCX renderer — fetches the file in the browser and converts to HTML via
- * mammoth.js, which strips scripts/styles/event handlers and emits only the
- * structural subset (paragraphs, headings, lists, tables, runs). The source
- * DOCX is committed to this repo, not user input, so the converted output is
- * safe to inject. Avoids the Office Online embed viewer's third-party server
+ * DOCX renderer — fetches the file in the browser and renders via
+ * docx-preview, which preserves the original document's fonts, sizes,
+ * spacing, tables, and inline styles (unlike mammoth which strips back to
+ * semantic HTML). Avoids the Office Online embed viewer's third-party
  * fetch which is unreliable on preview deployments and CORS-gated hosts.
  */
 function DocxRenderer({ src, title }: { src: string; title: string }) {
-  const [html, setHtml] = useState<string | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
   useEffect(() => {
+    const target = containerRef.current
+    if (!target) return
     let cancelled = false
     async function load() {
       try {
-        const [mammothMod, res] = await Promise.all([import('mammoth'), fetch(src)])
+        const [docxMod, res] = await Promise.all([import('docx-preview'), fetch(src)])
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        const arrayBuffer = await res.arrayBuffer()
-        const out = await mammothMod.convertToHtml({ arrayBuffer })
-        if (!cancelled) setHtml(out.value)
+        const buf = await res.arrayBuffer()
+        if (cancelled || !target) return
+        target.replaceChildren()
+        await docxMod.renderAsync(buf, target, undefined, {
+          className: 'docx',
+          inWrapper: true,
+          ignoreLastRenderedPageBreak: true,
+          experimental: true,
+          breakPages: true,
+        })
+        if (!cancelled) setLoading(false)
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : 'Conversion failed')
       }
@@ -50,20 +60,14 @@ function DocxRenderer({ src, title }: { src: string; title: string }) {
   if (error) {
     return <Fallback src={src} msg={`Couldn't render preview: ${error}`} />
   }
-  if (html === null) {
-    return (
-      <div className="os-glass-app h-full w-full flex items-center justify-center text-white text-[13px] opacity-60">
-        Loading {title}…
-      </div>
-    )
-  }
   return (
-    <div className="h-full w-full overflow-auto os-scroll bg-white text-zinc-900">
-      <article
-        className="max-w-3xl mx-auto px-10 py-10 docx-content text-[14px] leading-relaxed"
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: mammoth strips scripts/styles; source DOCX is committed, not user input
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+    <div className="h-full w-full overflow-auto os-scroll bg-zinc-200 text-zinc-900 relative">
+      {loading ? (
+        <div className="absolute inset-0 flex items-center justify-center text-zinc-500 text-[13px]">
+          Loading {title}…
+        </div>
+      ) : null}
+      <div ref={containerRef} className="docx-host py-6" />
     </div>
   )
 }
