@@ -41,8 +41,9 @@ export function FinderApp() {
     if (entry.open === '/resume') openApp('resume')
     else if (entry.open === '/safari') openApp('safari')
     else if (entry.open === '/calendar') openApp('calendar')
-    else if (entry.open.endsWith('.pdf') || entry.open.endsWith('.docx'))
-      window.open(entry.open, '_blank')
+    else if (entry.open.endsWith('.pdf') || entry.open.endsWith('.docx')) {
+      openApp('preview', { src: entry.open, title: entry.name })
+    }
   }
 
   return (

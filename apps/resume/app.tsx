@@ -1,8 +1,17 @@
 'use client'
 import { resumeData } from '@/app/resume/data'
+import { useWindowStore } from '@/lib/os/window-store'
+
+const PDF_PATH = '/Nate_OFarrell_Resume_2026.pdf'
+const DOCX_PATH = '/Nate_OFarrell_Resume_2026.docx'
 
 export function ResumeApp() {
   const r = resumeData
+  const openApp = useWindowStore((s) => s.openApp)
+
+  function preview(src: string, title: string) {
+    openApp('preview', { src, title })
+  }
   return (
     <div className="os-glass-app h-full w-full overflow-auto os-scroll text-white">
       <div className="max-w-3xl mx-auto px-8 py-7 flex flex-col gap-7">
@@ -21,20 +30,28 @@ export function ResumeApp() {
             </div>
           </div>
           <div className="flex flex-col gap-1.5 items-end">
-            <a
-              href="/Nate_OFarrell_Resume_2026.pdf"
-              download="Nate_OFarrell_Resume_2026.pdf"
+            <button
+              type="button"
+              onClick={() => preview(PDF_PATH, 'Resume — PDF')}
               className="w-36 text-center px-3 py-1.5 rounded-md bg-blue-500 hover:bg-blue-400 text-white text-[12px] font-medium whitespace-nowrap"
             >
-              Download PDF
-            </a>
-            <a
-              href="/Nate_OFarrell_Resume_2026.docx"
-              download="Nate_OFarrell_Resume_2026.docx"
+              Preview PDF
+            </button>
+            <button
+              type="button"
+              onClick={() => preview(DOCX_PATH, 'Resume — DOCX')}
               className="w-36 text-center px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white text-[12px] font-medium whitespace-nowrap"
             >
-              Download DOCX
-            </a>
+              Preview DOCX
+            </button>
+            <div className="flex gap-3 text-[11px] opacity-60 mt-0.5">
+              <a href={PDF_PATH} download className="hover:opacity-100 hover:underline">
+                ↓ pdf
+              </a>
+              <a href={DOCX_PATH} download className="hover:opacity-100 hover:underline">
+                ↓ docx
+              </a>
+            </div>
           </div>
         </header>
 
