@@ -1,4 +1,5 @@
 'use client'
+import { useEffect, useState } from 'react'
 import type { AppContext } from '@/lib/os/types'
 
 function Fallback({ src, msg }: { src: string; msg: string }) {
@@ -17,12 +18,61 @@ function Fallback({ src, msg }: { src: string; msg: string }) {
 }
 
 /**
- * Quick Look-style preview window. Renders an iframe inline so visitors can
- * read the resume (PDF or DOCX) without committing to a download.
- *  - PDFs render natively in the browser's plugin.
- *  - DOCX files use Microsoft's Office Online embed viewer, which requires a
- *    publicly-reachable URL. On localhost the viewer can't reach the file,
- *    so we fall back to a download link.
+ * DOCX renderer — fetches the file in the browser and converts to HTML via
+ * mammoth.js, which strips scripts/styles/event handlers and emits only the
+ * structural subset (paragraphs, headings, lists, tables, runs). The source
+ * DOCX is committed to this repo, not user input, so the converted output is
+ * safe to inject. Avoids the Office Online embed viewer's third-party server
+ * fetch which is unreliable on preview deployments and CORS-gated hosts.
+ */
+function DocxRenderer({ src, title }: { src: string; title: string }) {
+  const [html, setHtml] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      try {
+        const [mammothMod, res] = await Promise.all([import('mammoth'), fetch(src)])
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const arrayBuffer = await res.arrayBuffer()
+        const out = await mammothMod.convertToHtml({ arrayBuffer })
+        if (!cancelled) setHtml(out.value)
+      } catch (e) {
+        if (!cancelled) setError(e instanceof Error ? e.message : 'Conversion failed')
+      }
+    }
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [src])
+
+  if (error) {
+    return <Fallback src={src} msg={`Couldn't render preview: ${error}`} />
+  }
+  if (html === null) {
+    return (
+      <div className="os-glass-app h-full w-full flex items-center justify-center text-white text-[13px] opacity-60">
+        Loading {title}…
+      </div>
+    )
+  }
+  return (
+    <div className="h-full w-full overflow-auto os-scroll bg-white text-zinc-900">
+      <article
+        className="max-w-3xl mx-auto px-10 py-10 docx-content text-[14px] leading-relaxed"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: mammoth strips scripts/styles; source DOCX is committed, not user input
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+    </div>
+  )
+}
+
+/**
+ * Quick Look-style preview window. Renders the resume (PDF or DOCX) inline so
+ * visitors can read it without committing to a download.
+ *  - PDFs render in the browser's native PDF plugin via <object>.
+ *  - DOCX files are converted to HTML client-side via mammoth.
  */
 export function PreviewApp(ctx: AppContext) {
   const src = (ctx.params?.src as string | undefined) ?? ''
@@ -38,30 +88,9 @@ export function PreviewApp(ctx: AppContext) {
   const isPdf = lower.endsWith('.pdf')
   const isDocx = lower.endsWith('.docx')
 
-  if (isDocx) {
-    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-      return (
-        <Fallback src={src} msg="DOCX preview needs a public URL — unavailable on localhost." />
-      )
-    }
-    if (typeof window !== 'undefined') {
-      const absolute = `${window.location.origin}${src}`
-      const officeUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(absolute)}`
-      return (
-        <div className="os-glass-app h-full w-full">
-          <iframe title={title} src={officeUrl} className="w-full h-full border-0 bg-white" />
-        </div>
-      )
-    }
-    // SSR — render a placeholder; the client will replace it on hydration.
-    return <div className="os-glass-app h-full w-full" />
-  }
+  if (isDocx) return <DocxRenderer src={src} title={title} />
 
   if (isPdf) {
-    // <object> with explicit type beats <iframe> for inline PDF rendering on
-    // some CDNs — it forces the browser's PDF viewer instead of letting the
-    // network response steer the frame into a download. Inner <iframe> +
-    // download link kicks in if the browser can't render PDFs at all.
     return (
       <div className="os-glass-app h-full w-full">
         <object
@@ -76,5 +105,5 @@ export function PreviewApp(ctx: AppContext) {
     )
   }
 
-  return <Fallback src={src} msg={`Preview not supported for this file type.`} />
+  return <Fallback src={src} msg="Preview not supported for this file type." />
 }
