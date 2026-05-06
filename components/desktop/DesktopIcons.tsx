@@ -9,10 +9,10 @@ export function DesktopIcons() {
   const openApp = useWindowStore((s) => s.openApp)
 
   function previewPdf() {
-    openApp('preview', { src: `/api/file/${PDF_FILE}`, title: 'Resume — PDF' })
+    openApp('preview', { src: `/${PDF_FILE}`, title: 'Resume — PDF' })
   }
   function previewDocx() {
-    openApp('preview', { src: `/api/file/${DOCX_FILE}`, title: 'Resume — DOCX' })
+    openApp('preview', { src: `/${DOCX_FILE}`, title: 'Resume — DOCX' })
   }
 
   return (

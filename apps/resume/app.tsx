@@ -4,10 +4,6 @@ import { useWindowStore } from '@/lib/os/window-store'
 
 const PDF_PATH = '/Nate_OFarrell_Resume_2026.pdf'
 const DOCX_PATH = '/Nate_OFarrell_Resume_2026.docx'
-// Preview points at the /api/file route (forces Content-Disposition: inline);
-// download links keep direct /public paths so the browser triggers download.
-const PDF_PREVIEW = '/api/file/Nate_OFarrell_Resume_2026.pdf'
-const DOCX_PREVIEW = '/api/file/Nate_OFarrell_Resume_2026.docx'
 
 export function ResumeApp() {
   const r = resumeData
@@ -36,14 +32,14 @@ export function ResumeApp() {
           <div className="flex flex-col gap-1.5 items-end">
             <button
               type="button"
-              onClick={() => preview(PDF_PREVIEW, 'Resume — PDF')}
+              onClick={() => preview(PDF_PATH, 'Resume — PDF')}
               className="w-36 text-center px-3 py-1.5 rounded-md bg-blue-500 hover:bg-blue-400 text-white text-[12px] font-medium whitespace-nowrap"
             >
               Preview PDF
             </button>
             <button
               type="button"
-              onClick={() => preview(DOCX_PREVIEW, 'Resume — DOCX')}
+              onClick={() => preview(DOCX_PATH, 'Resume — DOCX')}
               className="w-36 text-center px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white text-[12px] font-medium whitespace-nowrap"
             >
               Preview DOCX

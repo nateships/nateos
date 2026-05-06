@@ -42,11 +42,7 @@ export function FinderApp() {
     else if (entry.open === '/safari') openApp('safari')
     else if (entry.open === '/calendar') openApp('calendar')
     else if (entry.open.endsWith('.pdf') || entry.open.endsWith('.docx')) {
-      // Route through /api/file so the response always has Content-Disposition:
-      // inline — Vercel's static asset CDN otherwise serves /public docs as
-      // attachments and the iframe/object preview triggers a download.
-      const name = entry.open.replace(/^\//, '')
-      openApp('preview', { src: `/api/file/${name}`, title: entry.name })
+      openApp('preview', { src: entry.open, title: entry.name })
     }
   }
 
