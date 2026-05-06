@@ -1,7 +1,6 @@
 'use client'
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { AppearanceProvider } from '@/components/os/AppearanceProvider'
 import { BootScreen } from '@/components/os/BootScreen'
 import { useWindowStore } from '@/lib/os/window-store'
 
@@ -49,10 +48,5 @@ export function HomeClient() {
     if (p === '/' || p === '') ensureTerminal()
   }, [])
 
-  return (
-    <>
-      <AppearanceProvider />
-      {booting ? <BootScreen onDone={onBootDone} /> : null}
-    </>
-  )
+  return <>{booting ? <BootScreen onDone={onBootDone} /> : null}</>
 }

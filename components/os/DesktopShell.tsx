@@ -4,6 +4,7 @@ import { DeeplinkRouter } from '@/components/deeplink/DeeplinkRouter'
 import { DesktopWidgets } from '@/components/desktop/DesktopWidgets'
 import { MobileShell } from '@/components/mobile/MobileShell'
 import { useViewport } from '@/lib/os/use-viewport'
+import { AppearanceProvider } from './AppearanceProvider'
 import { Dock } from './Dock'
 import { KernelPanic } from './KernelPanic'
 import { LockScreen } from './LockScreen'
@@ -16,6 +17,7 @@ export function DesktopShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <AppearanceProvider />
       {isMobile ? (
         <MobileShell />
       ) : (
