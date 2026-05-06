@@ -21,7 +21,7 @@ export function MessagesApp() {
   const [input, setInput] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [context, setContext] = useState<SendBody['context']>('other')
+  const [context, setContext] = useState<SendBody['context']>('recruiter')
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
@@ -80,13 +80,9 @@ export function MessagesApp() {
         <p className="text-[11px] opacity-60">iMessage · delivered to nate@nateofarrell.com</p>
       </header>
 
-      <div className="flex-1 overflow-auto os-scroll px-4 pt-3 pb-4 flex flex-col gap-2">
-        {messages.length === 0 ? (
-          <p className="text-[12px] opacity-50 self-center text-center max-w-[80%]">
-            Send a message — it lands in Nate's inbox via Resend.
-          </p>
-        ) : (
-          messages.map((m) => (
+      {messages.length > 0 && (
+        <div className="flex-1 overflow-auto os-scroll px-4 pt-3 pb-4 flex flex-col gap-2">
+          {messages.map((m) => (
             <div
               key={m.id}
               className={`max-w-[80%] px-3 py-2 rounded-2xl text-[13px] ${
@@ -97,11 +93,20 @@ export function MessagesApp() {
             >
               {m.text}
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
-      <div className="px-4 py-3 border-t border-white/10 flex flex-col gap-2">
+      <div
+        className={`px-4 py-3 flex flex-col gap-2 ${
+          messages.length > 0 ? 'border-t border-white/10' : ''
+        }`}
+      >
+        {messages.length === 0 ? (
+          <p className="text-[12px] opacity-50 text-center pt-1 pb-1">
+            Send a message — it lands in Nate's inbox via Resend.
+          </p>
+        ) : null}
         <div className="grid grid-cols-2 gap-2">
           <input
             value={name}
@@ -112,7 +117,7 @@ export function MessagesApp() {
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
+            placeholder="Your Email"
             type="email"
             className="bg-white/5 rounded-md px-3 py-1.5 text-[12px] outline-none focus:ring-1 focus:ring-blue-500"
           />
