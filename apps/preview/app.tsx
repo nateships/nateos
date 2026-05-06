@@ -61,13 +61,25 @@ function DocxRenderer({ src, title }: { src: string; title: string }) {
     return <Fallback src={src} msg={`Couldn't render preview: ${error}`} />
   }
   return (
-    <div className="h-full w-full overflow-auto os-scroll bg-zinc-200 text-zinc-900 relative">
-      {loading ? (
-        <div className="absolute inset-0 flex items-center justify-center text-zinc-500 text-[13px]">
-          Loading {title}…
-        </div>
-      ) : null}
-      <div ref={containerRef} className="docx-host py-6" />
+    <div className="h-full w-full flex flex-col bg-zinc-200 text-zinc-900">
+      <div className="shrink-0 flex items-center justify-between gap-3 px-3 py-1.5 bg-zinc-100/95 border-b border-zinc-300">
+        <span className="text-[11px] text-zinc-500 truncate">{title}</span>
+        <a
+          href={src}
+          download
+          className="px-3 py-1 rounded-md bg-blue-500 hover:bg-blue-400 text-white text-[11px] font-medium"
+        >
+          Download
+        </a>
+      </div>
+      <div className="flex-1 overflow-auto os-scroll relative">
+        {loading ? (
+          <div className="absolute inset-0 flex items-center justify-center text-zinc-500 text-[13px]">
+            Loading {title}…
+          </div>
+        ) : null}
+        <div ref={containerRef} className="docx-host py-6" />
+      </div>
     </div>
   )
 }

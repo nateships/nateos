@@ -8,7 +8,7 @@ export const manifest: AppManifest = {
   icon: PreviewIcon,
   route: '/preview',
   component: PreviewApp,
-  defaultSize: { w: 800, h: 920 },
+  defaultSize: { w: 1040, h: 920 },
   minSize: { w: 480, h: 400 },
   capabilities: ['resize', 'minimize', 'multi-instance'],
   surfaces: ['spotlight'],
