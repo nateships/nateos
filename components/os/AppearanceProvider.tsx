@@ -28,13 +28,12 @@ export function AppearanceProvider() {
     const t = Math.max(0, Math.min(100, transparency)) / 100
     // Light surfaces (menubar, dock): 95% solid → 25% at full glass.
     const lightPct = 95 - 70 * t
-    // Dark surfaces (window chrome, terminal, app bodies): 95% solid → 45%
-    // at full glass. Wide enough that the slider visibly retints app windows
-    // (was 7.8% range, effectively invisible) while still readable at any
-    // position thanks to the dark base color.
-    const darkPct = 95 - 50 * t
+    // Dark surfaces (window chrome, terminal, app bodies): 95% solid → 65%
+    // at full glass. Visible slider response, but app content stays readable
+    // — wider than this leaves windows feeling washed-out over the wallpaper.
+    const darkPct = 95 - 30 * t
     const blurPx = 30 * t
-    const darkBlurPx = 18 * t
+    const darkBlurPx = 14 * t
     root.style.setProperty('--os-glass-light', `${lightPct}%`)
     root.style.setProperty('--os-glass-dark', `${darkPct}%`)
     root.style.setProperty('--os-glass-blur', `${blurPx}px`)
