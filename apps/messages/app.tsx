@@ -98,12 +98,12 @@ export function MessagesApp() {
       )}
 
       <div
-        className={`px-4 py-3 flex flex-col gap-2 ${
-          messages.length > 0 ? 'border-t border-white/10' : ''
+        className={`px-4 py-3 flex flex-col gap-2 min-h-0 ${
+          messages.length > 0 ? 'border-t border-white/10' : 'flex-1'
         }`}
       >
         {messages.length === 0 ? (
-          <p className="text-[12px] opacity-50 text-center pt-1 pb-1">
+          <p className="text-[12px] opacity-50 text-center pt-1">
             Send a message — it lands in Nate's inbox via Resend.
           </p>
         ) : null}
@@ -131,14 +131,13 @@ export function MessagesApp() {
           <option value="engineer">Engineering peer</option>
           <option value="other">Other</option>
         </select>
-        <div className="flex gap-2 items-end">
+        <div className="flex gap-2 items-end flex-1 min-h-0">
           <textarea
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Write a message…"
-            rows={6}
-            className="flex-1 bg-white/5 rounded-md px-3 py-2 text-[13px] outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+            className="flex-1 self-stretch bg-white/5 rounded-md px-3 py-2 text-[13px] outline-none focus:ring-1 focus:ring-blue-500 resize-none min-h-[120px]"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) send()
             }}
