@@ -45,6 +45,8 @@ function DocxRenderer({ src, title }: { src: string; title: string }) {
           ignoreLastRenderedPageBreak: true,
           experimental: true,
           breakPages: true,
+          renderHeaders: false,
+          renderFooters: false,
         })
         if (!cancelled) setLoading(false)
       } catch (e) {
