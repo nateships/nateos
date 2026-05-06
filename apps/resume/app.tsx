@@ -1,5 +1,6 @@
 'use client'
 import { resumeData } from '@/app/resume/data'
+import { useViewport } from '@/lib/os/use-viewport'
 import { useWindowStore } from '@/lib/os/window-store'
 
 const PDF_PATH = '/Nate_OFarrell_Resume_2026.pdf'
@@ -8,6 +9,9 @@ const DOCX_PATH = '/Nate_OFarrell_Resume_2026.docx'
 export function ResumeApp() {
   const r = resumeData
   const openApp = useWindowStore((s) => s.openApp)
+  // MobileShell mounts no WindowLayer, so openApp('preview') would be a no-op.
+  // On mobile, defer to the browser's native preview by opening the file in a new tab.
+  const { isMobile } = useViewport()
 
   function preview(src: string, title: string) {
     openApp('preview', { src, title })
@@ -30,20 +34,43 @@ export function ResumeApp() {
             </div>
           </div>
           <div className="flex flex-col gap-1.5 items-end">
-            <button
-              type="button"
-              onClick={() => preview(PDF_PATH, 'Resume — PDF')}
-              className="w-36 text-center px-3 py-1.5 rounded-md bg-blue-500 hover:bg-blue-400 text-white text-[12px] font-medium whitespace-nowrap"
-            >
-              Preview PDF
-            </button>
-            <button
-              type="button"
-              onClick={() => preview(DOCX_PATH, 'Resume — DOCX')}
-              className="w-36 text-center px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white text-[12px] font-medium whitespace-nowrap"
-            >
-              Preview DOCX
-            </button>
+            {isMobile ? (
+              <>
+                <a
+                  href={PDF_PATH}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-36 text-center px-3 py-1.5 rounded-md bg-blue-500 hover:bg-blue-400 text-white text-[12px] font-medium whitespace-nowrap"
+                >
+                  Preview PDF
+                </a>
+                <a
+                  href={DOCX_PATH}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-36 text-center px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white text-[12px] font-medium whitespace-nowrap"
+                >
+                  Preview DOCX
+                </a>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => preview(PDF_PATH, 'Resume — PDF')}
+                  className="w-36 text-center px-3 py-1.5 rounded-md bg-blue-500 hover:bg-blue-400 text-white text-[12px] font-medium whitespace-nowrap"
+                >
+                  Preview PDF
+                </button>
+                <button
+                  type="button"
+                  onClick={() => preview(DOCX_PATH, 'Resume — DOCX')}
+                  className="w-36 text-center px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white text-[12px] font-medium whitespace-nowrap"
+                >
+                  Preview DOCX
+                </button>
+              </>
+            )}
             <div className="flex gap-3 text-[11px] opacity-60 mt-0.5">
               <a href={PDF_PATH} download className="hover:opacity-100 hover:underline">
                 ↓ pdf

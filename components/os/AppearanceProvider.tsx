@@ -28,19 +28,22 @@ export function AppearanceProvider() {
     const t = Math.max(0, Math.min(100, transparency)) / 100
     // Light surfaces (menubar, dock): 95% solid → 25% at full glass.
     const lightPct = 95 - 70 * t
-    // Dark surfaces (window chrome, terminal, app bodies): the dark slope is
-    // 30% of the light slope, so slider=100 gives dock full-glass AND windows
-    // the legibility level that previously required slider≈30. Means one
-    // slider position looks "right" across every surface at once.
-    const darkPct = 98 - 7.8 * t
-    // Blur is scaled the same 30% factor for dark surfaces so the visual
-    // weight of the blur tracks the alpha compression.
+    // Dark surfaces (window chrome, terminal, app bodies): 95% solid → 85%
+    // at full glass. Subtle slider response — app content stays firmly
+    // readable over the wallpaper at any position.
+    const darkPct = 95 - 10 * t
     const blurPx = 30 * t
-    const darkBlurPx = 5.4 * t
+    const darkBlurPx = 10 * t
     root.style.setProperty('--os-glass-light', `${lightPct}%`)
     root.style.setProperty('--os-glass-dark', `${darkPct}%`)
     root.style.setProperty('--os-glass-blur', `${blurPx}px`)
     root.style.setProperty('--os-glass-blur-dark', `${darkBlurPx}px`)
+    // Light surfaces fade from near-white (solid) to translucent over a dark
+    // wallpaper as the slider rises. Foreground has to track that: black at
+    // slider=0 (light bg → dark text) lerping to white at slider=100 (glass
+    // bg → light text). Linear lerp in sRGB is fine for grayscale endpoints.
+    const fgLight = `color-mix(in srgb, white ${t * 100}%, black)`
+    root.style.setProperty('--os-fg-on-light', fgLight)
   }, [transparency])
 
   useEffect(() => {

@@ -147,11 +147,11 @@ export function Menubar() {
 
   return (
     <>
-      <div className="os-glass-menubar fixed top-0 inset-x-0 h-7 z-50 flex items-stretch px-2 gap-0.5 text-white text-[12px] font-medium border-b border-white/10">
+      <div className="os-glass-menubar fixed top-0 inset-x-0 h-7 z-50 flex items-stretch px-2 gap-0.5 text-[12px] font-medium border-b border-white/10">
         {/* Apple menu */}
         <MenubarMenu
           ariaLabel="Apple menu"
-          trigger={<AppleLogo size={14} className="text-white" />}
+          trigger={<AppleLogo size={14} />}
           open={openMenu === 'apple'}
           onOpenChange={(o) => setMenu('apple', o)}
           onTriggerEnter={hoverSwitch('apple')}

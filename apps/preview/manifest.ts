@@ -10,8 +10,8 @@ export const manifest: AppManifest = {
   component: PreviewApp,
   defaultSize: { w: 1040, h: 920 },
   minSize: { w: 480, h: 400 },
-  capabilities: ['resize', 'minimize', 'multi-instance'],
-  surfaces: ['spotlight'],
+  capabilities: ['resize', 'multi-instance'],
+  surfaces: [],
   category: 'core',
   description: 'Quick Look — preview PDFs and documents inline.',
 }

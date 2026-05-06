@@ -41,7 +41,7 @@ export function Dock() {
             key={m.id}
             type="button"
             aria-label={m.title}
-            className={`group relative ${sz.btn} rounded-lg flex items-center justify-center transition-transform hover:scale-110 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60`}
+            className={`group relative ${sz.btn} rounded-lg flex items-center justify-center transition-transform hover:scale-110 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 [&_svg]:drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]`}
             onClick={() => {
               const existing = windows.find((w) => w.appId === m.id)
               if (!existing) {
