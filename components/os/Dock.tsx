@@ -9,6 +9,16 @@ const SIZES = {
   large: { btn: 'w-14 h-14', icon: 52, gap: 'gap-2' },
 } as const
 
+// macOS convention: Finder pinned to the far left. Hoisted out of the render
+// because it depends only on the static registry.
+const DOCK_APPS = registry
+  .filter((m) => m.surfaces.includes('dock') && !m.disabled)
+  .sort((a, b) => {
+    if (a.id === 'finder') return -1
+    if (b.id === 'finder') return 1
+    return 0
+  })
+
 export function Dock() {
   const windows = useWindowStore((s) => s.windows)
   const focusedId = useWindowStore((s) => s.focusedId)
@@ -19,20 +29,11 @@ export function Dock() {
   const runningIds = new Set(windows.map((w) => w.appId))
   const sz = SIZES[dockSize]
 
-  // macOS convention: Finder pinned to the far left.
-  const dockApps = registry
-    .filter((m) => m.surfaces.includes('dock') && !m.disabled)
-    .sort((a, b) => {
-      if (a.id === 'finder') return -1
-      if (b.id === 'finder') return 1
-      return 0
-    })
-
   return (
     <div
       className={`os-glass-dock fixed bottom-2 left-1/2 -translate-x-1/2 z-50 flex ${sz.gap} px-2 py-1.5 rounded-2xl border border-white/20`}
     >
-      {dockApps.map((m) => {
+      {DOCK_APPS.map((m) => {
         const Icon = m.icon
         const isRunning = runningIds.has(m.id)
         return (

@@ -29,8 +29,6 @@ export function Snake({ onExit }: { onExit: () => void }) {
   const foodRef = useRef<Point>(spawnFood([{ x: 8, y: 10 }]))
   const dirRef = useRef<Point>({ x: 1, y: 0 })
   const [dead, setDead] = useState(false)
-  // Bumped every tick to trigger a re-render; the actual game state lives
-  // in the refs above.
   const [, force] = useState(0)
 
   useEffect(() => {
@@ -85,6 +83,12 @@ export function Snake({ onExit }: { onExit: () => void }) {
 
   const snake = snakeRef.current
   const food = foodRef.current
+  // O(1) occupancy lookup per cell — was O(n) Array.some() called 320× per
+  // render which compounded into noticeable jank on slower devices.
+  const occupied = new Set<number>()
+  for (const p of snake) occupied.add(p.y * COLS + p.x)
+  const headKey = snake[0].y * COLS + snake[0].x
+  const foodKey = food.y * COLS + food.x
 
   return (
     <div className="os-glass-app h-full w-full flex flex-col items-center justify-center gap-2 text-white">
@@ -100,11 +104,9 @@ export function Snake({ onExit }: { onExit: () => void }) {
         }}
       >
         {Array.from({ length: ROWS * COLS }).map((_, i) => {
-          const x = i % COLS
-          const y = Math.floor(i / COLS)
-          const isSnake = snake.some((p) => p.x === x && p.y === y)
-          const isHead = snake[0].x === x && snake[0].y === y
-          const isFood = food.x === x && food.y === y
+          const isHead = i === headKey
+          const isSnake = occupied.has(i)
+          const isFood = i === foodKey
           return (
             <div
               // biome-ignore lint/suspicious/noArrayIndexKey: grid cells are positional, index = position

@@ -53,10 +53,6 @@ export function SpotlightModal({ open, onClose }: Props) {
       .slice(0, 8)
   }, [query])
 
-  useEffect(() => {
-    setActiveIdx(0)
-  }, [])
-
   // Reset query on open + focus input.
   useEffect(() => {
     if (!open) return

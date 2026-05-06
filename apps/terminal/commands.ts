@@ -3,7 +3,6 @@ import { registry } from '@/lib/os/registry'
 
 export type CommandContext = {
   openApp(appId: string, params?: Record<string, unknown>): string
-  closeWindow(windowId: string): void
 }
 
 const WHOAMI =

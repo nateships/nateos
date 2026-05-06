@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid'
 import { create } from 'zustand'
 import { MENUBAR_H } from './layout'
 import { byId } from './registry'
@@ -13,14 +12,6 @@ const TILE_STEP = 24
 const MARGIN = 8
 
 /**
- * Scan a grid of candidate positions and return the first one where a window
- * of `size` fits without overlapping any rect in `existing`. Falls back to a
- * cascade offset when no slot fits.
- *
- * Two passes: strict (leaves room for the dock), then relaxed (allows the
- * window bottom to extend behind the dock if nothing fits otherwise).
- */
-/**
  * Reserved zones for desktop widgets so the tile finder doesn't drop new
  * windows on top of them. Kept in lockstep with components/desktop/*.
  *  - Left: stack of file/folder icons under DesktopIcons (top-10 left-3, w-20 tiles).
@@ -33,6 +24,16 @@ function desktopReservedRects(viewW: number): Rect[] {
   ]
 }
 
+/**
+ * Scan a grid of candidate positions and return the first one where a window
+ * of `size` fits without overlapping any rect in `existing`. Three passes of
+ * decreasing strictness so a tall window (e.g. resume at 820px on a 900px
+ * viewport) still lands in a clean slot rather than cascading on top of the
+ * existing terminal:
+ *  1. strict — full height fits above the dock
+ *  2. relaxed — full height fits but may extend behind the dock
+ *  3. overflow — title bar fits in the viewport, body can extend past bottom
+ */
 function findTilePosition(
   size: { w: number; h: number },
   existing: Rect[],
@@ -42,8 +43,11 @@ function findTilePosition(
   const viewH = window.innerHeight
   const obstacles: Rect[] = [...desktopReservedRects(viewW), ...existing]
 
-  function scan(bottom: number): { x: number; y: number } | null {
-    for (let y = TILE_TOP; y + size.h <= bottom; y += TILE_STEP) {
+  // `yMax` is the highest top-y the scan will accept. Decoupled from window
+  // height so the overflow pass can keep iterating after the strict bottom
+  // would have terminated the loop.
+  function scan(yMax: number): { x: number; y: number } | null {
+    for (let y = TILE_TOP; y <= yMax; y += TILE_STEP) {
       for (let x = MARGIN; x + size.w <= viewW - MARGIN; x += TILE_STEP) {
         const overlaps = obstacles.some(
           (e) => x < e.x + e.w && x + size.w > e.x && y < e.y + e.h && y + size.h > e.y,
@@ -54,11 +58,15 @@ function findTilePosition(
     return null
   }
 
-  const strict = scan(viewH - DOCK_RESERVE)
+  const strict = scan(viewH - DOCK_RESERVE - size.h)
   if (strict) return strict
-  const relaxed = scan(viewH - MARGIN)
+  const relaxed = scan(viewH - MARGIN - size.h)
   if (relaxed) return relaxed
-  // Nothing fits — cascade behind whatever's there.
+  // Last resort: keep ~80px of title bar visible; body may extend past the
+  // viewport bottom (user can resize / drag / scroll inside).
+  const overflow = scan(viewH - 80)
+  if (overflow) return overflow
+  // Truly nothing — cascade behind whatever's there.
   const offset = existing.length * 24
   return { x: 120 + offset, y: 80 + offset }
 }
@@ -95,7 +103,7 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
         return existing.id
       }
     }
-    const id = uuid()
+    const id = crypto.randomUUID()
     const z = get().zCounter + 1
     // Only `normal` windows occupy screen real estate — minimized are hidden,
     // and fullscreen/max already cover everything so tiling around them is

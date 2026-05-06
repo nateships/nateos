@@ -1,16 +1,10 @@
 import type { ComponentType } from 'react'
 
-export type Capability =
-  | 'fullscreen'
-  | 'resize'
-  | 'minimize'
-  | 'multi-instance'
-  | 'persists-state'
-  | 'requires-network'
+export type Capability = 'resize' | 'minimize' | 'multi-instance'
 
-export type Surface = 'dock' | 'launchpad' | 'spotlight' | 'menubar-only'
+export type Surface = 'dock' | 'launchpad' | 'spotlight'
 
-export type AppCategory = 'core' | 'utility' | 'media' | 'dev' | 'future'
+export type AppCategory = 'core'
 
 export type AppParams = Record<string, string | number | boolean | undefined>
 
@@ -30,19 +24,19 @@ export interface AppManifest {
   capabilities: Capability[]
   surfaces: Surface[]
   category: AppCategory
-  badge?: () => string | number | null
-  schema?: Record<string, { type: 'string' | 'number' | 'boolean'; optional?: boolean }>
   disabled?: boolean
-  /** Short copy shown in the App > About <Name> dialog. Plan 2 fills these in. */
+  /** Short copy shown in the App > About <Name> dialog. */
   description?: string
 }
+
+export type WindowMode = 'normal' | 'min' | 'max' | 'fullscreen'
 
 export interface WindowState {
   id: string
   appId: string
   position: { x: number; y: number }
   size: { w: number; h: number }
-  state: 'normal' | 'min' | 'max' | 'fullscreen'
+  state: WindowMode
   z: number
   params?: AppParams
 }

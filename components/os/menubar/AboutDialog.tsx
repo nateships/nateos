@@ -1,13 +1,12 @@
 'use client'
 import { useEffect } from 'react'
+import { NATEOS_VERSION } from '@/lib/version'
 import { AppleLogo } from '../AppleLogo'
 
 type Props = {
   open: boolean
   onClose: () => void
 }
-
-const NATEOS_VERSION = 'v0.1.0 · feature/foundation'
 
 /** Centered "About This Mac"-style dialog. */
 export function AboutDialog({ open, onClose }: Props) {

@@ -8,7 +8,7 @@ export const manifest: AppManifest = {
   icon: MessagesIcon,
   route: '/messages',
   component: MessagesApp,
-  defaultSize: { w: 600, h: 500 },
+  defaultSize: { w: 480, h: 400 },
   minSize: { w: 420, h: 320 },
   capabilities: ['resize', 'minimize'],
   surfaces: ['dock', 'launchpad', 'spotlight'],

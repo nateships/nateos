@@ -1,15 +1,19 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
+import { safeGet, safeSet } from '@/lib/storage'
 import type { ChatMessage, SendBody } from './types'
 
 const STORAGE_KEY = 'nateos.messages'
+// Cap persisted history so a long-lived session doesn't bloat localStorage.
+const MESSAGES_CAP = 200
 
 export function MessagesApp() {
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     if (typeof window === 'undefined') return []
+    const raw = safeGet(STORAGE_KEY)
+    if (!raw) return []
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY)
-      return raw ? (JSON.parse(raw) as ChatMessage[]) : []
+      return JSON.parse(raw) as ChatMessage[]
     } catch {
       return []
     }
@@ -17,17 +21,14 @@ export function MessagesApp() {
   const [input, setInput] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [context, setContext] = useState<SendBody['context']>('other')
+  const [context, setContext] = useState<SendBody['context']>('recruiter')
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   useEffect(() => {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
-    } catch {
-      // localStorage may be unavailable; ignore.
-    }
+    const trimmed = messages.length > MESSAGES_CAP ? messages.slice(-MESSAGES_CAP) : messages
+    safeSet(STORAGE_KEY, JSON.stringify(trimmed))
   }, [messages])
 
   async function send() {
@@ -79,13 +80,9 @@ export function MessagesApp() {
         <p className="text-[11px] opacity-60">iMessage · delivered to nate@nateofarrell.com</p>
       </header>
 
-      <div className="flex-1 overflow-auto os-scroll px-4 py-4 flex flex-col gap-2">
-        {messages.length === 0 ? (
-          <div className="m-auto text-center opacity-60 text-[13px]">
-            Send a message — it lands in Nate's inbox via Resend.
-          </div>
-        ) : (
-          messages.map((m) => (
+      {messages.length > 0 && (
+        <div className="flex-1 overflow-auto os-scroll px-4 pt-3 pb-4 flex flex-col gap-2">
+          {messages.map((m) => (
             <div
               key={m.id}
               className={`max-w-[80%] px-3 py-2 rounded-2xl text-[13px] ${
@@ -96,11 +93,20 @@ export function MessagesApp() {
             >
               {m.text}
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
-      <div className="px-4 py-3 border-t border-white/10 flex flex-col gap-2">
+      <div
+        className={`px-4 py-3 flex flex-col gap-2 min-h-0 ${
+          messages.length > 0 ? 'border-t border-white/10' : 'flex-1'
+        }`}
+      >
+        {messages.length === 0 ? (
+          <p className="text-[12px] opacity-50 text-center pt-1">
+            Send a message — it lands in Nate's inbox via Resend.
+          </p>
+        ) : null}
         <div className="grid grid-cols-2 gap-2">
           <input
             value={name}
@@ -111,7 +117,7 @@ export function MessagesApp() {
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
+            placeholder="Your Email"
             type="email"
             className="bg-white/5 rounded-md px-3 py-1.5 text-[12px] outline-none focus:ring-1 focus:ring-blue-500"
           />
@@ -125,14 +131,13 @@ export function MessagesApp() {
           <option value="engineer">Engineering peer</option>
           <option value="other">Other</option>
         </select>
-        <div className="flex gap-2 items-end">
+        <div className="flex gap-2 items-end flex-1 min-h-0">
           <textarea
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Write a message…"
-            rows={2}
-            className="flex-1 bg-white/5 rounded-md px-3 py-2 text-[13px] outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+            className="flex-1 self-stretch bg-white/5 rounded-md px-3 py-2 text-[13px] outline-none focus:ring-1 focus:ring-blue-500 resize-none min-h-[120px]"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) send()
             }}
