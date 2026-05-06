@@ -137,7 +137,7 @@ export function MessagesApp() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Write a message…"
-            rows={2}
+            rows={6}
             className="flex-1 bg-white/5 rounded-md px-3 py-2 text-[13px] outline-none focus:ring-1 focus:ring-blue-500 resize-none"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) send()
