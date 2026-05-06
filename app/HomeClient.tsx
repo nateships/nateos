@@ -3,8 +3,6 @@ import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AppearanceProvider } from '@/components/os/AppearanceProvider'
 import { BootScreen } from '@/components/os/BootScreen'
-import { KernelPanic } from '@/components/os/KernelPanic'
-import { LockScreen } from '@/components/os/LockScreen'
 import { useWindowStore } from '@/lib/os/window-store'
 
 const KEY = 'nateos_booted'
@@ -54,8 +52,6 @@ export function HomeClient() {
   return (
     <>
       <AppearanceProvider />
-      <KernelPanic />
-      <LockScreen />
       {booting ? <BootScreen onDone={onBootDone} /> : null}
     </>
   )
