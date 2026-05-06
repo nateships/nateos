@@ -58,9 +58,20 @@ export function PreviewApp(ctx: AppContext) {
   }
 
   if (isPdf) {
+    // <object> with explicit type beats <iframe> for inline PDF rendering on
+    // some CDNs — it forces the browser's PDF viewer instead of letting the
+    // network response steer the frame into a download. Inner <iframe> +
+    // download link kicks in if the browser can't render PDFs at all.
     return (
       <div className="os-glass-app h-full w-full">
-        <iframe title={title} src={src} className="w-full h-full border-0 bg-white" />
+        <object
+          data={src}
+          type="application/pdf"
+          aria-label={title}
+          className="w-full h-full bg-white"
+        >
+          <iframe title={title} src={src} className="w-full h-full border-0 bg-white" />
+        </object>
       </div>
     )
   }
