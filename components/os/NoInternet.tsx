@@ -177,6 +177,9 @@ export function NoInternet({ onClose }: { onClose: () => void }) {
     if (feetY.current >= GROUND_Y) vy.current = -JUMP
   }
 
+  // startOrJump reads game state from refs and is stable for the lifetime of
+  // the component; adding it to deps would force-rebind the keydown listener.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: stable per above
   useEffect(() => {
     function key(e: KeyboardEvent) {
       if (e.key === 'Escape') return onClose()

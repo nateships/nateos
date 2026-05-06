@@ -92,11 +92,12 @@ html[data-fullscreen] .os-glass-dock {
 /*
  * docx-preview wrapper override. Default style paints a gray strip with 30px
  * top padding around the page, which read as a second header bar under our
- * toolbar. Make the wrapper transparent so the host's zinc-200 shows through.
+ * toolbar. Higher specificity (host > wrapper) wins over docx-preview's
+ * single-class default rule without needing !important.
  */
-.docx-wrapper {
-  background: transparent !important;
-  padding: 0 !important;
+.docx-host > .docx-wrapper {
+  background: transparent;
+  padding: 0;
 }
 
 /* Subtle fade for the Projects app on detail switch — single ramp, no stagger. */

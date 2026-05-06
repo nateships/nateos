@@ -31,6 +31,9 @@ export function HomeClient() {
   const pathRef = useRef(pathname)
   pathRef.current = pathname
 
+  // Intentional one-shot boot check on mount — re-running on pathname change
+  // would re-fire the session-storage short-circuit and stomp DeeplinkRouter.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: mount-only by design
   useEffect(() => {
     if (sessionStorage.getItem(KEY) === '1') {
       setBooting(false)
@@ -38,7 +41,6 @@ export function HomeClient() {
       // /resume etc. are handled by DeeplinkRouter.
       if (pathname === '/' || pathname === '') ensureTerminal()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onBootDone = useCallback(() => {
