@@ -44,8 +44,6 @@ export function KernelPanic() {
   if (!open) return null
 
   return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: full-screen click-to-dismiss is the entire interaction
-    // biome-ignore lint/a11y/useKeyWithClickEvents: any keypress also dismisses (handled in effect)
     <div
       role="alertdialog"
       aria-modal="true"
