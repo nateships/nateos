@@ -59,14 +59,14 @@ body {
   background: color-mix(in srgb, rgb(245, 245, 250) var(--os-glass-light, 25%), transparent);
 }
 .os-glass-window {
-  backdrop-filter: blur(var(--os-glass-blur-dark, 14px));
-  -webkit-backdrop-filter: blur(var(--os-glass-blur-dark, 14px));
-  background: color-mix(in srgb, rgb(40, 40, 46) var(--os-glass-dark, 65%), transparent);
+  backdrop-filter: blur(var(--os-glass-blur-dark, 12px));
+  -webkit-backdrop-filter: blur(var(--os-glass-blur-dark, 12px));
+  background: color-mix(in srgb, rgb(40, 40, 46) var(--os-glass-dark, 75%), transparent);
 }
 .os-glass-term {
-  backdrop-filter: blur(var(--os-glass-blur-dark, 14px));
-  -webkit-backdrop-filter: blur(var(--os-glass-blur-dark, 14px));
-  background: color-mix(in srgb, rgb(20, 20, 24) var(--os-glass-dark, 65%), transparent);
+  backdrop-filter: blur(var(--os-glass-blur-dark, 12px));
+  -webkit-backdrop-filter: blur(var(--os-glass-blur-dark, 12px));
+  background: color-mix(in srgb, rgb(20, 20, 24) var(--os-glass-dark, 75%), transparent);
 }
 /*
  * App body surface: lives behind every app's content area inside Window.
@@ -74,9 +74,9 @@ body {
  * Terminal — single visual identity across the OS.
  */
 .os-glass-app {
-  backdrop-filter: blur(var(--os-glass-blur-dark, 14px));
-  -webkit-backdrop-filter: blur(var(--os-glass-blur-dark, 14px));
-  background: color-mix(in srgb, rgb(20, 20, 24) var(--os-glass-dark, 65%), transparent);
+  backdrop-filter: blur(var(--os-glass-blur-dark, 12px));
+  -webkit-backdrop-filter: blur(var(--os-glass-blur-dark, 12px));
+  background: color-mix(in srgb, rgb(20, 20, 24) var(--os-glass-dark, 75%), transparent);
 }
 
 /*
