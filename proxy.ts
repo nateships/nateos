@@ -8,14 +8,14 @@ import { type NextRequest, NextResponse } from 'next/server'
  *
  * The earlier next.config headers() rule didn't survive on Vercel's CDN, and
  * a serverless API route blew the 250MB function-size budget by bundling
- * /public/apple/wallpapers (260MB). Middleware modifies the response headers
- * before the asset reaches the browser without bundling anything.
+ * /public/apple/wallpapers (260MB). Proxy (formerly Middleware in Next < 16)
+ * modifies response headers at the edge without bundling anything.
  *
  * `<a download>` on the resume's text-link "↓ pdf / ↓ docx" still triggers
  * a download — the HTML5 attribute is client-side and overrides the inline
  * server header.
  */
-export function middleware(_req: NextRequest) {
+export function proxy(_req: NextRequest) {
   const res = NextResponse.next()
   res.headers.set('Content-Disposition', 'inline')
   res.headers.set('X-Content-Type-Options', 'nosniff')
