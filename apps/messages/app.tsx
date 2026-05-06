@@ -80,11 +80,11 @@ export function MessagesApp() {
         <p className="text-[11px] opacity-60">iMessage · delivered to nate@nateofarrell.com</p>
       </header>
 
-      <div className="flex-1 overflow-auto os-scroll px-4 py-4 flex flex-col gap-2">
+      <div className="flex-1 overflow-auto os-scroll px-4 pt-3 pb-4 flex flex-col gap-2">
         {messages.length === 0 ? (
-          <div className="m-auto text-center opacity-60 text-[13px]">
-            Send a message — it lands in Nate's inbox via Resend.
-          </div>
+          <p className="text-[10px] opacity-40 self-center tracking-wide uppercase">
+            Delivered via Resend
+          </p>
         ) : (
           messages.map((m) => (
             <div
