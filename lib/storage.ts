@@ -19,11 +19,3 @@ export function safeSet(key: string, value: string): void {
     // Quota exceeded, private mode, or storage disabled — drop silently.
   }
 }
-
-export function safeRemove(key: string): void {
-  try {
-    localStorage.removeItem(key)
-  } catch {
-    // ignore
-  }
-}
