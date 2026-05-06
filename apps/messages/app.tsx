@@ -82,8 +82,8 @@ export function MessagesApp() {
 
       <div className="flex-1 overflow-auto os-scroll px-4 pt-3 pb-4 flex flex-col gap-2">
         {messages.length === 0 ? (
-          <p className="text-[10px] opacity-40 self-center tracking-wide uppercase">
-            Delivered via Resend
+          <p className="text-[12px] opacity-50 self-center text-center max-w-[80%]">
+            Send a message — it lands in Nate's inbox via Resend.
           </p>
         ) : (
           messages.map((m) => (
