@@ -417,7 +417,7 @@ export function Menubar() {
           <MenubarMenu
             ariaLabel="Date and time"
             align="end"
-            trigger={<span>{formatClock(now)}</span>}
+            trigger={<span suppressHydrationWarning>{formatClock(now)}</span>}
             open={openMenu === 'clock'}
             onOpenChange={(o) => setMenu('clock', o)}
             onTriggerEnter={hoverSwitch('clock')}
@@ -425,7 +425,9 @@ export function Menubar() {
           >
             <div className="px-3 py-2">
               <div className="text-[11px] uppercase tracking-wide opacity-60">Today</div>
-              <div className="text-[16px] font-semibold mt-1">{formatToday(now)}</div>
+              <div className="text-[16px] font-semibold mt-1" suppressHydrationWarning>
+                {formatToday(now)}
+              </div>
             </div>
           </MenubarMenu>
         </div>
