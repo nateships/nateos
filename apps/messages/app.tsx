@@ -1,15 +1,19 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
+import { safeGet, safeSet } from '@/lib/storage'
 import type { ChatMessage, SendBody } from './types'
 
 const STORAGE_KEY = 'nateos.messages'
+// Cap persisted history so a long-lived session doesn't bloat localStorage.
+const MESSAGES_CAP = 200
 
 export function MessagesApp() {
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     if (typeof window === 'undefined') return []
+    const raw = safeGet(STORAGE_KEY)
+    if (!raw) return []
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY)
-      return raw ? (JSON.parse(raw) as ChatMessage[]) : []
+      return JSON.parse(raw) as ChatMessage[]
     } catch {
       return []
     }
@@ -23,11 +27,8 @@ export function MessagesApp() {
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   useEffect(() => {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
-    } catch {
-      // localStorage may be unavailable; ignore.
-    }
+    const trimmed = messages.length > MESSAGES_CAP ? messages.slice(-MESSAGES_CAP) : messages
+    safeSet(STORAGE_KEY, JSON.stringify(trimmed))
   }, [messages])
 
   async function send() {

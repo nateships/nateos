@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid'
 import { create } from 'zustand'
 import { MENUBAR_H } from './layout'
 import { byId } from './registry'
@@ -13,14 +12,6 @@ const TILE_STEP = 24
 const MARGIN = 8
 
 /**
- * Scan a grid of candidate positions and return the first one where a window
- * of `size` fits without overlapping any rect in `existing`. Falls back to a
- * cascade offset when no slot fits.
- *
- * Two passes: strict (leaves room for the dock), then relaxed (allows the
- * window bottom to extend behind the dock if nothing fits otherwise).
- */
-/**
  * Reserved zones for desktop widgets so the tile finder doesn't drop new
  * windows on top of them. Kept in lockstep with components/desktop/*.
  *  - Left: stack of file/folder icons under DesktopIcons (top-10 left-3, w-20 tiles).
@@ -33,6 +24,12 @@ function desktopReservedRects(viewW: number): Rect[] {
   ]
 }
 
+/**
+ * Scan a grid of candidate positions and return the first one where a window
+ * of `size` fits without overlapping any rect in `existing`. Falls back to a
+ * cascade offset when no slot fits. Two passes: strict (leaves room for the
+ * dock), then relaxed (allows the window bottom to extend behind the dock).
+ */
 function findTilePosition(
   size: { w: number; h: number },
   existing: Rect[],
@@ -95,7 +92,7 @@ export const useWindowStore = create<State & Actions>((set, get) => ({
         return existing.id
       }
     }
-    const id = uuid()
+    const id = crypto.randomUUID()
     const z = get().zCounter + 1
     // Only `normal` windows occupy screen real estate — minimized are hidden,
     // and fullscreen/max already cover everything so tiling around them is

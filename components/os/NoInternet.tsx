@@ -201,25 +201,23 @@ export function NoInternet({ onClose }: { onClose: () => void }) {
         vy.current += GRAVITY
         feetY.current = Math.min(GROUND_Y, feetY.current + vy.current)
         if (feetY.current >= GROUND_Y) vy.current = 0
-        // Scroll cacti
-        cacti.current = cacti.current
-          .map((c) => ({ ...c, x: c.x - speed.current }))
-          .filter((c) => c.x + c.w > -10)
-        // Spawn cactus
-        const last = cacti.current[cacti.current.length - 1]
-        const minGap = 180 + Math.random() * 120
-        if (!last || last.x < W - minGap) {
-          if (Math.random() < 0.04) {
-            const variant = Math.floor(Math.random() * 3) as 0 | 1 | 2
-            cacti.current.push({ x: W + 10, variant, w: CACTUS_W(variant) })
-          }
+        // Scroll cacti in place + drop off-screen entries from the tail.
+        const cs = cacti.current
+        for (let i = cs.length - 1; i >= 0; i--) {
+          cs[i].x -= speed.current
+          if (cs[i].x + cs[i].w <= -10) cs.splice(i, 1)
         }
-        // Scroll clouds (slower)
-        clouds.current = clouds.current.map((c) => ({
-          ...c,
-          x: c.x - speed.current * 0.3,
-        }))
+        // Spawn cactus
+        const last = cs[cs.length - 1]
+        const minGap = 180 + Math.random() * 120
+        if ((!last || last.x < W - minGap) && Math.random() < 0.04) {
+          const variant = Math.floor(Math.random() * 3) as 0 | 1 | 2
+          cs.push({ x: W + 10, variant, w: CACTUS_W(variant) })
+        }
+        // Scroll clouds (slower) — mutate in place + recycle off-screen.
+        const cloudSpeed = speed.current * 0.3
         for (const c of clouds.current) {
+          c.x -= cloudSpeed
           if (c.x < -50) {
             c.x = W + Math.random() * 80
             c.y = 15 + Math.random() * 40
@@ -229,12 +227,10 @@ export function NoInternet({ onClose }: { onClose: () => void }) {
         const tx1 = TREX_X + 8
         const tx2 = TREX_X + 38
         const ty2 = feetY.current - 2
-        for (const c of cacti.current) {
+        for (const c of cs) {
           const cTop =
             c.variant === 0 ? GROUND_Y - 30 : c.variant === 1 ? GROUND_Y - 44 : GROUND_Y - 28
-          const cx1 = c.x
-          const cx2 = c.x + c.w
-          if (cx2 > tx1 && cx1 < tx2 && ty2 > cTop) {
+          if (c.x + c.w > tx1 && c.x < tx2 && ty2 > cTop) {
             stateRef.current = 'over'
             deathAtRef.current = Date.now()
             if (score.current > hi.current) hi.current = score.current
@@ -244,8 +240,10 @@ export function NoInternet({ onClose }: { onClose: () => void }) {
         score.current += 1
         speed.current = START_SPEED + score.current / 600
         frameCounter.current += 1
+        // Only re-render while the game is animating — idle/over screens are
+        // static, so skipping force() drops the loop to a no-op cost.
+        force((n) => (n + 1) % 1_000_000)
       }
-      force((n) => (n + 1) % 1_000_000)
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)

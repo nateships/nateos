@@ -62,6 +62,21 @@ function Banner() {
 
 type Line = { kind: 'in' | 'out' | 'sys'; content: ReactNode }
 
+const TAB_CANDIDATES = [
+  'help',
+  'apps',
+  'open',
+  'whoami',
+  'ls',
+  'cat',
+  'cd',
+  'clear',
+  'contact',
+  'resume',
+] as const
+
+const HISTORY_CAP = 1000
+
 export function Term({ ctx }: { ctx: CommandContext }) {
   const [history, setHistory] = useState<Line[]>([{ kind: 'sys', content: <Banner /> }])
   const [input, setInput] = useState('')
@@ -78,11 +93,20 @@ export function Term({ ctx }: { ctx: CommandContext }) {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
   }, [history])
 
+  // Bound history so a long-lived terminal can't accumulate megabytes of
+  // ReactNodes — windows stay mounted while minimized.
+  function appendHistory(line: Line) {
+    setHistory((h) => {
+      const next = [...h, line]
+      return next.length > HISTORY_CAP ? next.slice(-HISTORY_CAP) : next
+    })
+  }
+
   async function submit() {
     const cmd = input.trim()
     if (!cmd) return
-    setHistory((h) => [...h, { kind: 'in', content: `nate@nateos ~ $ ${cmd}` }])
-    setStack((s) => [...s, cmd])
+    appendHistory({ kind: 'in', content: `nate@nateos ~ $ ${cmd}` })
+    setStack((s) => (s.length >= HISTORY_CAP ? [...s.slice(1), cmd] : [...s, cmd]))
     setStackIdx(-1)
     setInput('')
     const out = await runCommand(cmd, ctx)
@@ -90,7 +114,7 @@ export function Term({ ctx }: { ctx: CommandContext }) {
       setHistory([])
       return
     }
-    if (out) setHistory((h) => [...h, { kind: 'out', content: out }])
+    if (out) appendHistory({ kind: 'out', content: out })
   }
 
   function onKey(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -98,7 +122,6 @@ export function Term({ ctx }: { ctx: CommandContext }) {
       submit()
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
-      // Compute next index outside the updater so we keep both setters pure.
       const cur = stackIdx
       const n = cur < 0 ? stack.length - 1 : Math.max(0, cur - 1)
       setStackIdx(n)
@@ -120,19 +143,7 @@ export function Term({ ctx }: { ctx: CommandContext }) {
       setInput(stack[n] ?? '')
     } else if (e.key === 'Tab') {
       e.preventDefault()
-      const candidates = [
-        'help',
-        'apps',
-        'open',
-        'whoami',
-        'ls',
-        'cat',
-        'cd',
-        'clear',
-        'contact',
-        'resume',
-      ]
-      const m = candidates.filter((c) => c.startsWith(input))
+      const m = TAB_CANDIDATES.filter((c) => c.startsWith(input))
       if (m.length === 1) setInput(m[0])
     }
   }

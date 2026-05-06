@@ -1,6 +1,7 @@
 'use client'
 import { useEffect } from 'react'
 import type { AppManifest } from '@/lib/os/types'
+import { NATEOS_VERSION } from '@/lib/version'
 
 type Props = {
   app: AppManifest | null
@@ -40,7 +41,7 @@ export function AboutAppDialog({ app, onClose }: Props) {
         <div className="flex flex-col items-center gap-3 px-8 py-7 text-center">
           <Icon size={64} />
           <h2 className="text-lg font-semibold tracking-tight">{app.title}</h2>
-          <p className="text-[11px] opacity-60">NateOS · v0.1.0</p>
+          <p className="text-[11px] opacity-60">NateOS · {NATEOS_VERSION}</p>
           <p className="text-[12px] opacity-85 mt-2 leading-relaxed">
             {app.description ?? 'Part of NateOS.'}
           </p>

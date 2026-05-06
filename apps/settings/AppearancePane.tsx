@@ -1,16 +1,15 @@
 'use client'
-import { type AccentColor, type DockSize, useSettings } from '@/lib/settings/store'
+import { ACCENT_RAMP, type AccentColor, type DockSize, useSettings } from '@/lib/settings/store'
 
-const ACCENTS: { value: AccentColor; swatch: string; label: string }[] = [
-  { value: 'blue', swatch: 'oklch(62.3% 0.214 259.815)', label: 'Blue' },
-  { value: 'purple', swatch: 'oklch(62.7% 0.265 303.9)', label: 'Purple' },
-  { value: 'pink', swatch: 'oklch(65.6% 0.241 354.308)', label: 'Pink' },
-  { value: 'red', swatch: 'oklch(63.7% 0.237 25.331)', label: 'Red' },
-  { value: 'orange', swatch: 'oklch(70.5% 0.213 47.604)', label: 'Orange' },
-  { value: 'yellow', swatch: 'oklch(79.5% 0.184 86.047)', label: 'Yellow' },
-  { value: 'green', swatch: 'oklch(72.3% 0.219 149.579)', label: 'Green' },
-  { value: 'graphite', swatch: 'oklch(55.2% 0.016 285.938)', label: 'Graphite' },
-]
+// Derive the swatch list from ACCENT_RAMP so the oklch values can't drift
+// between the provider (writes the CSS var) and the picker (renders the dot).
+const ACCENTS: { value: AccentColor; swatch: string; label: string }[] = (
+  Object.keys(ACCENT_RAMP) as AccentColor[]
+).map((value) => ({
+  value,
+  swatch: ACCENT_RAMP[value].c500,
+  label: value.charAt(0).toUpperCase() + value.slice(1),
+}))
 
 const DOCK_SIZES: { value: DockSize; label: string }[] = [
   { value: 'small', label: 'Small' },

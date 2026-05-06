@@ -31,28 +31,25 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'invalid owner/repo' }, { status: 400 })
   }
   try {
-    const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
-      headers: HEADERS,
-      next: { revalidate: 21600 },
-    })
+    // Repo metadata + README are independent — fire both at once. README is
+    // best-effort, so wrap it in a Promise that always resolves.
+    const [repoRes, readmeText] = await Promise.all([
+      fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+        headers: HEADERS,
+        next: { revalidate: 21600 },
+      }),
+      fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, {
+        headers: { ...HEADERS, accept: 'application/vnd.github.v3.raw' },
+        next: { revalidate: 21600 },
+      })
+        .then((res) => (res.ok ? res.text() : null))
+        .catch(() => null),
+    ])
     if (!repoRes.ok) {
       return NextResponse.json({ error: `GitHub ${repoRes.status}` }, { status: 502 })
     }
     const r = await repoRes.json()
-    let readmeExcerpt: string | null = null
-    try {
-      const readmeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, {
-        headers: { ...HEADERS, accept: 'application/vnd.github.v3.raw' },
-        next: { revalidate: 21600 },
-      })
-      if (readmeRes.ok) {
-        const text = await readmeRes.text()
-        // First 600 chars of README, stripped of front-matter and pure markdown noise
-        readmeExcerpt = text.slice(0, 600)
-      }
-    } catch {
-      // README is best-effort
-    }
+    const readmeExcerpt = readmeText ? readmeText.slice(0, 600) : null
     const info: RepoInfo = {
       fullName: r.full_name ?? `${owner}/${repo}`,
       description: r.description ?? null,

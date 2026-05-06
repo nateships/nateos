@@ -3,7 +3,6 @@ import { runCommand } from './commands'
 
 const ctx = {
   openApp: vi.fn(),
-  closeWindow: vi.fn(),
 }
 
 describe('terminal commands', () => {
