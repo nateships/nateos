@@ -14,6 +14,7 @@ export function QrVCard() {
         width={120}
         height={120}
         className="rounded-md w-full h-auto"
+        priority
         unoptimized
       />
       <div className="mt-2 font-medium">Save my contact</div>
