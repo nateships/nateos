@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { safeGet, safeSet } from '@/lib/storage'
 
 const KEY = 'nateos.mobile_hint_dismissed'
 
@@ -12,20 +13,12 @@ export function MobileDesktopHint() {
   const [dismissed, setDismissed] = useState<boolean | null>(null)
 
   useEffect(() => {
-    try {
-      setDismissed(localStorage.getItem(KEY) === '1')
-    } catch {
-      setDismissed(false)
-    }
+    setDismissed(safeGet(KEY) === '1')
   }, [])
 
   function dismiss() {
     setDismissed(true)
-    try {
-      localStorage.setItem(KEY, '1')
-    } catch {
-      // localStorage may be blocked; in-memory dismissal still works for the session.
-    }
+    safeSet(KEY, '1')
   }
 
   if (dismissed !== false) return null

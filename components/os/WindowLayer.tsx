@@ -1,11 +1,11 @@
 'use client'
-import { useEffect, useLayoutEffect } from 'react'
+import { useEffect, useLayoutEffect, useMemo } from 'react'
 import { useWindowStore } from '@/lib/os/window-store'
 import { Window } from './Window'
 
 export function WindowLayer() {
   const windows = useWindowStore((s) => s.windows)
-  const sorted = [...windows].sort((a, b) => a.z - b.z)
+  const sorted = useMemo(() => [...windows].sort((a, b) => a.z - b.z), [windows])
   // Mark <html> when any window is in fullscreen so globals.css can hide the
   // menubar + dock, matching real macOS fullscreen (which moves the window
   // into its own Space and hides the bars). useLayoutEffect runs before the

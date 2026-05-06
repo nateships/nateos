@@ -1,5 +1,5 @@
 'use client'
-import { type PointerEvent as RP, useRef, useState } from 'react'
+import { type PointerEvent as RP, useRef } from 'react'
 import { MENUBAR_H } from '@/lib/os/layout'
 import { byId } from '@/lib/os/registry'
 import { useWindowStore } from '@/lib/os/window-store'
@@ -23,7 +23,6 @@ export function Window({ windowId }: { windowId: string }) {
     startH: number
     pointerId: number
   } | null>(null)
-  const [, force] = useState(0)
 
   if (!w) return null
   const manifest = byId[w.appId]
@@ -53,7 +52,6 @@ export function Window({ windowId }: { windowId: string }) {
     if (e.currentTarget.hasPointerCapture(e.pointerId)) {
       e.currentTarget.releasePointerCapture(e.pointerId)
     }
-    force((n) => n + 1)
   }
 
   function startResize(edge: ResizeEdge) {

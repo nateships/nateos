@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { Resend } from 'resend'
 import { z } from 'zod'
 
 const Body = z.object({
@@ -74,6 +73,10 @@ export async function POST(req: Request) {
   if (!apiKey) {
     return NextResponse.json({ error: 'Email not configured' }, { status: 503 })
   }
+  // Lazy-import the Resend SDK so it doesn't load on cold start or during
+  // build-time page-data collection; only requests that pass validation +
+  // rate-limit + honeypot need it.
+  const { Resend } = await import('resend')
   const resend = new Resend(apiKey)
   const { name, email, context, body } = parsed.data
   try {
