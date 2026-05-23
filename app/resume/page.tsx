@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { profileData } from '@/app/profile/data'
+import { isJobSearchActive } from '@/lib/job-search'
 import { BASE_OG, BASE_TWITTER } from '@/lib/seo'
 import { resumeData } from './data'
 
@@ -34,6 +36,24 @@ export const metadata: Metadata = {
  * off-screen for sighted users without hiding it from screen readers.
  */
 export default function ResumeRoute() {
+  if (!isJobSearchActive()) {
+    const url = profileData.links.find((l) => l.label.toLowerCase() === 'linkedin')?.url
+    return (
+      <article className="sr-only" aria-label="Profile">
+        <header>
+          <h1>{profileData.name}</h1>
+          {profileData.currentCompany ? <p>Now at {profileData.currentCompany}</p> : null}
+          <p>{profileData.tagline}</p>
+        </header>
+        {url ? (
+          <p>
+            <a href={url}>Connect on LinkedIn</a>
+          </p>
+        ) : null}
+      </article>
+    )
+  }
+
   const r = resumeData
   return (
     <article className="sr-only" aria-label="Resume">
