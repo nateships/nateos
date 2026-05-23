@@ -6,6 +6,7 @@ export const Profile = z.object({
   location: z.string(),
   email: z.email(),
   phone: z.string().optional(),
+  currentCompany: z.string().optional(),
   links: z.array(z.object({ label: z.string(), url: z.url() })),
   bio: z.string(),
 })
