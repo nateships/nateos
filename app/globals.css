@@ -112,3 +112,37 @@ html[data-fullscreen] .os-glass-dock {
 .proj-fade {
   animation: proj-fade 200ms ease-out both;
 }
+
+/* Entrance for the off-state profile card (Resume app when not job hunting). */
+@keyframes card-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes card-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.card-rise {
+  animation: card-rise 460ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.card-pop {
+  animation: card-pop 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-rise,
+  .card-pop {
+    animation: none;
+  }
+}

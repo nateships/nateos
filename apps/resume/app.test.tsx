@@ -16,10 +16,20 @@ describe('ResumeApp', () => {
     expect(screen.getByRole('heading', { name: 'Experience' })).toBeDefined()
   })
 
-  it('shows the LinkedIn card and no Experience/download when off', () => {
+  it('shows the profile card (avatar + social links, no CV) when off', () => {
     process.env.NEXT_PUBLIC_JOBSEARCH = 'off'
     render(<ResumeApp />)
-    expect(screen.getByRole('link', { name: /Connect on LinkedIn/i })).toBeDefined()
+    // Initials avatar for "Nate O'Farrell".
+    expect(screen.getByText('NO')).toBeDefined()
+    // Social links resolve to the right destinations.
+    expect(screen.getByRole('link', { name: 'LinkedIn' }).getAttribute('href')).toContain(
+      'linkedin.com',
+    )
+    expect(screen.getByRole('link', { name: 'GitHub' }).getAttribute('href')).toContain(
+      'github.com',
+    )
+    expect(screen.getByRole('link', { name: 'Email' }).getAttribute('href')).toMatch(/^mailto:/)
+    // No CV content or downloads.
     expect(screen.queryByRole('heading', { name: 'Experience' })).toBeNull()
     expect(screen.queryByText('Preview PDF')).toBeNull()
   })
