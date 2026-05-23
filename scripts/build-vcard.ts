@@ -2,6 +2,12 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import qrcode from 'qrcode'
 import { loadProfile } from '../lib/content/load'
+import { isJobSearchActive } from '../lib/job-search'
+
+if (!isJobSearchActive()) {
+  console.log('jobsearch off — skipping vCard + QR generation')
+  process.exit(0)
+}
 
 const profile = loadProfile()
 
