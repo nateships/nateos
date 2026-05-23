@@ -9,8 +9,8 @@ apps. Built as a credible "this is how I architect" signal as much as a resume s
 - **App registry pattern.** Each app under `apps/<id>/` declares a manifest. The OS shell never
   imports app code — it reads from the registry and mounts components into windows. Drop a folder
   + manifest = new app appears in dock, Spotlight, deeplinks.
-- **Real macOS chrome.** Apple icons, wallpapers, and SF fonts extracted from the dev machine.
-  File-type icons rendered via `NSWorkspace.icon(forFileType:)`.
+- **Real macOS chrome.** macOS-style icons, wallpapers, and system fonts, with file-type icons
+  rendered via `NSWorkspace.icon(forFileType:)`.
 - **Window manager.** Drag, resize (3 edges), traffic-light close/minimize/maximize, focus +
   z-index, multi-instance, deeplink-driven open state, minimize-preserves-state.
 - **Apps:** Resume (+ PDF + DOCX download), Projects (case studies w/ MDX bodies), Terminal
@@ -48,9 +48,10 @@ bun run build
 
 ## Apple assets
 
-Icons + wallpapers + SF fonts are extracted from the local macOS install via
-`scripts/extract-apple-assets.sh`. Apple's copyright; accepted risk for a personal portfolio.
-If you fork this for your own portfolio, replace `public/apple/` with your own.
+NateOS is a personal, non-commercial homage to macOS and is not affiliated with Apple. The
+macOS-style icons, wallpapers, and fonts under `public/apple/` are property of their respective
+owners and are **not** covered by this repo's license. If you fork this for your own portfolio,
+replace `public/apple/` with your own assets.
 
 ## Architecture
 
@@ -61,14 +62,13 @@ If you fork this for your own portfolio, replace `public/apple/` with your own.
   `components/deeplink/DeeplinkRouter.tsx`.
 - Content: MDX in `content/`, validated by Zod schemas at build, surfaced as JSON via
   `scripts/generate-data.ts` (Turbopack rejects `node:fs` in client component import chains).
-- Deploy: see [`docs/DEPLOY.md`](./docs/DEPLOY.md).
 
 ## Status
 
-Feature-complete on the `feature/foundation` branch. Will go open-source after the initial
-launch.
+Live at [nate.cx](https://nate.cx). This is a personal portfolio — feel free to read and learn
+from the code, but PRs aren't accepted. Issues and questions are welcome.
 
 ## License
 
-TBD before going public. Likely MIT for code; Apple assets in `public/apple/` are not part of
-the license.
+Original source code is [MIT](./LICENSE). The macOS-style assets in `public/apple/` are **not**
+covered by it — see the Apple assets section above.

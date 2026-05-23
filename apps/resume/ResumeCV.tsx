@@ -30,7 +30,6 @@ export function ResumeCV() {
               <a className="text-blue-400 hover:underline" href="mailto:nate@nateofarrell.com">
                 nate@nateofarrell.com
               </a>
-              <span className="opacity-70">+1 (781) 888 2277</span>
             </div>
           </div>
           <div className="flex flex-col gap-1.5 items-end">

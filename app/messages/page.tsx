@@ -17,7 +17,7 @@ export default function MessagesRoute() {
   return (
     <section className="sr-only" aria-label="Contact">
       <h1>Contact Nate O&apos;Farrell</h1>
-      <p>Email: nate@nateofarrell.com · Phone: +1 (781) 888 2277</p>
+      <p>Email: nate@nateofarrell.com</p>
       <p>Send a message via the iMessage-style form on this page.</p>
     </section>
   )
