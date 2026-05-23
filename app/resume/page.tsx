@@ -81,7 +81,7 @@ export default function ResumeRoute() {
       <header>
         <h1>Nate O&apos;Farrell — Resume</h1>
         <p>Director of Infrastructure &amp; Platform Engineering · Tewksbury, MA</p>
-        <p>nate@nateofarrell.com · +1 (781) 888 2277</p>
+        <p>nate@nateofarrell.com</p>
       </header>
 
       <section>
