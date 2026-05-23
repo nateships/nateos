@@ -1,7 +1,14 @@
 {
-  "name": "portfolio",
+  "name": "nateos",
   "version": "0.1.0",
   "private": true,
+  "description": "NateOS — a macOS-styled personal portfolio site.",
+  "author": "Nate O'Farrell <nate@nateofarrell.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cfsnate/nateos.git"
+  },
   "scripts": {
     "gen:data": "bun run scripts/generate-data.ts",
     "build:vcard": "bun run scripts/build-vcard.ts",

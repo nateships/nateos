@@ -1,0 +1,18 @@
+NateOS — Third-Party Assets Notice
+===================================
+
+The MIT license in LICENSE applies to the original source code of this
+project. It does NOT apply to the contents of `public/apple/`.
+
+`public/apple/` contains assets owned by Apple Inc. — including the
+San Francisco fonts (`SFNS.ttf`, `SFNSMono.ttf`), macOS wallpapers, and
+system icons (`.icns`). They are reproduced here only as part of a personal,
+non-commercial homage/portfolio that emulates the macOS interface.
+
+These assets remain the property of Apple Inc. and are subject to Apple's own
+license terms. They are NOT licensed for redistribution or reuse under the MIT
+license above, and their inclusion here does not grant any rights to them.
+
+If you fork or reuse this project, remove `public/apple/` and supply your own
+assets. The repository owner makes no warranty regarding the licensing of
+these Apple-owned files.

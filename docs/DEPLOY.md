@@ -1,6 +1,6 @@
 # NateOS — Deploy
 
-Branch `feature/foundation` carries Plans 1–3. After verifying locally, ship to Vercel and cut over `nate.cx` DNS.
+After verifying locally, ship to Vercel and cut over the `nate.cx` DNS.
 
 ## Local verification
 

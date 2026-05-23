@@ -48,9 +48,11 @@ bun run build
 
 ## Apple assets
 
-Icons + wallpapers + SF fonts are extracted from the local macOS install via
-`scripts/extract-apple-assets.sh`. Apple's copyright; accepted risk for a personal portfolio.
-If you fork this for your own portfolio, replace `public/apple/` with your own.
+Icons + wallpapers + SF fonts under `public/apple/` are extracted from a local macOS install via
+`scripts/extract-apple-assets.sh`. They remain Apple's property and are **not** covered by this
+repo's license — see [`NOTICE`](./NOTICE). They're included only as part of a personal,
+non-commercial homage. If you fork this for your own portfolio, replace `public/apple/` with your
+own assets.
 
 ## Architecture
 
@@ -65,10 +67,10 @@ If you fork this for your own portfolio, replace `public/apple/` with your own.
 
 ## Status
 
-Feature-complete on the `feature/foundation` branch. Will go open-source after the initial
-launch.
+Live at [nate.cx](https://nate.cx). This is a personal portfolio — feel free to read and learn
+from the code, but PRs aren't accepted. Issues and questions are welcome.
 
 ## License
 
-TBD before going public. Likely MIT for code; Apple assets in `public/apple/` are not part of
-the license.
+Original source code is [MIT](./LICENSE). The Apple-owned assets in `public/apple/` (SF fonts,
+wallpapers, system icons) are **not** covered by the MIT license — see [`NOTICE`](./NOTICE).
