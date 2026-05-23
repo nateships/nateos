@@ -1,3 +1,5 @@
+import { isJobSearchActive } from '@/lib/job-search'
+
 export type VfsEntry = {
   name: string
   kind: 'folder' | 'file'
@@ -49,6 +51,10 @@ export const VFS: Record<string, VfsEntry[]> = {
   ],
 }
 
+const RESUME_FILES = new Set(['/Nate_OFarrell_Resume_2026.pdf', '/Nate_OFarrell_Resume_2026.docx'])
+
 export function listDir(path: string): VfsEntry[] {
-  return VFS[path] ?? []
+  const entries = VFS[path] ?? []
+  if (isJobSearchActive()) return entries
+  return entries.filter((e) => !RESUME_FILES.has(e.path))
 }

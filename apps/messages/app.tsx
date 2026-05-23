@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
+import { isJobSearchActive } from '@/lib/job-search'
 import { safeGet, safeSet } from '@/lib/storage'
 import type { ChatMessage, SendBody } from './types'
 
@@ -21,7 +22,9 @@ export function MessagesApp() {
   const [input, setInput] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [context, setContext] = useState<SendBody['context']>('recruiter')
+  const [context, setContext] = useState<SendBody['context']>(
+    isJobSearchActive() ? 'recruiter' : 'engineer',
+  )
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
@@ -127,7 +130,9 @@ export function MessagesApp() {
           onChange={(e) => setContext(e.target.value as SendBody['context'])}
           className="bg-white/5 rounded-md px-3 py-1.5 text-[12px] outline-none focus:ring-1 focus:ring-blue-500"
         >
-          <option value="recruiter">Recruiter / hiring manager</option>
+          {isJobSearchActive() ? (
+            <option value="recruiter">Recruiter / hiring manager</option>
+          ) : null}
           <option value="engineer">Engineering peer</option>
           <option value="other">Other</option>
         </select>
