@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: false,
-    include: ['lib/**/*.test.{ts,tsx}', 'apps/**/*.test.{ts,tsx}'],
+    include: ['lib/**/*.test.{ts,tsx}', 'apps/**/*.test.{ts,tsx}', 'components/**/*.test.{ts,tsx}'],
   },
   resolve: {
     alias: { '@': path.resolve(__dirname, '.') },
