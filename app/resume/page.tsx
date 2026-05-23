@@ -8,25 +8,46 @@ const TITLE = "Resume — Nate O'Farrell"
 const DESCRIPTION =
   'Director of Infrastructure & Platform Engineering. 15+ years across cloud, on-prem, and HPC.'
 
-export const metadata: Metadata = {
+export function generateMetadata(): Metadata {
+  if (!isJobSearchActive()) {
+    const offTitle = 'Profile'
+    const offDescription = `${profileData.name} — ${profileData.tagline}. Connect on LinkedIn.`
+    const offOgTitle = profileData.name
+    return {
+      title: offTitle,
+      description: offDescription,
+      alternates: { canonical: '/resume' },
+      openGraph: {
+        ...BASE_OG,
+        type: 'profile',
+        url: '/resume',
+        title: offOgTitle,
+        description: offDescription,
+      },
+      twitter: { ...BASE_TWITTER, title: offOgTitle, description: offDescription },
+    }
+  }
+
   // Page title goes through the layout template ("%s · NateOS"). Keep it
   // short here so the rendered title is "Resume · NateOS" rather than
   // double-branded ("Resume — Nate O'Farrell · NateOS").
-  title: 'Resume',
-  description:
-    "Nate O'Farrell — Director of Infrastructure & Platform Engineering. Full work history, skills, certifications, and education. PDF + DOCX downloads available.",
-  alternates: { canonical: '/resume' },
-  // Spread BASE_OG so siteName/locale stay set; override type to 'profile'
-  // and url to the resume canonical. Without spread, parent's defaults are
-  // wholesale-replaced when this child openGraph is defined.
-  openGraph: {
-    ...BASE_OG,
-    type: 'profile',
-    url: '/resume',
-    title: TITLE,
-    description: DESCRIPTION,
-  },
-  twitter: { ...BASE_TWITTER, title: TITLE, description: DESCRIPTION },
+  return {
+    title: 'Resume',
+    description:
+      "Nate O'Farrell — Director of Infrastructure & Platform Engineering. Full work history, skills, certifications, and education. PDF + DOCX downloads available.",
+    alternates: { canonical: '/resume' },
+    // Spread BASE_OG so siteName/locale stay set; override type to 'profile'
+    // and url to the resume canonical. Without spread, parent's defaults are
+    // wholesale-replaced when this child openGraph is defined.
+    openGraph: {
+      ...BASE_OG,
+      type: 'profile',
+      url: '/resume',
+      title: TITLE,
+      description: DESCRIPTION,
+    },
+    twitter: { ...BASE_TWITTER, title: TITLE, description: DESCRIPTION },
+  }
 }
 
 /**
