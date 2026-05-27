@@ -76,7 +76,7 @@ const personJsonLd = {
     addressRegion: 'MA',
     addressCountry: 'US',
   },
-  sameAs: ['https://github.com/cfsnate', 'https://www.linkedin.com/in/nateofarrell/'],
+  sameAs: ['https://github.com/nateships', 'https://www.linkedin.com/in/nateofarrell/'],
 }
 
 const websiteJsonLd = {
