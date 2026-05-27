@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cfsnate/nateos.git"
+    "url": "https://github.com/nateships/nateos.git"
   },
   "scripts": {
     "gen:data": "bun run scripts/generate-data.ts",
