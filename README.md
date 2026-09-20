@@ -39,6 +39,13 @@ bun run dev
 The first `bun run dev` calls `gen:data` + `build:vcard` to generate JSON content + vCard QR.
 Resume PDF + DOCX live in `public/` (committed).
 
+## Job-search mode
+
+`NEXT_PUBLIC_JOBSEARCH=on` shows the job-hunting surfaces: full resume CV, PDF/DOCX downloads in
+Finder and on the desktop, vCard QR widget, and the recruiter default in Messages. Unset or any
+other value hides them and shows the short profile card instead. Flip it in the Vercel project env
+and redeploy.
+
 ```bash
 bun run typecheck
 bun run lint

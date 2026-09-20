@@ -34,6 +34,7 @@ function ProjectMedia({ p }: { p: ProjectWithBody }) {
 const SHORT_LABELS: Record<string, string> = {
   nateos: 'NateOS',
   idea: 'IDEA',
+  rolle: 'Rolle',
   sleepbar: 'Sleepbar',
   'reinvent-2022': 're:Invent',
 }

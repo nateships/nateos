@@ -1,13 +1,12 @@
 /**
- * Owner-controlled "are we job hunting" switch. Default ON so unset/preview
- * builds keep the full job-search experience. Set NEXT_PUBLIC_JOBSEARCH=off
- * in the deploy env to hide the job-hunting surfaces. Fails open: only the
- * exact string "off" disables it.
+ * Owner-controlled "are we job hunting" switch. Default OFF so unset/preview
+ * builds hide the job-hunting surfaces. Set NEXT_PUBLIC_JOBSEARCH=on in the
+ * deploy env to show them. Fails closed: only the exact string "on" enables it.
  */
 export function isJobSearchActive(
   value: string | undefined = process.env.NEXT_PUBLIC_JOBSEARCH,
 ): boolean {
-  return value !== 'off'
+  return value === 'on'
 }
 
 export const JOB_SEARCH_ACTIVE = isJobSearchActive()

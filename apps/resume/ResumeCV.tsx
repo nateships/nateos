@@ -23,7 +23,7 @@ export function ResumeCV() {
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">Nate O'Farrell</h1>
             <p className="text-sm opacity-80 mt-1">
-              Director of Infrastructure & Platform Engineering
+              Staff Engineer, TimescaleDB Enterprise at Tiger Data
             </p>
             <p className="text-[12px] opacity-60 mt-1">Tewksbury, MA</p>
             <div className="flex flex-wrap gap-3 mt-2 text-[12px]">

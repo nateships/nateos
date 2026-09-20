@@ -2,21 +2,21 @@ import { describe, expect, it } from 'vitest'
 import { isJobSearchActive } from './job-search'
 
 describe('isJobSearchActive', () => {
-  it('is false only when the value is exactly "off"', () => {
-    expect(isJobSearchActive('off')).toBe(false)
-  })
-
-  it('is true when the value is "on"', () => {
+  it('is true only when the value is exactly "on"', () => {
     expect(isJobSearchActive('on')).toBe(true)
   })
 
-  it('is true when the value is unset', () => {
-    expect(isJobSearchActive(undefined)).toBe(true)
+  it('is false when the value is "off"', () => {
+    expect(isJobSearchActive('off')).toBe(false)
   })
 
-  it('fails open: any unexpected value is treated as active', () => {
-    expect(isJobSearchActive('OFF')).toBe(true)
-    expect(isJobSearchActive('false')).toBe(true)
-    expect(isJobSearchActive('')).toBe(true)
+  it('is false when the value is unset', () => {
+    expect(isJobSearchActive(undefined)).toBe(false)
+  })
+
+  it('fails closed: any unexpected value is treated as inactive', () => {
+    expect(isJobSearchActive('ON')).toBe(false)
+    expect(isJobSearchActive('true')).toBe(false)
+    expect(isJobSearchActive('')).toBe(false)
   })
 })

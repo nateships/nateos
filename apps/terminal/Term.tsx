@@ -22,7 +22,7 @@ function Banner() {
     { label: 'User', value: 'nate', valueClass: 'text-emerald-300' },
     { label: 'Host', value: 'nate.cx', valueClass: 'text-sky-300' },
     { label: 'OS', value: 'NateOS v1.0' },
-    { label: 'Role', value: 'Director · Infra & Platform Eng' },
+    { label: 'Role', value: 'Staff Engineer · Tiger Data' },
     { label: 'Location', value: 'Tewksbury, MA' },
     { label: 'Email', value: 'nate@nateofarrell.com', valueClass: 'text-blue-300' },
     { label: 'Theme', value: 'Tahoe (dark)' },

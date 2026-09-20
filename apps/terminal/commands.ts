@@ -6,8 +6,8 @@ export type CommandContext = {
 }
 
 const WHOAMI =
-  "Nate O'Farrell — Director of Infrastructure & Platform Engineering at\n" +
-  'Commonwealth Fusion Systems. 15+ years building distributed systems.\n' +
+  "Nate O'Farrell — Staff Engineer at Tiger Data, building TimescaleDB\n" +
+  'Enterprise. 15+ years building distributed systems.\n' +
   'Hands-on builder. Tewksbury, MA. nate@nateofarrell.com\n' +
   '\n' +
   "Type 'open resume' for the long version."
@@ -79,7 +79,7 @@ const HIDDEN: Record<string, (args: string[]) => string> = {
 
 const VFS: Record<string, string[] | string> = {
   '/': ['resume.mdx', 'projects/', 'links.mdx'],
-  '/projects/': ['idea.mdx', 'sleepbar.mdx', 'reinvent-2022.mdx', '_index.mdx'],
+  '/projects/': ['rolle.mdx', 'idea.mdx', 'sleepbar.mdx', 'reinvent-2022.mdx', '_index.mdx'],
 }
 
 export async function runCommand(raw: string, ctx: CommandContext): Promise<string> {

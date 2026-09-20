@@ -29,6 +29,7 @@ export const VFS: Record<string, VfsEntry[]> = {
     { name: 'Calendar', kind: 'folder', path: '/Calendar' },
   ],
   '/Projects': [
+    { name: 'Rolle.md', kind: 'file', path: '/Projects/Rolle.md', open: '/projects/rolle' },
     { name: 'IDEA.md', kind: 'file', path: '/Projects/IDEA.md', open: '/projects/idea' },
     {
       name: 'Sleepbar.md',
