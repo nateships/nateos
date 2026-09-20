@@ -1,0 +1,34 @@
+---
+title: Rolle
+slug: rolle
+summary: Assume any role, any cloud. Open-source desktop app and CLI that hands short-lived AWS, Azure, and Google Cloud credentials to your tools and writes no secret to disk. Go + Wails v3 + React, signed self-updates, Homebrew cask.
+tech:
+  - Go
+  - Wails
+  - React
+  - TypeScript
+  - Tailwind v4
+  - AWS
+  - Azure
+  - Google Cloud
+repo: https://github.com/nateships/rolle
+url: https://getrolle.com
+order: 1
+---
+
+Open-source desktop app and CLI for short-lived cloud credentials, built solo in Go with a
+Wails v3 + React desktop shell. Docs at getrolle.com.
+
+- AWS: sign in to IAM Identity Center once and get every account and role you can reach. Chain
+  `AssumeRole` from any session. Add IAM users with optional MFA. Each active session is a
+  profile backed by `credential_process` for the AWS CLI and SDKs.
+- Azure: sign in to an Entra ID tenant. Each subscription is a session that yields Resource
+  Manager tokens.
+- Google Cloud: reuse the credentials `gcloud` already has. Each project is a session.
+  Impersonate service accounts.
+- Secrets live in the OS keychain. Short-lived credentials are owner-only files that expire.
+  No telemetry.
+- Imports what your machine already has: Identity Center portals from the AWS CLI and Granted,
+  az CLI tenants, gcloud credentials, and a Leapp workspace.
+- Desktop app: expiry countdowns, favorites, tags, one-click console and terminal, tray menu,
+  signed self-updates. Ships as a Homebrew cask plus Windows and Linux builds.

@@ -6,7 +6,8 @@ const DESCRIPTION = 'Curated bookmarks and external profiles.'
 
 export const metadata: Metadata = {
   title: 'Links',
-  description: 'Curated bookmarks and external profiles — GitHub, LinkedIn, Sleepbar, IDEA HPC.',
+  description:
+    'Curated bookmarks and external profiles — GitHub, LinkedIn, Rolle, IDEA HPC, Sleepbar.',
   alternates: { canonical: '/safari' },
   openGraph: { ...BASE_OG, title: TITLE, description: DESCRIPTION, url: '/safari' },
   twitter: { ...BASE_TWITTER, title: TITLE, description: DESCRIPTION },

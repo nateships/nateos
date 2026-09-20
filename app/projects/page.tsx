@@ -9,7 +9,7 @@ const DESCRIPTION =
 export const metadata: Metadata = {
   title: 'Projects',
   description:
-    'Selected projects: NateOS portfolio, IDEA HPC platform powering Commonwealth Fusion Systems, Sleepbar indie macOS app, AWS re:Invent 2022 talk on cloud HPC for fusion.',
+    'Selected projects: NateOS portfolio, Rolle multi-cloud credentials app, IDEA HPC platform powering Commonwealth Fusion Systems, Sleepbar indie macOS app, AWS re:Invent 2022 talk on cloud HPC for fusion.',
   alternates: { canonical: '/projects' },
   openGraph: { ...BASE_OG, title: TITLE, description: DESCRIPTION, url: '/projects' },
   twitter: { ...BASE_TWITTER, title: TITLE, description: DESCRIPTION },

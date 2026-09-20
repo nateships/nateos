@@ -83,7 +83,7 @@ export default async function OG() {
         }}
       >
         <div style={{ fontSize: 30, opacity: 0.85 }}>
-          {"Nate O'Farrell — Director of Infrastructure & Platform Engineering"}
+          {"Nate O'Farrell — Staff Engineer, TimescaleDB Enterprise at Tiger Data"}
         </div>
         <div
           style={{
@@ -94,13 +94,15 @@ export default async function OG() {
             opacity: 0.6,
           }}
         >
+          <span>Rolle</span>
+          <span style={{ opacity: 0.4 }}>·</span>
           <span>IDEA HPC</span>
           <span style={{ opacity: 0.4 }}>·</span>
           <span>Sleepbar</span>
           <span style={{ opacity: 0.4 }}>·</span>
           <span>AWS re:Invent 2022</span>
           <span style={{ opacity: 0.4 }}>·</span>
-          <span>Commonwealth Fusion Systems</span>
+          <span>Tiger Data</span>
         </div>
       </div>
     </div>,
