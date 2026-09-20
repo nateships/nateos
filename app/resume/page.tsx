@@ -5,8 +5,7 @@ import { BASE_OG, BASE_TWITTER } from '@/lib/seo'
 import { resumeData } from './data'
 
 const TITLE = "Resume — Nate O'Farrell"
-const DESCRIPTION =
-  'Director of Infrastructure & Platform Engineering. 15+ years across cloud, on-prem, and HPC.'
+const DESCRIPTION = 'Staff Engineer at Tiger Data. 15+ years across cloud, on-prem, and HPC.'
 
 export function generateMetadata(): Metadata {
   if (!isJobSearchActive()) {
@@ -34,7 +33,7 @@ export function generateMetadata(): Metadata {
   return {
     title: 'Resume',
     description:
-      "Nate O'Farrell — Director of Infrastructure & Platform Engineering. Full work history, skills, certifications, and education. PDF + DOCX downloads available.",
+      "Nate O'Farrell — Staff Engineer at Tiger Data. Full work history, skills, certifications, and education. PDF + DOCX downloads available.",
     alternates: { canonical: '/resume' },
     // Spread BASE_OG so siteName/locale stay set; override type to 'profile'
     // and url to the resume canonical. Without spread, parent's defaults are
@@ -80,7 +79,7 @@ export default function ResumeRoute() {
     <article className="sr-only" aria-label="Resume">
       <header>
         <h1>Nate O&apos;Farrell — Resume</h1>
-        <p>Director of Infrastructure &amp; Platform Engineering · Tewksbury, MA</p>
+        <p>Staff Engineer, TimescaleDB Enterprise at Tiger Data · Tewksbury, MA</p>
         <p>nate@nateofarrell.com</p>
       </header>
 

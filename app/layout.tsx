@@ -7,7 +7,7 @@ import { BASE_OG, BASE_TWITTER, SITE_NAME, SITE_URL } from '@/lib/seo'
 
 const TITLE = "NateOS — Nate O'Farrell"
 const DESCRIPTION =
-  "Nate O'Farrell — Director of Infrastructure & Platform Engineering. Hands-on builder behind IDEA HPC, Sleepbar, AWS re:Invent talks, and this macOS-style portfolio."
+  "Nate O'Farrell — Staff Engineer at Tiger Data building TimescaleDB Enterprise. Hands-on builder behind Rolle, IDEA HPC, Sleepbar, AWS re:Invent talks, and this macOS-style portfolio."
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -28,6 +28,9 @@ export const metadata: Metadata = {
     'AWS',
     'Kubernetes',
     'Terraform',
+    'Tiger Data',
+    'TimescaleDB',
+    'PostgreSQL',
     'IDEA HPC',
     'Commonwealth Fusion Systems',
     'CFS',
@@ -68,8 +71,8 @@ const personJsonLd = {
   name: "Nate O'Farrell",
   url: SITE_URL,
   email: 'mailto:nate@nateofarrell.com',
-  jobTitle: 'Director of Infrastructure & Platform Engineering',
-  worksFor: { '@type': 'Organization', name: 'Commonwealth Fusion Systems' },
+  jobTitle: 'Staff Engineer',
+  worksFor: { '@type': 'Organization', name: 'Tiger Data' },
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Tewksbury',
